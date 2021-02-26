@@ -1,11 +1,10 @@
 # DataSource
 Iterator with additional functionality
 
-## Needed: a universal iterator to work on all sources interchangeably:
+### A general iterator to work on several sources interchangeably:
  * Arrays, Lists, small files (from memory), large files (from disk/cache), strings (tokenized on space).
 
-
-### Implementations should provide:
+### Implementations should provide additional features:
  * Empty line skipping.
  * Word-by-word iteration of source (tokenizing to a continuous word stream).
  * Peek forward and peek back.
@@ -32,6 +31,7 @@ Decorators:
     *Locates a text pattern and sets a field so later parsing can use it*
 * SourceFluid:  
     *Uses a stack to change file sources on-the-fly, returning to a previous source when the current one finishes*
+    
 ### Each iterator output token should provide accurate status with:
  * current source name:        
      *file name or list description*
@@ -74,6 +74,8 @@ Accomplished by returning an IReadNode object instead of a string token.
 * Should return null indefinitely if caller ignores false hasNext()
 
 ### Notes:
+ * This iterator does not implement Java Iterator, so you need to use a while loop:  
+         while(dataSource.hasNext() // do stuff   
  * The availability of status data from each node simplifies the interface.
     You could remove every feature except hasData() and next() and still have a functioning iterator by keeping track of node status.
  *  No 'rewind' or 'reset' is provided. Objects should be single purpose; resetting adds complexity
