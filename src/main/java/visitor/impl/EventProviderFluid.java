@@ -1,12 +1,12 @@
 package visitor.impl;
 
-import datasource.LocalStatics;
+import runstate.Glob;
+import langdef.iface.LANG_STRUCT;
 import readnode.iface.IReadNode;
-import textpattern.TEXT_PATTERN;
 import visitor.iface.IEventProvider;
 import visitor.iface.IEventReceiver;
 
-import static datasource.LocalStatics.FACTORY_DATA_SOURCE;
+import static runstate.Glob.FACTORY_DATA_SOURCE;
 
 /** Some DataSource decorators keep internal state out of sync with the eventual output.
  *  SourceFluid needs immediate triggering to push a new file on time
@@ -16,11 +16,11 @@ import static datasource.LocalStatics.FACTORY_DATA_SOURCE;
  *  Implemented here for clarity, but an anonymous impl would suffice (with values hard-coded).
  *  This impl demonstrates loading a second file from a keyword in the first file */
 public class EventProviderFluid implements IEventProvider {
-    private final TEXT_PATTERN[] textPatterns;
+    private final LANG_STRUCT[] langStructs;
     private boolean state;
 
-    public EventProviderFluid(TEXT_PATTERN... textPatterns) {
-        this.textPatterns = textPatterns;
+    public EventProviderFluid(LANG_STRUCT... langStructs) {
+        this.langStructs = langStructs;
         this.state = false;
     }
 
@@ -33,20 +33,20 @@ public class EventProviderFluid implements IEventProvider {
             if(state ){
                 requestData.setActive(false);
                 receiver.receive(this,FACTORY_DATA_SOURCE.getSourceTok(
-                        LocalStatics.FILE_NAME_UTIL.mergeDefaultPath(requestData.text()), null
+                        Glob.FILE_NAME_UTIL.mergeDefaultPath(requestData.text()), null
                     )
                 );
                 state = false;
             }
-            else if(requestData.textPattern() != null && findInTextPatterns(requestData.textPattern())){
+            else if(requestData.langStruct() != null && isActionableLangStruct(requestData.langStruct())){
                 requestData.setActive(false);
                 state = true;
             }
         }
     }
-    private boolean findInTextPatterns(TEXT_PATTERN textPattern){
-        for(int i = 0; i < textPatterns.length; i++){
-            if(textPatterns[i] == textPattern){
+    private boolean isActionableLangStruct(LANG_STRUCT langStruct){
+        for(int i = 0; i < langStructs.length; i++){
+            if(langStructs[i] == langStruct){
                 return true;
             }
         }

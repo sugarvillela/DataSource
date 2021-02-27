@@ -8,10 +8,10 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-import static datasource.LocalStatics.FILE_NAME_UTIL;
-import static datasource.LocalStatics.SMALL_FILE_DUMP;
+import static runstate.Glob.FILE_NAME_UTIL;
+import static runstate.Glob.SMALL_FILE_DUMP;
 
-class LocalStaticsTest {
+class GlobTest {
     String path;
 
     @BeforeEach

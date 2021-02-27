@@ -1,7 +1,7 @@
 package datasource.core;
 
-import static datasource.LocalStatics.FILE_NAME_UTIL;
-import static datasource.LocalStatics.SMALL_FILE_DUMP;
+import static runstate.Glob.FILE_NAME_UTIL;
+import static runstate.Glob.SMALL_FILE_DUMP;
 
 public class SourceFile extends SourceList {
     public SourceFile(String fileName) {

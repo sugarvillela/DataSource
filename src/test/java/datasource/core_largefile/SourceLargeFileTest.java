@@ -5,12 +5,10 @@ import datasource.iface.IDataSource;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import readnode.iface.IReadNode;
 
 import java.io.File;
-import java.util.ArrayList;
 
-import static datasource.LocalStatics.FILE_NAME_UTIL;
+import static runstate.Glob.FILE_NAME_UTIL;
 
 class SourceLargeFileTest {
     String path;

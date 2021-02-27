@@ -9,7 +9,7 @@ import java.io.FileNotFoundException;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
 
-import static datasource.LocalStatics.FILE_NAME_UTIL;
+import static runstate.Glob.FILE_NAME_UTIL;
 
 public class SourceLargeFile implements IDataSource {
     private final String filePath, stringIdentifier;

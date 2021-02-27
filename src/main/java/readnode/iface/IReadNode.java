@@ -1,6 +1,8 @@
 package readnode.iface;
 
-import textpattern.TEXT_PATTERN;
+import langdef.CMD;
+import langdef.STRUCT_KEYWORD;
+import langdef.iface.LANG_STRUCT;
 
 /** See accompanying javadoc in IDataSource.
  *  Contextual comments below in code */
@@ -8,9 +10,7 @@ public interface IReadNode extends Comparable<IReadNode> {
 
     void setActive(boolean active);     // Set false if node should be ignored by downstream parsing
     void setHasNext(boolean hasNext);   // Overridable done state (used by SourceFluid to continue on source pop)
-    void setTextPattern(                // Set a TEXT_PATTERN enum if matching text found (set by PatternMatch)
-            TEXT_PATTERN textPattern
-    );
+    void setLangStruct(LANG_STRUCT langStruct); // Set a TEXT_PATTERN enum if matching text found (set by PatternMatch)
 
     // immutable status
     String source();                    // Short fileName or unique id for array, list etc.
@@ -25,8 +25,8 @@ public interface IReadNode extends Comparable<IReadNode> {
     // state
     boolean active();                   // Default true
     boolean hasNext();                  // Row mode: false on last row; Tokenize mode: false on all words in last row (overridden by SourceFluid to continue on source pop)
-    boolean hasPattern();               // Default false unless textPattern is set
-    TEXT_PATTERN textPattern();         // Null unless text matches a TEXT_PATTERN enum (set by PatternMatch)
+    boolean hasPattern();               // Default false unless langStruct is set
+    LANG_STRUCT langStruct();           // Null unless text matches a TEXT_PATTERN enum (set by PatternMatch)
 
     // to string
     String indentedText();              // Row mode: same as text(); Tokenize mode: recreate indented text (back spaces still discarded)
@@ -36,4 +36,7 @@ public interface IReadNode extends Comparable<IReadNode> {
     String csvString();                 // CSV of all data
 
     int sortValue();                    // Values assigned sequentially on node create, for sorting by creation order
+
+    CMD cmd();
+    String key();
 }

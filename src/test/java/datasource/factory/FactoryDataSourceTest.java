@@ -9,8 +9,8 @@ import visitor.impl.EventProviderFluid;
 
 import java.io.File;
 
-import static datasource.LocalStatics.FACTORY_DATA_SOURCE;
-import static textpattern.TEXT_PATTERN.INSERT;
+import static runstate.Glob.FACTORY_DATA_SOURCE;
+import static langdef.STRUCT_KEYWORD.INSERT;
 
 class FactoryDataSourceTest {
     String path;

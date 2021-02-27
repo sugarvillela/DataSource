@@ -1,12 +1,14 @@
-package textpattern;
+package langdef;
 
-public enum TEXT_PATTERN {
+import langdef.iface.LANG_STRUCT;
+
+public enum STRUCT_KEYWORD implements LANG_STRUCT {
     INSERT,
     RX,
     FX
     ;
 
-    public static TEXT_PATTERN getEnum(String text){
+    public static STRUCT_KEYWORD getEnum(String text){
         try{
             return valueOf(text);
         }

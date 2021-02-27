@@ -14,8 +14,8 @@ import visitor.impl.EventProviderFluid;
 import java.io.File;
 import java.util.ArrayList;
 
-import static datasource.LocalStatics.FILE_NAME_UTIL;
-import static textpattern.TEXT_PATTERN.INSERT;
+import static runstate.Glob.FILE_NAME_UTIL;
+import static langdef.STRUCT_KEYWORD.INSERT;
 
 class DecoratorTest {
     String path;
