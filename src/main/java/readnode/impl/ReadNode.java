@@ -5,10 +5,9 @@ import java.util.ArrayList;
 public class ReadNode extends ReadNodeBase {
     private static final String FORMAT_CSV = "%s,%d,%d,%d,%d,%d,%d,%s,%s";
 
-    private final boolean endLine;
     private final int indent;
 
-    private boolean hasNext;
+    private boolean endLine, hasNext;
 
     // row implementations use this constructor; unused immutables set to default
     public ReadNode(String source, int row, String text, boolean hasNext){
@@ -24,6 +23,11 @@ public class ReadNode extends ReadNodeBase {
 
         this.active = true;
         this.hasNext = hasNext;
+    }
+
+    @Override
+    public void setEndLine(boolean endLine) {
+        this.endLine = endLine;
     }
 
     // state setters
@@ -69,7 +73,7 @@ public class ReadNode extends ReadNodeBase {
         if(endLine){ out.add("endLine"); }
         if(hasNext){ out.add("hasNext"); }
         if(text != null){ out.add("text: " + text); }
-        if(langStruct != null){ out.add("langStruct: " + langStruct.toString()); }
+        if(textEvent != null){ out.add("textEvent: " + textEvent.friendlyString()); }
         return String.join(", ", out);
     }
 
@@ -81,7 +85,7 @@ public class ReadNode extends ReadNodeBase {
                 (endLine? 1 : 0),
                 (hasNext? 1 : 0),
                 text,
-                ((langStruct == null)? "-" : langStruct.toString())
+                ((textEvent == null)? "-" : textEvent.textPattern().toString())
         );
     }
 

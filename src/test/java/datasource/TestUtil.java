@@ -13,7 +13,7 @@ import java.util.ArrayList;
  *  Comment out the ++ and the tests will work
  */
 public abstract class TestUtil {
-    public static final boolean display = false;
+    public static final boolean display = true;
     public static final boolean displayForCopy = false;
 
     public static String iterateAndJoin(IDataSource dataSource){
@@ -27,24 +27,16 @@ public abstract class TestUtil {
         ArrayList<String> data = new ArrayList<>();
         int i = 0;
         while(dataSource.hasNext()){
-            String text;
-            boolean active = true;
+
             IReadNode node = dataSource.next();
-            if(node == null){
-                text = "null";
+            String text = (node == null)? "null" : node.csvString();
+            data.add(text);
+            if(display){
+                text = (node == null)? "null" : node.friendlyString();
+                System.out.println("\"" + text + "|\" + ");
             }
-            else{
-                text = node.csvString();
-                active = node.active();
-            }
-            if(active){
-                data.add(text);
-                if(display){
-                    System.out.println(text);
-                }
-                else if(displayForCopy){
-                    System.out.println("\"" + text + "|\" + ");
-                }
+            else if(displayForCopy){
+                System.out.println("\"" + text + "|\" + ");
             }
             if(overRun < i++){
                 System.out.println("overrun!!!");

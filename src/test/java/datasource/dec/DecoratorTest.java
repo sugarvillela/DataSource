@@ -9,7 +9,8 @@ import datasource.dec_tok.SourceTok;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import visitor.impl.EventProviderFluid;
+import readnode.iface.IReadNode;
+import runstate.Glob;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -231,14 +232,7 @@ class DecoratorTest {
                 "eight nine ten eleven twelve",
                 "thirteen fourteen"
         };
-        IDataSource dataSource = new SourceFluid(
-            new PatternMatch(
-                new SourceTok(
-                    new SourceArray(array1)
-                )
-            ),
-            new EventProviderFluid(INSERT)
-        );
+        IDataSource dataSource = Glob.FACTORY_DATA_SOURCE.getSource(array1);
 
         String actual = TestUtil.iterateAndJoin(dataSource, 25);
         String expected =
@@ -292,10 +286,11 @@ class DecoratorTest {
     @Test
     void patternMatchShouldSetEnums(){
         String[] array = new String[]{
-                "zero one two three",
-                "four five INSERT seven",
-                "eight RX ten eleven twelve",
-                "thirteen FX"
+                "zero $myIdentifier two three",
+                "*myAccessor five INSERT seven ",
+                "FUN some stuff END_FUN",
+                "twelve */ inserted stuff /* seventeen",
+                "eighteen FX"
         };
 
         IDataSource dataSource = new PatternMatch(
@@ -303,23 +298,35 @@ class DecoratorTest {
                     new SourceArray(array)
             )
         );
-        String actual = TestUtil.iterateAndJoin(dataSource, 20);
+        ArrayList<String> data = new ArrayList<>();
+        while(dataSource.hasNext()){
+            IReadNode node = dataSource.next();
+            String text = (node == null)? "null" : node.friendlyString();
+            data.add(text);
+            //System.out.println("\"" + text + "|\" + ");
+        }
+        String actual =  String.join("|", data);
         String expected =
-                "array@0,0,0,0,1,0,1,zero,-|" +
-                        "array@0,0,1,0,1,0,1,one,-|" +
-                        "array@0,0,2,0,1,0,1,two,-|" +
-                        "array@0,0,3,0,1,1,1,three,-|" +
-                        "array@0,1,0,0,1,0,1,four,-|" +
-                        "array@0,1,1,0,1,0,1,five,-|" +
-                        "array@0,1,2,0,1,0,1,INSERT,INSERT|" +
-                        "array@0,1,3,0,1,1,1,seven,-|" +
-                        "array@0,2,0,0,1,0,1,eight,-|" +
-                        "array@0,2,1,0,1,0,1,RX,RX|" +
-                        "array@0,2,2,0,1,0,1,ten,-|" +
-                        "array@0,2,3,0,1,0,1,eleven,-|" +
-                        "array@0,2,4,0,1,1,1,twelve,-|" +
-                        "array@0,3,0,0,1,0,0,thirteen,-|" +
-                        "array@0,3,1,0,1,1,0,FX,FX";
+                "sortValue 1, array@0, row 0, col 0, indent 0, hasNext, text: zero|" +
+                        "sortValue 2, array@0, row 0, col 1, indent 0, hasNext, text: myIdentifier, textEvent: textPattern: ID_DEFINE, cmd: PUSH|" +
+                        "sortValue 3, array@0, row 0, col 2, indent 0, hasNext, text: two|" +
+                        "sortValue 4, array@0, row 0, col 3, indent 0, endLine, hasNext, text: three|" +
+                        "sortValue 6, array@0, row 1, col 0, indent 0, hasNext, text: myAccessor, textEvent: textPattern: ID_ACCESS, cmd: PUSH|" +
+                        "sortValue 7, array@0, row 1, col 1, indent 0, hasNext, text: five|" +
+                        "sortValue 8, array@0, row 1, col 2, indent 0, hasNext, text: INSERT, textEvent: textPattern: INSERT, cmd: PUSH|" +
+                        "sortValue 9, array@0, row 1, col 3, indent 0, endLine, hasNext, text: seven|" +
+                        "sortValue 11, array@0, row 2, col 0, indent 0, hasNext, text: FUN, textEvent: textPattern: FUN, cmd: PUSH|" +
+                        "sortValue 12, array@0, row 2, col 1, indent 0, hasNext, text: some|" +
+                        "sortValue 13, array@0, row 2, col 2, indent 0, hasNext, text: stuff|" +
+                        "sortValue 14, array@0, row 2, col 3, indent 0, endLine, hasNext, text: END_FUN, textEvent: textPattern: FUN, cmd: POP|" +
+                        "sortValue 16, array@0, row 3, col 0, indent 0, hasNext, text: twelve|" +
+                        "sortValue 17, array@0, row 3, col 1, indent 0, hasNext, text: */, textEvent: textPattern: LANG_T, cmd: PUSH|" +
+                        "sortValue 18, array@0, row 3, col 2, indent 0, hasNext, text: inserted|" +
+                        "sortValue 19, array@0, row 3, col 3, indent 0, hasNext, text: stuff|" +
+                        "sortValue 20, array@0, row 3, col 4, indent 0, hasNext, text: /*, textEvent: textPattern: LANG_T, cmd: POP|" +
+                        "sortValue 21, array@0, row 3, col 5, indent 0, endLine, hasNext, text: seventeen|" +
+                        "sortValue 23, array@0, row 4, col 0, indent 0, text: eighteen|" +
+                        "sortValue 24, array@0, row 4, col 1, indent 0, endLine, text: FX, textEvent: textPattern: FX, cmd: PUSH";
         Assertions.assertEquals(expected, actual);
     }
 }

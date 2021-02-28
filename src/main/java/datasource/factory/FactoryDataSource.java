@@ -1,16 +1,13 @@
 package datasource.factory;
 
-import datasource.dec.PatternMatch;
+import datasource.dec.*;
 import datasource.dec_fluid.SourceFluid;
-import datasource.dec.SourceNonEmpty;
-import datasource.dec.SourcePeek;
 import datasource.dec_tok.SourceTok;
 import datasource.iface.IDataSource;
 import datasource.core.SourceArray;
 import datasource.core.SourceList;
 import datasource.core.SourceFile;
 import datasource.core_largefile.SourceLargeFile;
-import visitor.impl.EventProviderFluid;
 
 import java.util.List;
 
@@ -25,58 +22,62 @@ public class FactoryDataSource {
 
     private FactoryDataSource(){}
 
-    private IDataSource getWrap(IDataSource dataSource, EventProviderFluid fluidEvent){
+
+    private IDataSource getSmall1(IDataSource dataSource){
+        return new SourceNonComment(
+                new PatternMatch(
+                        new SourceTok(
+                                new SourceNonEmpty(dataSource))
+                )
+        );
+    }
+
+    private IDataSource getAll(IDataSource dataSource){
         return new SourcePeek(
-                new SourceFluid(
-                        new PatternMatch(
-                                new SourceTok(
-                                        new SourceNonEmpty(dataSource))
-                        ), fluidEvent
+                new SourceActiveOnly(
+                        new SourceFluid(
+                                new SourceNonComment(
+                                        new PatternMatch(
+                                                new SourceTok(
+                                                        new SourceNonEmpty(dataSource))
+                                        )
+                                )
+                        )
                 )
         );
     }
 
-    private IDataSource getWrap(IDataSource dataSource){
-        return new SourceTok(
-                new SourceNonEmpty(
-                        dataSource
-                )
-        );
+    public IDataSource getSourceSmall(String[] array){
+        return this.getAll(new SourceArray(array));
     }
 
-    private IDataSource nullCheck(IDataSource dataSource, EventProviderFluid fluidEvent){
-        return ((fluidEvent == null))? getWrap(dataSource) : getWrap(dataSource, fluidEvent);
+    public IDataSource getSourceSmall(List list){
+        return this.getAll(new SourceList(list));
     }
 
-    public IDataSource getSourceTok(String[] array, EventProviderFluid fluidEvent){
-        return this.nullCheck(new SourceArray(array), fluidEvent);
+    public IDataSource getSourceSmall(String fileName){
+        return this.getAll(new SourceFile(fileName));
     }
 
-    public IDataSource getSourceTok(List list, EventProviderFluid fluidEvent){
-        return this.nullCheck(new SourceList(list), fluidEvent);
+    public IDataSource getSourceLargeFileSmall(String fileName){
+        return this.getAll(new SourceLargeFile(fileName));
     }
 
-    public IDataSource getSourceTok(String fileName, EventProviderFluid fluidEvent){
-        return this.nullCheck(new SourceFile(fileName), fluidEvent);
+
+
+    public IDataSource getSource(String[] array){
+        return this.getAll(new SourceArray(array));
     }
 
-    public IDataSource getSourceLargeFileTok(String fileName, EventProviderFluid fluidEvent){
-        return this.nullCheck(new SourceLargeFile(fileName), fluidEvent);
+    public IDataSource getSource(List list){
+        return this.getAll(new SourceList(list));
     }
 
-    public IDataSource getSource(String[] array, EventProviderFluid fluidEvent){
-        return this.nullCheck(new SourceArray(array), fluidEvent);
+    public IDataSource getSource(String fileName){
+        return this.getAll(new SourceFile(fileName));
     }
 
-    public IDataSource getSource(List list, EventProviderFluid fluidEvent){
-        return this.nullCheck(new SourceList(list), fluidEvent);
-    }
-
-    public IDataSource getSource(String fileName, EventProviderFluid fluidEvent){
-        return this.nullCheck(new SourceFile(fileName), fluidEvent);
-    }
-
-    public IDataSource getSourceLargeFile(String fileName, EventProviderFluid fluidEvent){
-        return this.nullCheck(new SourceLargeFile(fileName), fluidEvent);
+    public IDataSource getSourceLargeFile(String fileName){
+        return this.getAll(new SourceLargeFile(fileName));
     }
 }

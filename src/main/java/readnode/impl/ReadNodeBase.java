@@ -1,8 +1,8 @@
 package readnode.impl;
 
 import langdef.CMD;
-import langdef.iface.LANG_STRUCT;
 import readnode.iface.IReadNode;
+import textevent.iface.ITextEventNode;
 
 public abstract class ReadNodeBase implements IReadNode {
     protected static final String FORMAT_STATUS = "%s,%d,%d";
@@ -11,10 +11,11 @@ public abstract class ReadNodeBase implements IReadNode {
 
     protected final int sortValue;
     protected final int row, col;
-    protected final String source, text;
+    protected final String source;
 
+    protected String text;
     protected boolean active;
-    protected LANG_STRUCT langStruct;
+    protected ITextEventNode textEvent;
 
     public ReadNodeBase(String source, int row, int col, String text){
         this.sortValue = uqValue++;
@@ -26,13 +27,18 @@ public abstract class ReadNodeBase implements IReadNode {
     }
 
     @Override
+    public void setText(String text) {
+        this.text = text;
+    }
+
+    @Override
     public void setActive(boolean active) {
         this.active = active;
     }
 
     @Override
-    public void setLangStruct(LANG_STRUCT langStruct) {
-        this.langStruct = langStruct;
+    public void setLangStruct(ITextEventNode textEventNode) {
+        this.textEvent = textEventNode;
     }
 
     // getters
@@ -61,14 +67,15 @@ public abstract class ReadNodeBase implements IReadNode {
     public boolean active() {
         return active;
     }
+
     @Override
-    public boolean hasPattern() {
-        return langStruct != null;
+    public boolean hasTextEvent() {
+        return textEvent != null;
     }
 
     @Override
-    public LANG_STRUCT langStruct() {
-        return langStruct;
+    public ITextEventNode textEvent() {
+        return textEvent;
     }
 
     // to string
@@ -99,6 +106,11 @@ public abstract class ReadNodeBase implements IReadNode {
     }
 
     /*================================================================================================================*/
+
+    @Override
+    public void setEndLine(boolean endLine) {
+        throw new IllegalStateException("Not implemented");
+    }
 
     @Override
     public void setHasNext(boolean hasNext) {

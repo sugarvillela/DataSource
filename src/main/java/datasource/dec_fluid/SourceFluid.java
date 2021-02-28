@@ -1,31 +1,30 @@
 package datasource.dec_fluid;
 
 import datasource.iface.IDataSource;
+import langdef.iface.TEXT_PATTERN;
 import readnode.iface.IReadNode;
-import visitor.iface.IEventProvider;
-import visitor.iface.IEventReceiver;
-import visitor.impl.EventProviderFluid;
+import runstate.Glob;
 
 import java.util.Stack;
 
-public class SourceFluid implements IDataSource, IEventReceiver {
-    private final IEventProvider eventProvider;
+import static runstate.Glob.FACTORY_DATA_SOURCE;
+
+public class SourceFluid implements IDataSource {
     private final Stack<IDataSource> stack;
     private final IDataSource initialSource;
+    private final TEXT_PATTERN textPattern;
+
     private IReadNode prevNode, currNode;
+    private boolean state;
 
     public SourceFluid(IDataSource initialSource) {
         this.initialSource = initialSource;
-        this.eventProvider = new EventProviderFluid();
         stack = new Stack<>();
         stack.push(initialSource);
-        this.next();
-    }
-    public SourceFluid(IDataSource initialSource, IEventProvider eventProvider) {
-        this.initialSource = initialSource;
-        this.eventProvider = eventProvider;
-        stack = new Stack<>();
-        stack.push(initialSource);
+
+        this.textPattern = Glob.ENUMS_BY_TYPE.sourceFluidTextPattern();// keep all hard-code langDef in lang def package
+        this.state = false;
+
         this.next();
     }
 
@@ -63,17 +62,26 @@ public class SourceFluid implements IDataSource, IEventReceiver {
         prevNode = currNode;    // output one step behind
         getOrPop();             // get curr, pop if source finished
         fixNodeDoneStatus();    // make sure node.hasNext false only when stack is finished
-        eventProvider.provide(this, currNode);// push new file?
+        pushOnEvent();// push new file?
         return prevNode;
     }
 
-    @Override
-    public void receive(IEventProvider provider, IDataSource dataSource) {
-        stack.push(dataSource);
+    private void pushOnEvent(){
+        if(currNode != null){
+            if(state){
+                currNode.setActive(false);
+                stack.push(FACTORY_DATA_SOURCE.getSourceSmall(
+                    Glob.FILE_NAME_UTIL.mergeDefaultPath(currNode.text())
+                    )
+                );
+                state = false;
+            }
+            else if(currNode.textEvent() != null && this.textPattern == currNode.textEvent().textPattern()){
+                currNode.setActive(false);
+                state = true;
+            }
+        }
     }
-
-    @Override
-    public void receive(IEventProvider provider, boolean data) {}
 
     @Override
     public boolean hasPeekBack() {

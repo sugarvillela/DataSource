@@ -26,7 +26,7 @@ import readnode.iface.IReadNode;
  *      hasNext:                    true except for the last item
  *      active:                     if false, the node can be ignored in parsing
  *      the current string token:   a row or a word, depending on word-tokenize mode
- *      langStruct:                an enum that is found to match a word of text
+ *      textEvent:                an enum that is found to match a word of text
  *
  *  This is best accomplished by returning an IReadNode object instead of a string token.
  *  Each IReadNode has its own status fields, correct no matter what order things are called in.
