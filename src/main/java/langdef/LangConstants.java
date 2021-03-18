@@ -8,13 +8,12 @@ public abstract class LangConstants {
 
 
     // Trigger patterns for pushing lang structures: defines some language behavior
-
     public static final String OPEN_S = "/*$";      // pushes source datatype
     public static final String CLOSE_S = "$*/";     // pops all source datatypes
     public static final String OPEN_T = "*/";       // inserts target language without popping source
     public static final String CLOSE_T = "/*";      // pops target language insert
-    public static final String FUNCTION = "FUN";
-    public static final String END_FUNCTION = "END_FUN";
+    public static final String SYM_ANTI_FX = "!FX";     // like an else clause
+    public static final String SYM_END_ANTI_FX = "END!FX";// should not have to use
 
     public static final char COMMENT_START = '#';//
     public static final char DEFINE_START = '$';     // identifier declaration

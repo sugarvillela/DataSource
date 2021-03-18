@@ -28,7 +28,7 @@ class TokTest {
     @Test
     void nodeTokShouldIgnoreExtraSpaces(){
         NodeTokenizer tokenizer = new NodeTokenizer();
-        String text = "    String  with too many      spaces    ";
+        String text = "   \tString  with too many      spaces    ";
 
         // container values here are random; in operation the values come from the containing source
         IReadNode[] nodes = tokenizer.parse(text, "test.txt", 2, true).getArray();

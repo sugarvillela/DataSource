@@ -2,11 +2,11 @@ package langdef.util;
 
 import langdef.STRUCT_KEYWORD;
 import langdef.STRUCT_LOOKUP;
+import langdef.STRUCT_NON_KEYWORD;
 import langdef.STRUCT_SYMBOL;
-import langdef.iface.LANG_STRUCT;
-import langdef.iface.TEXT_PATTERN;
-import textevent.iface.ITextEventNode;
-import textevent.impl.TextEventNode;
+import langdefalgo.iface.EnumPOJOJoin;
+import langdefalgo.iface.LANG_STRUCT;
+import textevent.impl.TextEventTemplate;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -15,10 +15,15 @@ import java.util.Map;
 
 import static langdef.CMD.POP;
 import static langdef.CMD.PUSH;
-import static langdef.STRUCT_KEYWORD.INSERT;
+import static langdef.STRUCT_KEYWORD.INCLUDE;
 import static langdef.STRUCT_LOOKUP.COMMENT;
+import static langdef.STRUCT_LOOKUP.ID_DEFINE;
+import static langdef.STRUCT_NON_KEYWORD.LANG_ROOT;
+import static langdef.STRUCT_NON_KEYWORD.LANG_T;
+import static langdef.STRUCT_SYMBOL.LANG_S;
 
-/** List static enums by which interface they implement */
+/** Keeping hard-coded lang def names in langDef package, this class exports
+ * lists by interface type or by any structure needed */
 public class EnumsByType {
     private static EnumsByType instance;
 
@@ -28,54 +33,97 @@ public class EnumsByType {
 
     private EnumsByType(){}
 
-    private Map<String, ITextEventNode> map;
+    private Map<String, TextEventTemplate> map;
 
     private void initMap(){
         map = new HashMap<>();
-        for(TEXT_PATTERN textPattern : this.getTextPatterns()){
-            String oSymbol = textPattern.getOpenSymbol();
-            String cSymbol = textPattern.getCloseSymbol();
+        String pushSymbol, popSymbol;
 
-            if(oSymbol != null){
-                map.put(oSymbol, new TextEventNode(textPattern, PUSH));
+        // push symbol = ENUM_NAME, pop symbol = END_ENUM_NAME
+        for(LANG_STRUCT langStruct : STRUCT_KEYWORD.values()){
+            if((pushSymbol = langStruct.getPushSymbol()) != null){
+                map.put(pushSymbol, new TextEventTemplate(langStruct, PUSH, false));
             }
-            if(cSymbol != null){
-                map.put(cSymbol, new TextEventNode(textPattern, POP));
+            if((popSymbol = langStruct.getPopSymbol()) != null){
+                map.put(popSymbol, new TextEventTemplate(langStruct, POP, false));
+            }
+        }
+
+        // symbol != enum name
+        for(LANG_STRUCT langStruct : STRUCT_SYMBOL.values()){
+            if((pushSymbol = langStruct.getPushSymbol()) != null){
+                map.put(pushSymbol, new TextEventTemplate(langStruct, PUSH, false));
+            }
+            if((popSymbol = langStruct.getPopSymbol()) != null){
+                map.put(popSymbol, new TextEventTemplate(langStruct, POP, false));
+            }
+        }
+
+        // symbol is text prefix; identifier is text substring; no pop symbol
+        for(LANG_STRUCT langStruct : STRUCT_LOOKUP.values()){
+            if((pushSymbol = langStruct.getPushSymbol()) != null){
+                map.put(pushSymbol, new TextEventTemplate(langStruct, PUSH, true));
             }
         }
     }
 
-    public Map<String, ITextEventNode> getTextPatternsAsMap(){
+    public Map<String, TextEventTemplate> langStructEventMapForPatternMatch(){
         if(map == null){
             this.initMap();
         }
         return map;
     }
 
-    public ArrayList<TEXT_PATTERN> getTextPatterns(){
-        ArrayList<TEXT_PATTERN> list = new ArrayList<>();
-
-        Collections.addAll(list, STRUCT_KEYWORD.values());
-        Collections.addAll(list, STRUCT_SYMBOL.values());
-        Collections.addAll(list, STRUCT_LOOKUP.values());
-
-        return list;
-    }
-
-    public ArrayList<LANG_STRUCT> getLangStructures(){
+    public ArrayList<LANG_STRUCT> allFrontEndLangStruct(){
         ArrayList<LANG_STRUCT> list = new ArrayList<>();
 
         Collections.addAll(list, STRUCT_KEYWORD.values());
         Collections.addAll(list, STRUCT_SYMBOL.values());
         Collections.addAll(list, STRUCT_LOOKUP.values());
-        // TODO There are more language structures
+
         return list;
     }
 
-    public TEXT_PATTERN sourceFluidTextPattern(){
-        return INSERT;
+    public ArrayList<EnumPOJOJoin> allEnumAlgoJoin(){
+        ArrayList<EnumPOJOJoin> list = new ArrayList<>();
+
+        Collections.addAll(list, STRUCT_KEYWORD.values());
+        Collections.addAll(list, STRUCT_SYMBOL.values());
+        Collections.addAll(list, STRUCT_LOOKUP.values());
+        Collections.addAll(list, STRUCT_NON_KEYWORD.values());
+
+        return list;
     }
-    public TEXT_PATTERN sourceNonCommentTextPattern(){
+
+    public ArrayList<LANG_STRUCT> allLangStructures(){
+        ArrayList<LANG_STRUCT> list = new ArrayList<>();
+
+        Collections.addAll(list, STRUCT_KEYWORD.values());
+        Collections.addAll(list, STRUCT_SYMBOL.values());
+        Collections.addAll(list, STRUCT_LOOKUP.values());
+        Collections.addAll(list, STRUCT_NON_KEYWORD.values());
+
+        return list;
+    }
+
+    public LANG_STRUCT sourceFluidLangStruct(){
+        return INCLUDE;
+    }
+    public LANG_STRUCT sourceNonCommentLangStruct(){
         return COMMENT;
     }
+    public LANG_STRUCT sourceTextPatternIdDefine(){
+        return ID_DEFINE;
+    }
+    public LANG_STRUCT targetLangEnum(){
+        return LANG_T;
+    }
+    public LANG_STRUCT sourceLangEnum(){
+        return LANG_S;
+    }
+    public LANG_STRUCT langRootEnum(){
+        return LANG_ROOT;
+    }
+
+
 }

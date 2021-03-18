@@ -12,7 +12,7 @@ public class SourceFile extends SourceList {
     /** Override list impl because unique suffix not needed for file name
      * @return short file name */
     @Override
-    protected String getIdentifier() {
+    public String sourceName() {
         return stringIdentifier;
     }
 }

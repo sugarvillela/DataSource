@@ -8,7 +8,7 @@ import readnode.iface.IReadNode;
  *  Implementations should provide:
  *      Empty line skipping.
  *      Word-by-word iteration of source (tokenizing to a continuous word stream).
- *      Peek forward and peek back.
+ *      Peek forward and peek goBack.
  *      Source switching on-the-fly, meaning you can push a new source, finish it and resume the previous source.
  *      Recognition of keywords in text to trigger source switching
  *
@@ -51,6 +51,7 @@ import readnode.iface.IReadNode;
  *  FactoryDataSource provides a ready-made decorator configuration that passes tests.
  */
 public interface IDataSource {
+    String sourceName();    // short file name or unique array/list identifier
     boolean hasData();      // check once on start, or fold into hasNext()
 
     boolean hasNext();      // false on no more items

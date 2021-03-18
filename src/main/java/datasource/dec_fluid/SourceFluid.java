@@ -1,7 +1,7 @@
 package datasource.dec_fluid;
 
 import datasource.iface.IDataSource;
-import langdef.iface.TEXT_PATTERN;
+import langdefalgo.iface.LANG_STRUCT;
 import readnode.iface.IReadNode;
 import runstate.Glob;
 
@@ -12,7 +12,7 @@ import static runstate.Glob.FACTORY_DATA_SOURCE;
 public class SourceFluid implements IDataSource {
     private final Stack<IDataSource> stack;
     private final IDataSource initialSource;
-    private final TEXT_PATTERN textPattern;
+    private final LANG_STRUCT langStruct;
 
     private IReadNode prevNode, currNode;
     private boolean state;
@@ -22,10 +22,15 @@ public class SourceFluid implements IDataSource {
         stack = new Stack<>();
         stack.push(initialSource);
 
-        this.textPattern = Glob.ENUMS_BY_TYPE.sourceFluidTextPattern();// keep all hard-code langDef in lang def package
+        this.langStruct = Glob.ENUMS_BY_TYPE.sourceFluidLangStruct();// keep all hard-code langDef in lang def package
         this.state = false;
 
         this.next();
+    }
+
+    @Override
+    public String sourceName() {
+        return stack.peek().sourceName();
     }
 
     @Override
@@ -76,7 +81,7 @@ public class SourceFluid implements IDataSource {
                 );
                 state = false;
             }
-            else if(currNode.textEvent() != null && this.textPattern == currNode.textEvent().textPattern()){
+            else if(currNode.textEvent() != null && this.langStruct == currNode.textEvent().langStruct()){
                 currNode.setActive(false);
                 state = true;
             }
@@ -85,21 +90,25 @@ public class SourceFluid implements IDataSource {
 
     @Override
     public boolean hasPeekBack() {
-        throw new IllegalStateException("Peek not implemented; use a peek decorator");
+        Glob.ERR_DEV.kill("Peek not implemented; use a peek decorator");
+        return false;
     }
 
     @Override
     public boolean hasPeekAhead() {
-        throw new IllegalStateException("Peek not implemented; use a peek decorator");
+        Glob.ERR_DEV.kill("Peek not implemented; use a peek decorator");
+        return false;
     }
 
     @Override
     public IReadNode peekBack() {
-        throw new IllegalStateException("Peek not implemented; use a peek decorator");
+        Glob.ERR_DEV.kill("Peek not implemented; use a peek decorator");
+        return null;
     }
 
     @Override
     public IReadNode peekAhead() {
-        throw new IllegalStateException("Peek not implemented; use a peek decorator");
+        Glob.ERR_DEV.kill("Peek not implemented; use a peek decorator");
+        return null;
     }
 }

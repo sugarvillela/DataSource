@@ -11,6 +11,11 @@ public abstract class DecoratorBase implements IDataSource {
     }
 
     @Override
+    public String sourceName() {
+        return dataSource.sourceName();
+    }
+
+    @Override
     public boolean hasData() {
         return dataSource != null && dataSource.hasData();
     }

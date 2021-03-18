@@ -1,0 +1,14 @@
+    one two three
+    four five
+/*$
+	SCOPE theScope # RX $scopeRx scopeWord1 scopeWord2
+		RX $myRx rxWord1 rxWord2
+		FX $myFx fxWord1 fxWord2
+	END_SCOPE
+	IF RX rxWordIf
+		FX fxWordIf
+	END_IF
+	ELSE
+		FX fxWordElse
+	END_ELSE
+$*/

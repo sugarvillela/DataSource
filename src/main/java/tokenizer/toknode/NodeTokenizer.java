@@ -4,20 +4,20 @@ import readnode.iface.IReadNode;
 import readnode.impl.ReadNode;
 
 public class NodeTokenizer {
-    private final char delimiter;
     String[] tokens;
     int[] indents;
     IReadNode[] nodes;
 
-    public NodeTokenizer() {
-        this.delimiter = ' ';
-    }
+    public NodeTokenizer() {}
 
+    private boolean isWhiteSpace(char c){
+        return ((int)c) < 33;
+    }
     private void initData(String text){
         int size = 0;
         int i, j = 0;
         for(i = 0; i < text.length(); i++){
-            if( text.charAt(i) == delimiter){
+            if(this.isWhiteSpace(text.charAt(i))){
                 if( i != j ){
                     size++;
                 }
@@ -35,10 +35,10 @@ public class NodeTokenizer {
     private void fillData(String text){
         // Indents under-counted by 1, except on initial token.
         // When using String.join to rebuild, use a space as delimiter.
-        // This puts back the missing indent, except on the initial token.
+        // This puts goBack the missing indent, except on the initial token.
         int i, j = 0, k = 0, n = 0;
         for(i = 0; i < text.length(); i++){
-            if( text.charAt(i) == delimiter){
+            if(this.isWhiteSpace(text.charAt(i))){
                 if( i != j ){
                     tokens[k] = text.substring(j, i);
                     indents[k] = j - n;
@@ -61,7 +61,7 @@ public class NodeTokenizer {
         int k = 0;
         for(int i = 0; i < tokens.length; i++){
             nodes[k++] = new ReadNode(
-                    containerSource, containerRow, i, tokens[i], (i == tokens.length - 1), containerHasNext, indents[i]
+                    containerSource, containerRow, i, tokens[i], text.trim(), (i == tokens.length - 1), containerHasNext, indents[i]
             );
         }
 

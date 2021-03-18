@@ -4,9 +4,10 @@ import datasource.iface.IDataSource;
 import readnode.iface.IReadNode;
 
 /** Most inner implementations inherit from this class, while most decorator implementations
- *  inherit from DecoratorBase.
+ *  inherit from DecoratorBase or InterceptorBase.
  *  Any class that inherits from this can support peekBack and peekForward without a peek decorator,
- *  as long as no other decorator is applied (decorators take internal and external state out of sync) */
+ *  as long as no other decorator is applied (decorators take internal and external state out of sync).
+ *  These implementations are list-based or array-based, so peeking is easily done */
 public abstract class DataSourceBase implements IDataSource {
     private static int uqValue = 0;
     protected final int numericIdentifier;  // for impl without fileName, uq prefix allows to tell sources apart
@@ -29,7 +30,8 @@ public abstract class DataSourceBase implements IDataSource {
         return this;
     }
 
-    protected String getIdentifier() {
+    @Override
+    public String sourceName() {
         return stringIdentifier + "@" + numericIdentifier;
     }
 

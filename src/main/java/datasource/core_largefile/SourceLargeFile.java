@@ -1,8 +1,10 @@
 package datasource.core_largefile;
 
 import datasource.iface.IDataSource;
+import err.ERR_TYPE;
 import readnode.iface.IReadNode;
 import readnode.impl.ReadNode;
+import runstate.Glob;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -29,10 +31,15 @@ public class SourceLargeFile implements IDataSource {
             row = -1;
         }
         catch ( FileNotFoundException e ){
-            // TODO handle exception
+            Glob.ERR.kill(ERR_TYPE.FILE_ERROR);
             scanner = new Scanner("");
             hasData = false;
         }
+    }
+
+    @Override
+    public String sourceName() {
+        return stringIdentifier;
     }
 
     @Override
@@ -60,22 +67,26 @@ public class SourceLargeFile implements IDataSource {
 
     @Override
     public boolean hasPeekBack() {
-        throw new IllegalStateException("Peek not implemented; use a peek decorator");
+        Glob.ERR_DEV.kill("Peek not implemented; use a peek decorator");
+        return false;
     }
 
     @Override
     public boolean hasPeekAhead() {
-        throw new IllegalStateException("Peek not implemented; use a peek decorator");
+        Glob.ERR_DEV.kill("Peek not implemented; use a peek decorator");
+        return false;
     }
 
     @Override
     public IReadNode peekBack() {
-        throw new IllegalStateException("Peek not implemented; use a peek decorator");
+        Glob.ERR_DEV.kill("Peek not implemented; use a peek decorator");
+        return null;
     }
 
     @Override
     public IReadNode peekAhead() {
-        throw new IllegalStateException("Peek not implemented; use a peek decorator");
+        Glob.ERR_DEV.kill("Peek not implemented; use a peek decorator");
+        return null;
     }
 
 }

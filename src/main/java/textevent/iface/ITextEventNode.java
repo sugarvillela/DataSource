@@ -1,12 +1,17 @@
 package textevent.iface;
 
 import langdef.CMD;
-import langdef.iface.TEXT_PATTERN;
+import langdefalgo.iface.LANG_STRUCT;
 
 /** Immutable data object */
 public interface ITextEventNode {
-    TEXT_PATTERN textPattern();
+    LANG_STRUCT langStruct();
     CMD cmd();
 
+    void setSubstring(String substring);
+    boolean hasSubstring();
+    String substring();
+
+    String csvString();
     String friendlyString();
 }

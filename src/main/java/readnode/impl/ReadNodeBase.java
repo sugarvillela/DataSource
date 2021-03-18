@@ -2,6 +2,7 @@ package readnode.impl;
 
 import langdef.CMD;
 import readnode.iface.IReadNode;
+import runstate.Glob;
 import textevent.iface.ITextEventNode;
 
 public abstract class ReadNodeBase implements IReadNode {
@@ -9,25 +10,19 @@ public abstract class ReadNodeBase implements IReadNode {
     protected static final String FORMAT_FRIENDLY_STATUS = "%s line %d word %d";
     protected static int uqValue = 0;
 
-    protected final int sortValue;
     protected final int row, col;
-    protected final String source;
+    protected final String source, text;
 
-    protected String text;
+    protected int sortValue;
     protected boolean active;
     protected ITextEventNode textEvent;
 
     public ReadNodeBase(String source, int row, int col, String text){
-        this.sortValue = uqValue++;
+        //this.sortValue = uqValue++;
 
         this.source = source;
         this.row = row;
         this.col = col;
-        this.text = text;
-    }
-
-    @Override
-    public void setText(String text) {
         this.text = text;
     }
 
@@ -37,9 +32,15 @@ public abstract class ReadNodeBase implements IReadNode {
     }
 
     @Override
-    public void setLangStruct(ITextEventNode textEventNode) {
+    public void setTextEvent(ITextEventNode textEventNode) {
         this.textEvent = textEventNode;
     }
+
+    @Override
+    public void renumberSortValue() {
+        this.sortValue = uqValue++;
+    }
+
 
     // getters
 
@@ -109,52 +110,66 @@ public abstract class ReadNodeBase implements IReadNode {
 
     @Override
     public void setEndLine(boolean endLine) {
-        throw new IllegalStateException("Not implemented");
+        Glob.ERR_DEV.kill("Not implemented");
     }
 
     @Override
     public void setHasNext(boolean hasNext) {
-        throw new IllegalStateException("Not implemented");
+        Glob.ERR_DEV.kill("Not implemented");
     }
 
     @Override
     public int indent() {
-        throw new IllegalStateException("Not implemented");
+        Glob.ERR_DEV.kill("Not implemented");
+        return 0;
     }
 
     @Override
     public boolean endLine() {
-        throw new IllegalStateException("Not implemented");
+        Glob.ERR_DEV.kill("Not implemented");
+        return false;
     }
     @Override
     public boolean hasNext() {
-        throw new IllegalStateException("Not implemented");
+        Glob.ERR_DEV.kill("Not implemented");
+        return false;
+    }
+
+    @Override
+    public String containerText() {
+        Glob.ERR_DEV.kill("Not implemented");
+        return null;
     }
 
     @Override
     public String indentedText() {
-        throw new IllegalStateException("Not implemented");
+        Glob.ERR_DEV.kill("Not implemented");
+        return null;
     }
 
     @Override
     public String friendlyString() {
-        throw new IllegalStateException("Not implemented");
+        Glob.ERR_DEV.kill("Not implemented");
+        return null;
     }
 
     @Override
     public String csvString() {
-        throw new IllegalStateException("Not implemented");
+        Glob.ERR_DEV.kill("Not implemented");
+        return null;
     }
 
     /*================================================================================================================*/
 
     @Override
     public CMD cmd() {
-        throw new IllegalStateException("Not implemented");
+        Glob.ERR_DEV.kill("Not implemented");
+        return null;
     }
 
     @Override
     public String key() {
-        throw new IllegalStateException("Not implemented");
+        Glob.ERR_DEV.kill("Not implemented");
+        return null;
     }
 }

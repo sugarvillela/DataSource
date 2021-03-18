@@ -13,15 +13,15 @@ import java.util.ArrayList;
  *  Comment out the ++ and the tests will work
  */
 public abstract class TestUtil {
-    public static final boolean display = true;
-    public static final boolean displayForCopy = false;
+    public static final boolean display = false;
+    public static final boolean displayCsv = true;
 
     public static String iterateAndJoin(IDataSource dataSource){
         return iterateAndJoin(dataSource, 20);
     }
 
     public static String iterateAndJoin(IDataSource dataSource, int overRun){
-        if(display || displayForCopy){
+        if(display || displayCsv){
             System.out.println("=============================");
         }
         ArrayList<String> data = new ArrayList<>();
@@ -35,7 +35,8 @@ public abstract class TestUtil {
                 text = (node == null)? "null" : node.friendlyString();
                 System.out.println("\"" + text + "|\" + ");
             }
-            else if(displayForCopy){
+            else if(displayCsv){
+                //System.out.println(node.containerText());
                 System.out.println("\"" + text + "|\" + ");
             }
             if(overRun < i++){
@@ -55,7 +56,7 @@ public abstract class TestUtil {
             if(display){
                 System.out.println(text);
             }
-            else if(displayForCopy){
+            else if(displayCsv){
                 System.out.println("\"" + text + "|\" + ");
             }
         }

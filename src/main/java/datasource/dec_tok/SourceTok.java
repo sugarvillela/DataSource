@@ -3,6 +3,7 @@ package datasource.dec_tok;
 import datasource.core.SourceCol;
 import datasource.iface.IDataSource;
 import readnode.iface.IReadNode;
+import runstate.Glob;
 import tokenizer.impl.SimpleTok;
 
 public class SourceTok implements IDataSource {
@@ -18,6 +19,11 @@ public class SourceTok implements IDataSource {
             more = true;
             refreshColSource();
         }
+    }
+
+    @Override
+    public String sourceName() {
+        return rowSource.sourceName();
     }
 
     @Override
@@ -51,19 +57,23 @@ public class SourceTok implements IDataSource {
 
     @Override
     public boolean hasPeekBack() {
-        throw new IllegalStateException("Peek not implemented; use a peek decorator");
+        Glob.ERR_DEV.kill("Peek not implemented; use a peek decorator");
+        return false;
     }
     @Override
     public boolean hasPeekAhead() {
-        throw new IllegalStateException("Peek not implemented; use a peek decorator");
+        Glob.ERR_DEV.kill("Peek not implemented; use a peek decorator");
+        return false;
     }
     @Override
     public IReadNode peekBack() {
-        throw new IllegalStateException("Peek not implemented; use a peek decorator");
+        Glob.ERR_DEV.kill("Peek not implemented; use a peek decorator");
+        return null;
     }
     @Override
     public IReadNode peekAhead() {
-        throw new IllegalStateException("Peek not implemented; use a peek decorator");
+        Glob.ERR_DEV.kill("Peek not implemented; use a peek decorator");
+        return null;
     }
 
 }

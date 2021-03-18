@@ -26,6 +26,6 @@ public class SourceArray extends DataSourceBase {
         if(index >= array.length){
             return null;
         }
-        return new ReadNode(this.getIdentifier(), row, array[index], this.hasNext());
+        return new ReadNode(this.sourceName(), row, array[index], this.hasNext());
     }
 }

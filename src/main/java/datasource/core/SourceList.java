@@ -10,6 +10,9 @@ public class SourceList extends DataSourceBase{
 
     public SourceList(List<String> list) {
         this.list = list;
+//        for(String item : list){
+//            System.out.println(item);
+//        }
         this.stringIdentifier = "list";
     }
 
@@ -28,6 +31,6 @@ public class SourceList extends DataSourceBase{
         if(index >= list.size()){
             return null;
         }
-        return new ReadNode(this.getIdentifier(), row, list.get(index), this.hasNext());
+        return new ReadNode(this.sourceName(), row, list.get(index), this.hasNext());
     }
 }

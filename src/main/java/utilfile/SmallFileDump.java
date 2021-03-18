@@ -1,4 +1,7 @@
-package datasource.util;
+package utilfile;
+
+import err.ERR_TYPE;
+import runstate.Glob;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -20,7 +23,7 @@ public class SmallFileDump {
                 list.add(line);
             }
         } catch (IOException e) {
-            System.out.println(e.getMessage());// TODO handle exception
+            Glob.ERR.kill(ERR_TYPE.FILE_ERROR);
         }
         return list;// returns empty list on fail
     }

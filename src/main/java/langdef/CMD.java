@@ -1,5 +1,5 @@
 package langdef;
 
 public enum CMD {
-    PUSH, POP
+    PUSH, POP, ADD_TO
 }

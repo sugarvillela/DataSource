@@ -11,7 +11,7 @@ import java.util.Stack;
  * Supports 'skip area' (quoted or bracketed text). Tokenizer leaves these areas joined.
  * Supports multiple, nested skip symbols. Outermost symbol defines skip area.
  * Option to keep or discard delimiters, skip symbols.
- * Use builder to set options.
+ * Use builder to kill options.
  *
  * Sample usage:
  *   String text = "Sentence__with_(too_many_'delims')_and_quotes__";
