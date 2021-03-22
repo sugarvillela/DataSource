@@ -3,11 +3,11 @@
 /*$
 	ATTRIB PROJ_NAME=wowee SOME_NUMBER=23
 	CONSTANT $myConst 69
-	RX rxContent1 rxContent2 */ six seven eight /* 
+	RX $myRX rxContent1 rxContent2 */ six seven eight /* 
 	CONSTANT $crazy philharmonic
 	FUN $MyFun
-		RX $myRX rxContentA
-		FX $myFX fxContentA fxContentB END_FX
+		RX $myRX1 rxContentA
+		FX $myFX1 fxContentA fxContentB END_FX
 	END_FUN
 	*myConst
 $*/

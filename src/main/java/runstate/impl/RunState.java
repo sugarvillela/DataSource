@@ -4,18 +4,16 @@ import datasource.core.SourceFile;
 import datasource.dec.*;
 import datasource.dec_fluid.SourceFluid;
 import datasource.dec_tok.SourceTok;
-import langdef.NestRulesByStructType;
-import langdef.PopRulesByStructType;
-import langdefalgo.iface.EnumPOJOJoin;
+import langdef.RulesByStructType_Follow;
+import langdef.RulesByStructType_Nesting;
+import langdef.RulesByStructType_Pop;
 import langdefalgo.impl.AlgoImplGroupPreScan;
 import readnode.iface.IReadNode;
-import runstate.Glob;
 import runstate.iface.IRunState;
 import runstate.iface.IRunStep;
+import stack.iface.IStackLog;
 import stack.iface.IStructStack;
 import stackpayload.iface.IStackPayload;
-
-import java.util.ArrayList;
 
 public class RunState implements IRunState {
     private static RunState instance;
@@ -44,8 +42,9 @@ public class RunState implements IRunState {
 
     @Override
     public void initRunState() {
-        new NestRulesByStructType().initRules();
-        new PopRulesByStructType().initRules();
+        new RulesByStructType_Nesting().initRules();
+        new RulesByStructType_Follow().initRules();
+        new RulesByStructType_Pop().initRules();
 
 //        ArrayList<EnumPOJOJoin> enumPOJOJoins = Glob.ENUMS_BY_TYPE.allEnumAlgoJoin();
 //        for(EnumPOJOJoin enumPOJOJoin : enumPOJOJoins){
@@ -131,5 +130,10 @@ public class RunState implements IRunState {
     @Override
     public int size() {
         return currentSourceStep.size();
+    }
+
+    @Override
+    public IStackLog getStackLog() {
+        return currentSourceStep.getStackLog();
     }
 }

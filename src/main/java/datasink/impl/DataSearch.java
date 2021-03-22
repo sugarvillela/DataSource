@@ -46,9 +46,11 @@ public class DataSearch implements IDataSearch {
             Glob.ERR.kill(ERR_TYPE.DUPLICATE_ID);
         }
 
-        LANG_STRUCT parentEnum = readNode.textEvent().langStruct();                                     // get enum
-        IDataSinkNode sinkNode = Glob.DATA_SINK.addNewSink(readNode.textEvent().substring(), parentEnum);// set new sink
-        map.put(readNode.textEvent().substring(), sinkNode);                               // save enum, new sink in map
+        LANG_STRUCT parentEnum = readNode.textEvent().langStruct(); // get enum
+        String identifier = readNode.textEvent().substring();       // substring is identifier
+        readNode.textEvent().setSubstring(null);                    // kill substring so it won't be re-read on playback
+        IDataSinkNode sinkNode = Glob.DATA_SINK.addNewSink(identifier, parentEnum);// set new sink
+        map.put(identifier, sinkNode);                               // save enum, new sink in map
     }
 
 
@@ -59,9 +61,6 @@ public class DataSearch implements IDataSearch {
 
     @Override
     public IDataSinkNode getIdentifier(IReadNode readNode) {
-        if(!readNode.textEvent().hasSubstring()){       // delete
-            Glob.ERR.kill(ERR_TYPE.DEV_ERROR);
-        }
         return this.getIdentifier(readNode.textEvent().substring());
     }
 

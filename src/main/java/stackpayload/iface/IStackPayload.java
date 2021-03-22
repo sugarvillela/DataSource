@@ -1,6 +1,10 @@
 package stackpayload.iface;
 
 import langdefalgo.iface.LANG_STRUCT;
+import stack.iface.IStackLog;
+import stack.iface.IStackLogIterationItem;
+
+import java.util.ArrayList;
 
 // constructor sets algo
 
@@ -15,6 +19,9 @@ import langdefalgo.iface.LANG_STRUCT;
 public interface IStackPayload {
     void onPush();
     void onPop();
+
+    void addToStackLog(IStackLog stackLog, ArrayList<IStackLogIterationItem> newIteration);
+
     void setBelow(IStackPayload below);
     IStackPayload getBelow();
 

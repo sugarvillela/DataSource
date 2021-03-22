@@ -1,6 +1,6 @@
-package IdenfifierRule.impl;
+package rule_identifier.impl;
 
-import IdenfifierRule.iface.IIdentifierRule;
+import rule_identifier.iface.IIdentifierRule;
 import err.ERR_TYPE;
 import readnode.iface.IReadNode;
 import runstate.Glob;
@@ -12,6 +12,7 @@ public abstract class IdentifierRuleImplGroup {
     public static final IIdentifierRule ID_DISALLOW =   new IdentifierDisallow();
 
     public static abstract class IdentifierRuleBase implements IIdentifierRule {
+        private String pushedIdentifier;
 
         protected abstract boolean shouldContinue(boolean hasIdentifier);
 
@@ -32,23 +33,30 @@ public abstract class IdentifierRuleImplGroup {
                 )
             ){
                 //System.out.println("newSinkOnIdentifier");
+                pushedIdentifier = pushReadNode.textEvent().substring();// grab before it is deleted by setIdentifier()
                 Glob.DATA_SINK.setIdentifier(pushReadNode);
                 return true;
             }
+            pushedIdentifier = null;
             return false;
         }
 
         @Override
-        public void onPop(IReadNode pushReadNode) {
+        public void onPop(String pushedIdentifier) {
             if(
                 !ignore() &&
                 shouldContinue(
-                    pushReadNode != null
+                        pushedIdentifier != null
                 )
             ){
                 //System.out.println("newSinkOnIdentifier");
-                Glob.DATA_SINK.getIdentifier(pushReadNode).setListening(false);
+                Glob.DATA_SINK.getIdentifier(pushedIdentifier).setListening(false);
             }
+        }
+
+        @Override
+        public String getPushedIdentifier() {
+            return pushedIdentifier;
         }
     }
 

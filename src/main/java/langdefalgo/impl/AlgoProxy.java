@@ -1,10 +1,11 @@
 package langdefalgo.impl;
 
-import IdenfifierRule.iface.IIdentifierRule;
+import rule_follow.iface.IFollowRule;
+import rule_identifier.iface.IIdentifierRule;
 import langdefalgo.iface.EnumPOJOJoin;
 import langdefalgo.iface.LANG_STRUCT;
-import nestingrule.iface.INestingRule;
-import pushpoputil.iface.IPopRule;
+import rule_nesting.iface.INestingRule;
+import rule_pop.iface.IPopRule;
 import runstate.Glob;
 import stackpayload.iface.IStackPayload;
 
@@ -27,8 +28,8 @@ public class AlgoProxy implements LANG_STRUCT, EnumPOJOJoin {
     }
 
     @Override
-    public boolean go(IStackPayload stackPayload) {
-        return childAlgo.go(stackPayload);
+    public boolean go(IStackPayload stackTop) {
+        return childAlgo.go(stackTop);
     }
 
     @Override
@@ -54,6 +55,11 @@ public class AlgoProxy implements LANG_STRUCT, EnumPOJOJoin {
     @Override
     public INestingRule getNestingRule() {
         return childAlgo.getNestingRule();
+    }
+
+    @Override
+    public IFollowRule getFollowRule() {
+        return childAlgo.getFollowRule();
     }
 
     @Override

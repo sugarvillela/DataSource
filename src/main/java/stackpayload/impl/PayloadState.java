@@ -8,7 +8,7 @@ public class PayloadState implements IPayloadState {
     protected IStackPayload parentPayload;
     protected IReadNode pushedReadNode;
     protected int intState, timeOnStack;//, maxAbove, maxAdjAbove;
-    protected String stringState;
+    protected String stringState, pushedIdentifier;
 
     public PayloadState() {}
 
@@ -37,15 +37,17 @@ public class PayloadState implements IPayloadState {
         return stringState;
     }
 
+
     @Override
-    public void setPushedReadNode(IReadNode pushedReadNode) {
-        this.pushedReadNode = pushedReadNode;
+    public void setPushedIdentifier(String identifier) {
+        this.pushedIdentifier = identifier;
     }
 
     @Override
-    public IReadNode getPushedReadNode() {
-        return pushedReadNode;
+    public String getPushedIdentifier() {
+        return pushedIdentifier;
     }
+
 
     @Override
     public void incTimeOnStack() {
@@ -65,7 +67,7 @@ public class PayloadState implements IPayloadState {
     public String toString() {
         return "PayloadState{" +
                 ", timeOnStack=" + timeOnStack +
-                ", pushedReadNode=" + ((pushedReadNode == null)? "null" : pushedReadNode.text()) +
+                ", pushedIdentifier=" + pushedIdentifier +
                 ", intState=" + intState +
                 ", stringState='" + stringState + '\'' +
                 '}';

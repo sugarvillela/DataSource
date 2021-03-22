@@ -1,8 +1,9 @@
 package langdefalgo.iface;
 
-import IdenfifierRule.iface.IIdentifierRule;
-import nestingrule.iface.INestingRule;
-import pushpoputil.iface.IPopRule;
+import rule_follow.iface.IFollowRule;
+import rule_identifier.iface.IIdentifierRule;
+import rule_nesting.iface.INestingRule;
+import rule_pop.iface.IPopRule;
 import stackpayload.iface.IStackPayload;
 
 public interface LANG_STRUCT {
@@ -10,7 +11,7 @@ public interface LANG_STRUCT {
     String getPopSymbol();
     boolean isSelfPop();
 
-    boolean go(IStackPayload stackPayload);
+    boolean go(IStackPayload stackTop);
 
     void onPush(IStackPayload stackPayload);
     void onPop(IStackPayload stackPayload);
@@ -18,6 +19,7 @@ public interface LANG_STRUCT {
 
     IIdentifierRule getIdentifierRule();
     INestingRule getNestingRule();
+    IFollowRule getFollowRule();
     IPopRule getPopRule();
 
     IStackPayload newStackPayload();

@@ -1,6 +1,6 @@
 package langdef;
 
-import pushpoputil.impl.PopRule;
+import rule_pop.impl.PopRule;
 
 import static langdef.STRUCT_KEYWORD.*;
 import static langdef.STRUCT_LOOKUP.ID_ACCESS;
@@ -8,7 +8,7 @@ import static langdef.STRUCT_NON_KEYWORD.*;
 import static langdef.STRUCT_NON_KEYWORD.FX_WORD;
 import static langdef.STRUCT_SYMBOL.*;
 
-public class PopRulesByStructType {
+public class RulesByStructType_Pop {
     public void initRules() {
 
         /*=====STRUCT_KEYWORD=========================================================================================*/
@@ -20,8 +20,6 @@ public class PopRulesByStructType {
         RX.getPopRule().setRules(PopRule.popOnBadPush());
 
         FX.getPopRule().setRules(PopRule.popOnBadPush());
-
-        RXFX.getPopRule().setRules(PopRule.popOnBadPush());
 
         FUN.getPopRule().setRules(PopRule.popOnCmd());
 
@@ -41,13 +39,11 @@ public class PopRulesByStructType {
 
         LANG_T.getPopRule().setRules();
 
-        IF_ELSE.getPopRule().setRules(PopRule.popOnCmd());
-
         IF_TEST.getPopRule().setRules(PopRule.popOnTimeOut(1));
 
         SCOPE_TEST.getPopRule().setRules(PopRule.popOnTimeOut(1));
 
-        SCOPE_ITEM.getPopRule().setRules(PopRule.popOnTimeOut(1));
+        CONDITIONAL_ITEM.getPopRule().setRules(PopRule.popOnTimeOut(1));
 
         RX_WORD.getPopRule().setRules(PopRule.popOnCmd());
 

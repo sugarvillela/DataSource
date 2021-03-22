@@ -4,7 +4,7 @@ import attrib.types.RUNTIME_ATTRIB;
 import err.ERR_TYPE;
 import langdef.CMD;
 import langdefalgo.iface.LANG_STRUCT;
-import pushpoputil.iface.IPopAction;
+import rule_pop.iface.IPopAction;
 import readnode.iface.IReadNode;
 import readnode.impl.ReadNode;
 import runstate.Glob;
@@ -28,10 +28,9 @@ public class AlgoImplGroupPreScan {
         CONSTANT.initAlgo(new Constant());
         RX.initAlgo(new WordGroup(RX_WORD));
         FX.initAlgo(new WordGroup(FX_WORD));
-        RXFX.initAlgo(new RxFx());
         FUN.initAlgo(new Fun());
         SCOPE.initAlgo(new TestingStateMachine(SCOPE_TEST));
-        IF.initAlgo(new TestingStateMachine(SCOPE_TEST));
+        IF.initAlgo(new TestingStateMachine(IF_TEST));
         ELSE.initAlgo(new Else());
         INCLUDE.initAlgo(new Nop());
 
@@ -42,10 +41,9 @@ public class AlgoImplGroupPreScan {
 
         // Struct non-keyword
         LANG_T.initAlgo(new LangT());
-        IF_ELSE.initAlgo(new IfElse());
-        IF_TEST.initAlgo(new IfTest());
-        SCOPE_TEST.initAlgo(new ScopeTest(SCOPE_ITEM));
-        SCOPE_ITEM.initAlgo(new ScopeItem());
+        IF_TEST.initAlgo(new ConditionalTest(CONDITIONAL_ITEM));
+        SCOPE_TEST.initAlgo(new ConditionalTest(CONDITIONAL_ITEM));
+        CONDITIONAL_ITEM.initAlgo(new ConditionalItem());
         RX_WORD.initAlgo(new Nop());
         FX_WORD.initAlgo(new Nop());
         LANG_ROOT.initAlgo(new Nop());
@@ -58,7 +56,7 @@ public class AlgoImplGroupPreScan {
 
     public static class Nop extends AlgoBase {
         @Override
-        protected boolean doCoreTask(IStackPayload stackPayload) {
+        protected boolean doCoreTask(IStackPayload stackTop) {
             return false;
         }
     }
@@ -76,11 +74,11 @@ public class AlgoImplGroupPreScan {
             //System.out.println("LangT: doCoreTask: endLine: " + line);
         }
         @Override
-        protected boolean doCoreTask(IStackPayload stackPayload) {
+        protected boolean doCoreTask(IStackPayload stackTop) {
             IReadNode readNode = Glob.RUN_STATE.getCurrNode();
-            stackPayload.getState().set(readNode.indentedText());                   // accumulate tokenized words
+            stackTop.getState().set(readNode.indentedText());                   // accumulate tokenized words
             if(readNode.endLine()){                                                 // if end line, reconstruct line
-                this.onEndLine(stackPayload);
+                this.onEndLine(stackTop);
             }
             return true;
         }
@@ -96,14 +94,7 @@ public class AlgoImplGroupPreScan {
             return new StackPayload(this.parentEnum, new PayloadStateAccStr());
         }
     }
-    public static class LangTInsert extends LangT {
-
-//        @Override
-//        protected boolean doCoreTask(IStackPayload stackPayload) {
-//            IReadNode getCurrNode = Glob.RUN_STATE.getCurrNode();
-//            return false;
-//        }
-    }
+    public static class LangTInsert extends LangT { }
 
     // No task
     public static class LangS extends AlgoBase {
@@ -112,7 +103,7 @@ public class AlgoImplGroupPreScan {
         }
 
         @Override
-        protected boolean doCoreTask(IStackPayload stackPayload) {
+        protected boolean doCoreTask(IStackPayload stackTop) {
             Glob.ERR.kill("Unknown keyword");
             return false;
         }
@@ -134,7 +125,7 @@ public class AlgoImplGroupPreScan {
         public void onPop(IStackPayload stackPayload) {}
 
         @Override
-        protected boolean doCoreTask(IStackPayload stackPayload) {
+        protected boolean doCoreTask(IStackPayload stackTop) {
             IReadNode readNode = Glob.RUN_STATE.getCurrNode();
             Glob.ERR.check(RUNTIME_ATTRIB.props.put(readNode.text()));
             return false;
@@ -151,7 +142,7 @@ public class AlgoImplGroupPreScan {
         }
 
         @Override
-        protected boolean doCoreTask(IStackPayload stackPayload) {// add push/pop node without pushing to stack
+        protected boolean doCoreTask(IStackPayload stackTop) {// add push/pop node without pushing to stack
             IReadNode currNode = Glob.RUN_STATE.getCurrNode();
             //System.out.println("WordGroup core task");
             IReadNode wordPushNode = ReadNode.builder().copy(currNode).textEvent(new TextEventNode(wordStruct, CMD.PUSH)).build();
@@ -162,19 +153,6 @@ public class AlgoImplGroupPreScan {
 
             IReadNode wordPopNode = ReadNode.builder().copy(currNode).textEvent(new TextEventNode(wordStruct, CMD.POP)).build();
             Glob.DATA_SINK.put(wordPopNode);
-            return false;
-        }
-    }
-
-    public static class RxFx extends AlgoBase {
-
-        public RxFx() {
-            super();
-        }
-
-        @Override
-        protected boolean doCoreTask(IStackPayload stackPayload) {
-            IReadNode currNode = Glob.RUN_STATE.getCurrNode();
             return false;
         }
     }
@@ -191,49 +169,23 @@ public class AlgoImplGroupPreScan {
         public void onPush(IStackPayload stackPayload) {
             super.onPush(stackPayload);
             IReadNode currNode = Glob.RUN_STATE.getCurrNode();
-            System.out.println("TestingStateMachine onPush: "+ currNode.csvString());
+            //System.out.println("TestingStateMachine onPush: "+ currNode.csvString());
 
             // push if_test or scope_test to sink
             IReadNode pushNode = ReadNode.builder().copy(currNode).textEvent(new TextEventNode(wordStruct, CMD.PUSH)).build();
-//            Glob.DATA_SINK.put(pushNode);
-//
-//            // push if_test or scope_test to stack
-//            IStackPayload payload = wordStruct.newStackPayload();
-//            Glob.RUN_STATE.push(payload);
             Glob.RUN_STATE.goBack(pushNode);
         }
 
         @Override
-        protected boolean doCoreTask(IStackPayload stackPayload) {
-            System.out.println("TestingStateMachine doCoreTask start: "+ stackPayload.toString());
-            stackPayload.getState().set(SECOND);
+        protected boolean doCoreTask(IStackPayload stackTop) {
             Glob.ERR.kill(ERR_TYPE.BAD_TEST_PARAM);
             return false;
         }
 
         @Override
-        public void onRegainTop() {
-            IStackPayload stackPayload = Glob.RUN_STATE.getStack().top();
-            int state = stackPayload.getState().getInt();
-            System.out.println("TestingStateMachine onRegainTop: "+ stackPayload.toString());
-            if(state != PARSE){
-                //Glob.ERR.kill(ERR_TYPE.SYNTAX);
-            }
-        }
+        public void onRegainTop() {}// gets called on scopeTest pop
     }
 
-    public static class IfTest extends AlgoBase {
-
-        public IfTest() {
-            super();
-        }
-
-        @Override
-        protected boolean doCoreTask(IStackPayload stackPayload) {
-            IReadNode currNode = Glob.RUN_STATE.getCurrNode();
-            return false;
-        }
-    }
     public static class Else extends AlgoBase {
 
         public Else() {
@@ -241,40 +193,29 @@ public class AlgoImplGroupPreScan {
         }
 
         @Override
-        protected boolean doCoreTask(IStackPayload stackPayload) {
-            IReadNode currNode = Glob.RUN_STATE.getCurrNode();
-            return false;
-        }
-    }
-    public static class IfElse extends AlgoBase {
-
-        public IfElse() {
-            super();
-        }
-
-        @Override
-        protected boolean doCoreTask(IStackPayload stackPayload) {
+        protected boolean doCoreTask(IStackPayload stackTop) {
             IReadNode currNode = Glob.RUN_STATE.getCurrNode();
             return false;
         }
     }
 
-    public static class ScopeTest extends AlgoBase {
-        // same as WordGroup, but only allows one call to core task
-        // Nests RX or SCOPE_ITEM, not both. If RX, core task never called; if not RX, core task adds SCOPE_ITEM
+    public static class ConditionalTest extends AlgoBase {
+        // Nests RX or CONDITIONAL_ITEM, not both.
+        // If RX, core task never called; ScopeTest.onRegainTop() backPops ScopeTest
+        // Else if not RX, core task adds CONDITIONAL_ITEM push/pop to DataSink; PushPopUtil backPops ScopeTest on timeout
         private final LANG_STRUCT scopeItem;
 
-        public ScopeTest(LANG_STRUCT scopeItem) {
+        public ConditionalTest(LANG_STRUCT scopeItem) {
             super();
             this.scopeItem = scopeItem;
         }
 
         @Override
-        protected boolean doCoreTask(IStackPayload stackPayload) {// add push/pop node without pushing to stack
-            System.out.println("Scope test doCoreTask start: "+ stackPayload.toString());
-            int state = stackPayload.getState().getInt();
+        protected boolean doCoreTask(IStackPayload stackTop) {// add push/pop node without pushing to stack
+            //System.out.println("Scope test doCoreTask start: "+ stackPayload.toString());
+            int state = stackTop.getState().getInt();
             if(state == FIRST){
-                stackPayload.getState().set(SECOND);
+                stackTop.getState().set(SECOND);
 
                 IReadNode currNode = Glob.RUN_STATE.getCurrNode();
 
@@ -286,29 +227,29 @@ public class AlgoImplGroupPreScan {
 
                 IReadNode itemPopNode = ReadNode.builder().copy(currNode).textEvent(new TextEventNode(scopeItem, CMD.POP)).build();
                 Glob.DATA_SINK.put(itemPopNode);
-                System.out.println("Scope test doCoreTask finish");
+                //System.out.println("Scope test doCoreTask finish");
                 return true;
             }
             else{
                 Glob.ERR.kill(ERR_TYPE.SYNTAX);
             }
-            System.out.println("Scope test doCoreTask skipped");
+            //System.out.println("Scope test doCoreTask skipped");
             return false;
         }
         @Override
         public void onRegainTop() {
             IStackPayload stackTop = Glob.RUN_STATE.getStack().top();
-            System.out.println("Scope test onRegainTop start: "+ stackTop.toString());
             int state = stackTop.getState().getInt();
+
             if(state == FIRST){
                 stackTop.getState().set(SECOND);
+
                 IReadNode currNode = Glob.RUN_STATE.getCurrNode();
                 IPopAction action = stackTop.getLangStructEnum().getPopRule().getPopAction(stackTop, currNode);
                 if(action.haveAction()){
                     action.doAction(stackTop, currNode);
                 }
             }
-            System.out.println("Scope test onRegainTop finish: "+ stackTop.toString());
         }
     }
 
@@ -320,7 +261,7 @@ public class AlgoImplGroupPreScan {
 //        }
 
         @Override
-        protected boolean doCoreTask(IStackPayload stackPayload) {
+        protected boolean doCoreTask(IStackPayload stackTop) {
             IReadNode currNode = Glob.RUN_STATE.getCurrNode();
             System.out.println("IdAccess: doCoreTask: " + currNode.text());
             return false;
@@ -333,7 +274,6 @@ public class AlgoImplGroupPreScan {
         @Override
         public void onPush(IStackPayload stackPayload) {
             this.onPush_checkIdentifierRule(stackPayload);
-            //Glob.PUSH_POP_UTIL.setEnabled(false);
 
             LANG_STRUCT langRootEnum = Glob.ENUMS_BY_TYPE.langRootEnum();
             Glob.DATA_SINK.getIdentifier(langRootEnum.toString()).setListening(false);
@@ -341,7 +281,6 @@ public class AlgoImplGroupPreScan {
 
         @Override
         public void onPop(IStackPayload stackPayload) {
-            //Glob.PUSH_POP_UTIL.setEnabled(true);
             this.onPop_checkIdentifierRule(stackPayload);
 
             LANG_STRUCT langRootEnum = Glob.ENUMS_BY_TYPE.langRootEnum();
@@ -354,10 +293,8 @@ public class AlgoImplGroupPreScan {
 //        }
 
         @Override
-        protected boolean doCoreTask(IStackPayload stackPayload) {
-//            this.eventToCurrNode_addTo();
+        protected boolean doCoreTask(IStackPayload stackTop) {
             Glob.DATA_SINK.put();
-//            Glob.RUN_STATE.pop();
             return true;
         }
     }
@@ -374,7 +311,7 @@ public class AlgoImplGroupPreScan {
         }
 
         @Override
-        protected boolean doCoreTask(IStackPayload stackPayload) {
+        protected boolean doCoreTask(IStackPayload stackTop) {
             if(this.shouldPop()){
                 Glob.RUN_STATE.pop();
                 return true;
@@ -386,7 +323,6 @@ public class AlgoImplGroupPreScan {
             }
         }
     }
-    // not pre-scan, maybe discard
 
     public static class Rx extends AlgoBase {
 
@@ -395,7 +331,7 @@ public class AlgoImplGroupPreScan {
         }
 
         @Override
-        protected boolean doCoreTask(IStackPayload stackPayload) {
+        protected boolean doCoreTask(IStackPayload stackTop) {
             IReadNode currNode = Glob.RUN_STATE.getCurrNode();
             if(!currNode.hasTextEvent()){}
             return false;
@@ -408,7 +344,7 @@ public class AlgoImplGroupPreScan {
         }
 
         @Override
-        public boolean doCoreTask(IStackPayload stackPayload) {
+        public boolean doCoreTask(IStackPayload stackTop) {
             IReadNode currNode = Glob.RUN_STATE.getCurrNode();
             return false;
         }
@@ -420,7 +356,7 @@ public class AlgoImplGroupPreScan {
         }
 
         @Override
-        protected boolean doCoreTask(IStackPayload stackPayload) {
+        protected boolean doCoreTask(IStackPayload stackTop) {
             IReadNode currNode = Glob.RUN_STATE.getCurrNode();
             return false;
         }
@@ -432,7 +368,7 @@ public class AlgoImplGroupPreScan {
         }
 
         @Override
-        protected boolean doCoreTask(IStackPayload stackPayload) {
+        protected boolean doCoreTask(IStackPayload stackTop) {
             IReadNode currNode = Glob.RUN_STATE.getCurrNode();
             return false;
         }
@@ -444,7 +380,7 @@ public class AlgoImplGroupPreScan {
         }
 
         @Override
-        public boolean doCoreTask(IStackPayload stackPayload) {
+        public boolean doCoreTask(IStackPayload stackTop) {
             IReadNode currNode = Glob.RUN_STATE.getCurrNode();
             return false;
         }
@@ -461,18 +397,18 @@ public class AlgoImplGroupPreScan {
         }
 
         @Override
-        protected boolean doCoreTask(IStackPayload stackPayload) {
+        protected boolean doCoreTask(IStackPayload stackTop) {
             IReadNode readNode = Glob.RUN_STATE.getCurrNode();
             return false;
         }
     }
-    public static class ScopeItem extends AlgoBase {
-        public ScopeItem() {
+    public static class ConditionalItem extends AlgoBase {
+        public ConditionalItem() {
             super();
         }
 
         @Override
-        protected boolean doCoreTask(IStackPayload stackPayload) {
+        protected boolean doCoreTask(IStackPayload stackTop) {
             IReadNode currNode = Glob.RUN_STATE.getCurrNode();
             return false;
         }

@@ -1,18 +1,20 @@
 package langdef;
 
-import IdenfifierRule.iface.IIdentifierRule;
+import rule_follow.iface.IFollowRule;
+import rule_follow.impl.FollowRule;
+import rule_identifier.iface.IIdentifierRule;
 import langdefalgo.iface.EnumPOJOJoin;
 import langdefalgo.iface.LANG_STRUCT;
 import langdefalgo.impl.AlgoBase;
 import langdefalgo.impl.AlgoProxy;
-import nestingrule.iface.INestingRule;
-import nestingrule.impl.NestingRule;
-import pushpoputil.impl.PopRule;
-import pushpoputil.iface.IPopRule;
+import rule_nesting.iface.INestingRule;
+import rule_nesting.impl.NestingRule;
+import rule_pop.impl.PopRule;
+import rule_pop.iface.IPopRule;
 import runstate.Glob;
 import stackpayload.iface.IStackPayload;
 
-import static IdenfifierRule.impl.IdentifierRuleImplGroup.ID_IGNORE;
+import static rule_identifier.impl.IdentifierRuleImplGroup.ID_IGNORE;
 import static langdef.LangConstants.*;
 
 public enum STRUCT_LOOKUP  implements LANG_STRUCT, EnumPOJOJoin {
@@ -25,6 +27,7 @@ public enum STRUCT_LOOKUP  implements LANG_STRUCT, EnumPOJOJoin {
     private final IIdentifierRule identifierRule;
     private final AlgoProxy algoProxy;
     private final INestingRule nestingRule;
+    private final IFollowRule followRule;
     private final IPopRule popRule;
 
     STRUCT_LOOKUP(char pushSymbol, IIdentifierRule identifierRule) {
@@ -32,6 +35,7 @@ public enum STRUCT_LOOKUP  implements LANG_STRUCT, EnumPOJOJoin {
         this.identifierRule = identifierRule;
         this.algoProxy = new AlgoProxy();
         this.nestingRule = new NestingRule();
+        this.followRule = new FollowRule();
         this.popRule = new PopRule();
     }
 
@@ -53,8 +57,8 @@ public enum STRUCT_LOOKUP  implements LANG_STRUCT, EnumPOJOJoin {
     /*=====LANG_STRUCT================================================================================================*/
 
     @Override
-    public boolean go(IStackPayload stackPayload) {
-        return algoProxy.go(stackPayload);
+    public boolean go(IStackPayload stackTop) {
+        return algoProxy.go(stackTop);
     }
 
     @Override
@@ -80,6 +84,11 @@ public enum STRUCT_LOOKUP  implements LANG_STRUCT, EnumPOJOJoin {
     @Override
     public INestingRule getNestingRule() {
         return this.nestingRule;
+    }
+
+    @Override
+    public IFollowRule getFollowRule() {
+        return this.followRule;
     }
 
     @Override

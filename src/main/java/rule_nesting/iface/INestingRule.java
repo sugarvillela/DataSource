@@ -1,4 +1,4 @@
-package nestingrule.iface;
+package rule_nesting.iface;
 
 import langdefalgo.iface.LANG_STRUCT;
 

@@ -9,13 +9,12 @@ import readnode.iface.IReadNode;
 import readnode.impl.ReadNode;
 import runstate.Glob;
 import runstate.iface.IRunStep;
+import stack.iface.IStackLog;
 import stack.iface.IStructStack;
+import stack.impl.StackLog;
 import stack.impl.StructStack;
 import stackpayload.iface.IStackPayload;
 import textevent.impl.TextEventNode;
-
-import static langdef.STRUCT_NON_KEYWORD.LANG_T;
-
 
 public class RunStep implements IRunStep {
     private final IDataSource dataSource;
@@ -46,7 +45,7 @@ public class RunStep implements IRunStep {
             }
             else{
                 currNode = backNode;
-                System.out.println("have backNode: " + backNode.csvString());
+                //System.out.println("have backNode: " + backNode.csvString());
                 backNode = null;
             }
             if(currNode == null){
@@ -58,10 +57,13 @@ public class RunStep implements IRunStep {
             }
 
             structStack.top().getState().incTimeOnStack();
-            System.out.println(structStack.top().toString());
+            //System.out.println(structStack.top().toString());
             structStack.top().go();
         }
         System.out.println("\nfinished");
+        System.out.println(structStack.getStackLog().reportString());
+        System.out.println();
+
         RUNTIME_ATTRIB.props.display();
     }
 
@@ -72,7 +74,7 @@ public class RunStep implements IRunStep {
 
     @Override
     public void goBack(IReadNode backNode){
-        System.out.println("goBack: " + backNode.csvString());
+        //System.out.println("goBack: " + backNode.csvString());
         this.backNode = backNode;
     }
 
@@ -111,5 +113,10 @@ public class RunStep implements IRunStep {
     @Override
     public int size() {
         return structStack.size();
+    }
+
+    @Override
+    public IStackLog getStackLog() {
+        return structStack.getStackLog();
     }
 }

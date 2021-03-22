@@ -1,7 +1,7 @@
-package nestingrule.impl;
+package rule_nesting.impl;
 
 import langdefalgo.iface.LANG_STRUCT;
-import nestingrule.iface.INestingRule;
+import rule_nesting.iface.INestingRule;
 
 import java.util.ArrayList;
 

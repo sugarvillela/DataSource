@@ -1,7 +1,7 @@
 package pushpoputil.impl;
 
 import langdef.CMD;
-import pushpoputil.iface.IPopAction;
+import rule_pop.iface.IPopAction;
 import pushpoputil.iface.IPushPopUtil;
 import readnode.iface.IReadNode;
 import runstate.Glob;

@@ -1,9 +1,9 @@
-package pushpoputil.impl;
+package rule_pop.impl;
 
 import err.ERR_TYPE;
 import langdef.CMD;
-import pushpoputil.iface.IPopAction;
-import pushpoputil.iface.IPopRule;
+import rule_pop.iface.IPopAction;
+import rule_pop.iface.IPopRule;
 import readnode.iface.IReadNode;
 import runstate.Glob;
 import stackpayload.iface.IStackPayload;

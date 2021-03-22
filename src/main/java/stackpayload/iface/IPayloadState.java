@@ -11,8 +11,8 @@ public interface IPayloadState {
     int getInt();
     String getString();
 
-    void setPushedReadNode(IReadNode pushedReadNode);   // the node that created the payload
-    IReadNode getPushedReadNode();
+    void setPushedIdentifier(String identifier);
+    String getPushedIdentifier();
 
 //    void onPushAbove();     // increment the max stacked above this payload
 //    int getMaxAbove();

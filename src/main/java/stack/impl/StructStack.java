@@ -1,5 +1,6 @@
 package stack.impl;
 
+import stack.iface.IStackLog;
 import stack.iface.IStructStack;
 import stackpayload.iface.IStackPayload;
 
@@ -7,21 +8,25 @@ import java.util.Stack;
 
 public class StructStack implements IStructStack {
     private final Stack<IStackPayload> stack;
+    private final IStackLog stackLog;
 
     public StructStack() {
         stack = new Stack<>();
+        this.stackLog = new StackLog();
     }
 
     @Override
     public void push(IStackPayload stackPayload) {
-        System.out.println("StructStack push: " + stackPayload.getLangStructEnum().toString());
+        //System.out.println("StructStack push: " + stackPayload.getLangStructEnum().toString());
         if(!stack.isEmpty()){
+
             stackPayload.setBelow(stack.peek());
 //            stack.peek().getState().onPushAbove();
 //            stack.peek().getState().onPushAdjAbove();
         }
         stack.push(stackPayload);
         stackPayload.onPush();
+        stackPayload.addToStackLog(stackLog, null);
     }
 
     @Override
@@ -30,6 +35,7 @@ public class StructStack implements IStructStack {
             stack.peek().onPop();
             stack.pop();
             if(!stack.isEmpty()){
+                stack.peek().addToStackLog(stackLog, null);
                 stack.peek().getLangStructEnum().onRegainTop();
             }
         }
@@ -37,11 +43,8 @@ public class StructStack implements IStructStack {
 
     @Override
     public void popMost() {
-        while(stack.size() > 1){
-            //System.out.println("\npopMost 1:" + stack.peek().getLangStructEnum());
-            stack.peek().onPop();
-            stack.pop();
-            //System.out.println("popMost 2:" + stack.peek().getLangStructEnum());
+        while(this.size() > 1){
+            this.pop();
         }
     }
 
@@ -53,5 +56,10 @@ public class StructStack implements IStructStack {
     @Override
     public int size() {
         return stack.size();
+    }
+
+    @Override
+    public IStackLog getStackLog() {
+        return stackLog;
     }
 }

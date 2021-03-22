@@ -8,4 +8,5 @@ public interface IStructStack {
     void popMost();
     IStackPayload top();
     int size();
+    IStackLog getStackLog();
 }
