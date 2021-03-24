@@ -5,6 +5,8 @@ import textevent.iface.ITextEventNode;
 
 import java.util.ArrayList;
 
+import static runstate.Glob.NULL_TEXT;
+
 public class ReadNode extends ReadNodeBase {
     private static final String FORMAT_CSV = "%s,%d,%d,%d,%d,%d,%d,%s,%s";
 
@@ -95,7 +97,7 @@ public class ReadNode extends ReadNodeBase {
                 (endLine? 1 : 0),
                 (hasNext? 1 : 0),
                 text,
-                ((textEvent == null)? "-" : textEvent.csvString())
+                ((textEvent == null)? NULL_TEXT : textEvent.csvString())
         );
     }
 

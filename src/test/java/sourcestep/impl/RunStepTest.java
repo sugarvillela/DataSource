@@ -1,7 +1,9 @@
 package sourcestep.impl;
 
 import datasink.iface.IDataSinkNode;
-import langdef.STRUCT_KEYWORD;
+import datasource.dec.SourceActiveOnly;
+import datasource.dec_fluid.SourceAccess;
+import datasource.iface.IDataSource;
 import org.junit.jupiter.api.*;
 import readnode.iface.IReadNode;
 import runstate.Glob;
@@ -19,7 +21,7 @@ class RunStepTest {
     }
     @BeforeEach
     void beforeEach(){
-        String filePath = Glob.FILE_NAME_UTIL.mergeDefaultPath("test1.rxfx");
+        String filePath = Glob.FILE_NAME_UTIL.mergeDefaultPath("test2.rxfx");
         System.out.println(filePath);
         runState.setInFilePath(filePath);
         runState.initPreScan();
@@ -28,6 +30,7 @@ class RunStepTest {
     @Test
     void go() {
         runState.go();
+
         ArrayList<IDataSinkNode> allSinks = Glob.DATA_SINK.allSinks();
         for(IDataSinkNode sinkNode : allSinks){
             System.out.printf("\nSinkNode: %s %s \n", sinkNode.getParentEnum(), sinkNode.getIdentifier());
@@ -35,6 +38,26 @@ class RunStepTest {
                 System.out.printf("%s \n", readNode.csvString());
             }
         }
+
+//        System.out.println("STEP TWO");
+//
+//        IDataSource stepTwo =
+//            new SourceActiveOnly(
+//                new SourceAccess(
+//                    Glob.DATA_SINK.getIdentifier(Glob.ENUMS_BY_TYPE.langRootEnum2().toString()).toDataSource()
+//                )
+//        );
+//        while(stepTwo.hasNext()){
+//            //stepTwo.next();
+//            System.out.printf("%s \n", stepTwo.next().csvString());
+//        }
+//        ArrayList<IDataSinkNode> allSinks = Glob.DATA_SINK.allSinks();
+//        for(IDataSinkNode sinkNode : allSinks){
+//            System.out.printf("\nSinkNode: %s %s \n", sinkNode.getParentEnum(), sinkNode.getIdentifier());
+//            for(IReadNode readNode : sinkNode.getNodes()){
+//                System.out.printf("%s \n", readNode.csvString());
+//            }
+//        }
         //System.out.println(STRUCT_KEYWORD.CONSTANT.getSink(0).getLast().csvString());
 //        String actual = TestUtil.iterateAndJoin(dataSource, 30);;
 //        String expected = "array@0,0,0,0,1,0,1,FUN,FUN,PUSH,myFun|" +

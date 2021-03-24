@@ -1,5 +1,6 @@
 package datasink.iface;
 
+import datasource.iface.IDataSource;
 import langdefalgo.iface.LANG_STRUCT;
 import readnode.iface.IReadNode;
 

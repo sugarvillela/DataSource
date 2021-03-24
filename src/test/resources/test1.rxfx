@@ -1,23 +1,22 @@
     one two three
     four five
 /*$
-	SCOPE theScope # RX $scopeRx scopeWord1 scopeWord2
+	SCOPE theScope
 		RX $myRx rxWord1 rxWord2
 		FX $myFx fxWord1 fxWord2
 	END_SCOPE
 
-	IF RX rxWordIf
-		FX fxWordIf
-	END_IF
-	ELSE
-		IF RX rxWordIf2
-			FX fxWordIf2
+	SCOPE RX $scopeRx scopeWord1 scopeWord2
+		IF RX rxWordIf
+			FX fxWordIf
 		END_IF
-	END_ELSE
-	ELSE
-		IF RX rxWordIf3
-			FX fxWordIf3
-		END_IF
-	END_ELSE
-
+		
+		ELSE
+			IF RX rxWordIf2
+				FX fxWordIf2
+			END_IF
+		END_ELSE
+	END_SCOPE
 $*/
+
+six seven

@@ -6,6 +6,8 @@ import textevent.iface.ITextEventNode;
 
 import java.util.ArrayList;
 
+import static runstate.Glob.NULL_TEXT;
+
 public class TextEventNode implements ITextEventNode {
     private static final String FORMAT_CSV = "%s,%s,%s";
     private final LANG_STRUCT langStruct;
@@ -51,9 +53,9 @@ public class TextEventNode implements ITextEventNode {
     @Override
     public String csvString() {
         return String.format(FORMAT_CSV,
-                (langStruct == null)? "-" : langStruct.toString(),
-                (cmd == null)? "-" : cmd.toString(),
-                (substring == null)? "-" : substring
+                (cmd == null)?          NULL_TEXT : cmd.toString(),
+                (langStruct == null)?   NULL_TEXT : langStruct.toString(),
+                (substring == null)?    NULL_TEXT : substring
         );
     }
 

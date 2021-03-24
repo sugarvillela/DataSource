@@ -25,9 +25,11 @@ public class DataSink implements IDataSink {
         sinks = new ArrayList<>();
 
         // initialize with one sinkNode for the root language sink
-        LANG_STRUCT langRoot = Glob.ENUMS_BY_TYPE.langRootEnum();
+        LANG_STRUCT langRoot1 = Glob.ENUMS_BY_TYPE.langRootEnum1();
+        LANG_STRUCT langRoot2 = Glob.ENUMS_BY_TYPE.langRootEnum2();
         dataSearch = new DataSearch(
-            langRoot.toString(), this.addNewSink(langRoot.toString(), langRoot)
+            langRoot1.toString(), this.addNewSink(langRoot1.toString(), langRoot1),
+            langRoot2.toString(), this.addNewSink(langRoot2.toString(), langRoot2)
         );
     }
 

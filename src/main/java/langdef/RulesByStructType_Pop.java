@@ -33,7 +33,7 @@ public class RulesByStructType_Pop {
 
         /*=====STRUCT_LOOKUP==========================================================================================*/
 
-        ID_ACCESS.getPopRule().setRules(PopRule.popOnTimeOut(1));
+        ID_ACCESS.getPopRule().setRules(PopRule.popOnTimeOut(0));
 
         /*=====STRUCT_NON_KEYWORD=====================================================================================*/
 

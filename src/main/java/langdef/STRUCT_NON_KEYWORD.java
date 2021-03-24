@@ -24,7 +24,8 @@ public enum STRUCT_NON_KEYWORD implements LANG_STRUCT, EnumPOJOJoin {
     CONDITIONAL_ITEM(),
     RX_WORD     (),
     FX_WORD     (),
-    LANG_ROOT   (),
+    LANG_ROOT_1(),
+    LANG_ROOT_2(),
     ;
 
     private final AlgoProxy algoProxy;

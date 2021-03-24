@@ -16,10 +16,8 @@ import java.util.Map;
 import static langdef.CMD.POP;
 import static langdef.CMD.PUSH;
 import static langdef.STRUCT_KEYWORD.INCLUDE;
-import static langdef.STRUCT_LOOKUP.COMMENT;
-import static langdef.STRUCT_LOOKUP.ID_DEFINE;
-import static langdef.STRUCT_NON_KEYWORD.LANG_ROOT;
-import static langdef.STRUCT_NON_KEYWORD.LANG_T;
+import static langdef.STRUCT_LOOKUP.*;
+import static langdef.STRUCT_NON_KEYWORD.*;
 import static langdef.STRUCT_SYMBOL.LANG_S;
 
 /** Keeping hard-coded lang def names in langDef package, this class exports
@@ -109,6 +107,9 @@ public class EnumsByType {
     public LANG_STRUCT sourceFluidLangStruct(){
         return INCLUDE;
     }
+    public LANG_STRUCT sourceAccessLangStruct(){
+        return ID_ACCESS;
+    }
     public LANG_STRUCT sourceNonCommentLangStruct(){
         return COMMENT;
     }
@@ -121,8 +122,11 @@ public class EnumsByType {
     public LANG_STRUCT sourceLangEnum(){
         return LANG_S;
     }
-    public LANG_STRUCT langRootEnum(){
-        return LANG_ROOT;
+    public LANG_STRUCT langRootEnum1(){
+        return LANG_ROOT_1;
+    }
+    public LANG_STRUCT langRootEnum2(){
+        return LANG_ROOT_2;
     }
 
 

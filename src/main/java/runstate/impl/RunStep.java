@@ -32,6 +32,8 @@ public class RunStep implements IRunStep {
         structStack.push(targetLanguageEnum.newStackPayload());
     }
     private void finishLastTick(){
+        IReadNode wordPopNode = ReadNode.builder().copy(currNode).textEvent(new TextEventNode(Glob.ENUMS_BY_TYPE.targetLangEnum(), CMD.POP)).build();
+        Glob.DATA_SINK.put(wordPopNode);
         structStack.pop();
     }
 
@@ -53,13 +55,15 @@ public class RunStep implements IRunStep {
                 break;
             }
             else{
-                System.out.println(currNode.csvString());
+                //System.out.println(currNode.csvString());
             }
 
             structStack.top().getState().incTimeOnStack();
             //System.out.println(structStack.top().toString());
             structStack.top().go();
         }
+        //this.finishLastTick();
+
         System.out.println("\nfinished");
         System.out.println(structStack.getStackLog().reportString());
         System.out.println();

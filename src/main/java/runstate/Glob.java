@@ -18,6 +18,8 @@ public class Glob {
     public static final IErr                ERR_DEV =               ErrDev.initInstance();
     public static final IErr                ERR =                   Err.initInstance();
 
+    public static final String              NULL_TEXT =             "-";    // for csv strings
+
     public static final FileNameUtil        FILE_NAME_UTIL =        FileNameUtil.initInstance();
     public static final SmallFileDump       SMALL_FILE_DUMP =       SmallFileDump.initInstance();
     public static final FactoryDataSource   FACTORY_DATA_SOURCE =   FactoryDataSource.initInstance();

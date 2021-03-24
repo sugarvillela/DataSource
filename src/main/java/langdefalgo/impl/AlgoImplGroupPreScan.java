@@ -13,66 +13,106 @@ import stackpayload.impl.PayloadStateAccStr;
 import stackpayload.impl.StackPayload;
 import textevent.impl.TextEventNode;
 
+import static err.ERR_TYPE.UNKNOWN_LANG_STRUCT;
 import static langdef.STRUCT_KEYWORD.*;
 import static langdef.STRUCT_LOOKUP.*;
 import static langdef.STRUCT_NON_KEYWORD.*;
 import static langdef.STRUCT_SYMBOL.*;
 
 public class AlgoImplGroupPreScan {
-    public static final int FIRST = 0, SECOND = 1, PARSE = 2;
+    public static final int FIRST = 0, SECOND = 1;
 
     public void initPreScanAlgos(){
 
         // Struct keyword  // no sharing singletons: each algo needs a unique state
         ATTRIB.initAlgo(new Attrib());
-        CONSTANT.initAlgo(new Constant());
+        CONSTANT.initAlgo(new AltSinkNoTag());
         RX.initAlgo(new WordGroup(RX_WORD));
         FX.initAlgo(new WordGroup(FX_WORD));
-        FUN.initAlgo(new Fun());
+        FUN.initAlgo(new AltSinkNoTag());
         SCOPE.initAlgo(new TestingStateMachine(SCOPE_TEST));
         IF.initAlgo(new TestingStateMachine(IF_TEST));
-        ELSE.initAlgo(new Else());
-        INCLUDE.initAlgo(new Nop());
+        ELSE.initAlgo(new ErrOnCoreTask());
+        INCLUDE.initAlgo(new NoCoreTask());
 
         // Struct lookup
-        ID_DEFINE.initAlgo(new Nop());
-        ID_ACCESS.initAlgo(new IdAccess());
-        COMMENT.initAlgo(new Nop());
+        ID_DEFINE.initAlgo(new NoCoreTask());
+        ID_ACCESS.initAlgo(new NoCoreTask());
+        COMMENT.initAlgo(new NoCoreTask());
 
         // Struct non-keyword
         LANG_T.initAlgo(new LangT());
         IF_TEST.initAlgo(new ConditionalTest(CONDITIONAL_ITEM));
         SCOPE_TEST.initAlgo(new ConditionalTest(CONDITIONAL_ITEM));
-        CONDITIONAL_ITEM.initAlgo(new ConditionalItem());
-        RX_WORD.initAlgo(new Nop());
-        FX_WORD.initAlgo(new Nop());
-        LANG_ROOT.initAlgo(new Nop());
+        CONDITIONAL_ITEM.initAlgo(new NoCoreTask());
+        RX_WORD.initAlgo(new NoCoreTask());
+        FX_WORD.initAlgo(new NoCoreTask());
+        LANG_ROOT_1.initAlgo(new NoCoreTask());
+        LANG_ROOT_2.initAlgo(new NoCoreTask());
 
         // Struct symbol
-        LANG_S.initAlgo(new LangS());
-        LANG_T_INSERT.initAlgo(new LangTInsert());
+        LANG_S.initAlgo(new ErrOnCoreTask());
+        LANG_T_INSERT.initAlgo(new LangT());
         ANTI_FX.initAlgo(new WordGroup(FX_WORD));
     }
 
-    public static class Nop extends AlgoBase {
+    // placeholder for enum handled by another algo, or completed on push
+    public static class NoCoreTask extends AlgoBase {
         @Override
         protected boolean doCoreTask(IStackPayload stackTop) {
+            return true;
+        }
+    }
+
+    // enum only nests other enums; should never reach core task
+    public static class ErrOnCoreTask extends AlgoBase {
+        @Override
+        protected boolean doCoreTask(IStackPayload stackTop) {
+            Glob.ERR.kill(UNKNOWN_LANG_STRUCT);
             return false;
         }
     }
 
-    public static class LangT extends AlgoBase {
-        public LangT() {
-            super();
+    // copies to alt data sink with tags (push, pop) removed; core task only copies current read node
+    public static class AltSinkNoTag extends AlgoBase{
+        @Override
+        public void onPush(IStackPayload stackPayload) {
+            this.onPush_checkIdentifierRule(stackPayload);
+
+            LANG_STRUCT langRootEnum1 = Glob.ENUMS_BY_TYPE.langRootEnum1();
+            Glob.DATA_SINK.getIdentifier(langRootEnum1.toString()).setListening(false);
+
+            LANG_STRUCT langRootEnum2 = Glob.ENUMS_BY_TYPE.langRootEnum2();
+            Glob.DATA_SINK.getIdentifier(langRootEnum2.toString()).setListening(false);
         }
 
+        @Override
+        public void onPop(IStackPayload stackPayload) {
+            this.onPop_checkIdentifierRule(stackPayload);
+
+            LANG_STRUCT langRootEnum1 = Glob.ENUMS_BY_TYPE.langRootEnum1();
+            Glob.DATA_SINK.getIdentifier(langRootEnum1.toString()).setListening(true);
+
+            LANG_STRUCT langRootEnum2 = Glob.ENUMS_BY_TYPE.langRootEnum2();
+            Glob.DATA_SINK.getIdentifier(langRootEnum2.toString()).setListening(true);
+        }
+        @Override
+        protected boolean doCoreTask(IStackPayload stackTop) {
+            Glob.DATA_SINK.put();
+            return true;
+        }
+    }
+
+    // de-tokenizes lines for direct copying of target language code
+    public static class LangT extends AlgoBase {
         private void onEndLine(IStackPayload stackPayload){// reconstruct lines; Scan: no task
             String line = stackPayload.getState().getString();                      // accumulated string
             Glob.RUN_STATE.getCurrNode().setTextEvent(new TextEventNode(parentEnum, CMD.ADD_TO, line));// reconstruct line
-
+            //System.out.println("LangT: doCoreTask: endLine: " + Glob.RUN_STATE.getCurrNode().csvString());
             Glob.DATA_SINK.put();
-            //System.out.println("LangT: doCoreTask: endLine: " + line);
+
         }
+
         @Override
         protected boolean doCoreTask(IStackPayload stackTop) {
             IReadNode readNode = Glob.RUN_STATE.getCurrNode();
@@ -94,22 +134,8 @@ public class AlgoImplGroupPreScan {
             return new StackPayload(this.parentEnum, new PayloadStateAccStr());
         }
     }
-    public static class LangTInsert extends LangT { }
 
-    // No task
-    public static class LangS extends AlgoBase {
-        public LangS() {
-            super();
-        }
-
-        @Override
-        protected boolean doCoreTask(IStackPayload stackTop) {
-            Glob.ERR.kill("Unknown keyword");
-            return false;
-        }
-    }
-
-    // PreScan: handle run attrib; Scan: deleted
+    // handles run attributes in key=value form; silent push/pop so it does not persist to the next parse step
     public static class Attrib extends AlgoBase {
         public Attrib() {
             super();
@@ -132,7 +158,7 @@ public class AlgoImplGroupPreScan {
         }
     }
 
-    // RX, FX, ANTI_FX
+    // RX, FX: adds a word algo to each word; virtual push/pop (to sink, not actually pushed)
     public static class WordGroup extends AlgoBase{
         private final LANG_STRUCT wordStruct;
 
@@ -157,6 +183,7 @@ public class AlgoImplGroupPreScan {
         }
     }
 
+    // Pushes and pops a test to handle conditional; then hosts the truthy part
     public static class TestingStateMachine extends AlgoBase {
         protected final LANG_STRUCT wordStruct;
 
@@ -183,22 +210,10 @@ public class AlgoImplGroupPreScan {
         }
 
         @Override
-        public void onRegainTop() {}// gets called on scopeTest pop
+        public void onRegainTop() {}// gets called on scopeTest pop; keep just in case
     }
 
-    public static class Else extends AlgoBase {
-
-        public Else() {
-            super();
-        }
-
-        @Override
-        protected boolean doCoreTask(IStackPayload stackTop) {
-            IReadNode currNode = Glob.RUN_STATE.getCurrNode();
-            return false;
-        }
-    }
-
+    // Handles conditional test for TestingStateMachine
     public static class ConditionalTest extends AlgoBase {
         // Nests RX or CONDITIONAL_ITEM, not both.
         // If RX, core task never called; ScopeTest.onRegainTop() backPops ScopeTest
@@ -253,74 +268,17 @@ public class AlgoImplGroupPreScan {
         }
     }
 
-    // pass
-    public static class IdAccess extends AlgoBase {
+    /*=====Unused=====================================================================================================*/
 
-//        public IdAccess() {
-//            super();
-//        }
+    public static class ConditionalItem extends AlgoBase {
+        public ConditionalItem() {
+            super();
+        }
 
         @Override
         protected boolean doCoreTask(IStackPayload stackTop) {
             IReadNode currNode = Glob.RUN_STATE.getCurrNode();
-            System.out.println("IdAccess: doCoreTask: " + currNode.text());
             return false;
-        }
-    }
-
-    /*=====Route output to alt dataSink===============================================================================*/
-
-    public static abstract class AltSinkAlgo extends AlgoBase{
-        @Override
-        public void onPush(IStackPayload stackPayload) {
-            this.onPush_checkIdentifierRule(stackPayload);
-
-            LANG_STRUCT langRootEnum = Glob.ENUMS_BY_TYPE.langRootEnum();
-            Glob.DATA_SINK.getIdentifier(langRootEnum.toString()).setListening(false);
-        }
-
-        @Override
-        public void onPop(IStackPayload stackPayload) {
-            this.onPop_checkIdentifierRule(stackPayload);
-
-            LANG_STRUCT langRootEnum = Glob.ENUMS_BY_TYPE.langRootEnum();
-            Glob.DATA_SINK.getIdentifier(langRootEnum.toString()).setListening(true);
-        }
-    }
-    public static class Constant extends AltSinkAlgo {
-//        public Constant() {
-//            super();
-//        }
-
-        @Override
-        protected boolean doCoreTask(IStackPayload stackTop) {
-            Glob.DATA_SINK.put();
-            return true;
-        }
-    }
-    public static class Fun extends AltSinkAlgo {
-
-//        public Fun() {
-//            super();
-//        }
-        private boolean shouldPop(){
-            IReadNode currNode = Glob.RUN_STATE.getCurrNode();
-            return currNode.hasTextEvent() &&
-                    currNode.textEvent().cmd() == CMD.POP &&
-                    currNode.textEvent().langStruct() == parentEnum;
-        }
-
-        @Override
-        protected boolean doCoreTask(IStackPayload stackTop) {
-            if(this.shouldPop()){
-                Glob.RUN_STATE.pop();
-                return true;
-            }
-            else{
-//                this.eventToCurrNode_addTo();
-                Glob.DATA_SINK.put();
-                return false;
-            }
         }
     }
 
@@ -401,24 +359,5 @@ public class AlgoImplGroupPreScan {
             IReadNode readNode = Glob.RUN_STATE.getCurrNode();
             return false;
         }
-    }
-    public static class ConditionalItem extends AlgoBase {
-        public ConditionalItem() {
-            super();
-        }
-
-        @Override
-        protected boolean doCoreTask(IStackPayload stackTop) {
-            IReadNode currNode = Glob.RUN_STATE.getCurrNode();
-            return false;
-        }
-    }
-
-    public static abstract class SilentPushPop extends AlgoBase{
-        @Override
-        public void onPush(IStackPayload stackPayload) {}
-
-        @Override
-        public void onPop(IStackPayload stackPayload) {}
     }
 }

@@ -14,9 +14,10 @@ public class DataSearch implements IDataSearch {
     private final Map<String, IDataSinkNode> map;
 
     /** Initialize with one node */
-    public DataSearch(String rootIdentifier, IDataSinkNode rootDataSinkNode) {
+    public DataSearch(String langRoot1, IDataSinkNode rootDataSinkNode1, String langRoot2, IDataSinkNode rootDataSinkNode2) {
         map = new HashMap<>();
-        map.put(rootIdentifier, rootDataSinkNode);
+        map.put(langRoot1, rootDataSinkNode1);
+        map.put(langRoot2, rootDataSinkNode2);
     }
 
     @Override
@@ -51,6 +52,7 @@ public class DataSearch implements IDataSearch {
         readNode.textEvent().setSubstring(null);                    // kill substring so it won't be re-read on playback
         IDataSinkNode sinkNode = Glob.DATA_SINK.addNewSink(identifier, parentEnum);// set new sink
         map.put(identifier, sinkNode);                               // save enum, new sink in map
+        System.out.println("put identifier: " + identifier);
     }
 
 
@@ -68,7 +70,7 @@ public class DataSearch implements IDataSearch {
     public IDataSinkNode getIdentifier(String identifier) {
         IDataSinkNode sinkNode = map.get(identifier);
         if(sinkNode == null){                                     // check if bad identifier (user error)
-            Glob.ERR.kill(ERR_TYPE.UNKNOWN_ID);
+            Glob.ERR.kill(ERR_TYPE.UNKNOWN_ID.toString(), identifier);
         }
         return sinkNode;
     }

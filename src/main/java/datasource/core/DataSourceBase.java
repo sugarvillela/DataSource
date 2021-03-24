@@ -42,6 +42,7 @@ public abstract class DataSourceBase implements IDataSource {
 
     @Override
     public IReadNode next() {
+        //IReadNode nextNode = this.tick().getData(row);
         return this.tick().getData(row);
     }
 

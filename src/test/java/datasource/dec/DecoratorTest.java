@@ -9,6 +9,7 @@ import datasource.dec_tok.SourceTok;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import readnode.iface.IReadNode;
 import runstate.Glob;
 
 import java.io.File;
@@ -318,6 +319,31 @@ class DecoratorTest {
                         "array@0,3,5,0,1,1,1,seventeen,-|" +
                         "array@0,4,0,0,1,0,0,eighteen,-|" +
                         "array@0,4,1,0,1,1,0,FX,FX,PUSH,-";
+        Assertions.assertEquals(expected, actual);
+    }
+
+    @Test
+    void troubleshoot(){//step 1
+        IDataSource dataSource = new SourceActiveOnly(
+                new SourceFluid(
+                        new SourceNonComment(
+                                new SourceTextPattern(
+                                        new SourceTok(
+                                                new SourceNonEmpty(
+                                                        new SourceFile(FILE_NAME_UTIL.mergeDefaultPath("test1.rxfx"))
+                                                )
+                                        )
+                                )
+                        )
+                )
+        );
+        while(dataSource.hasNext()){
+            IReadNode node = dataSource.next();
+            String text = (node == null)? "null" : node.csvString();
+            System.out.println("\"" + text + "|\" + ");
+        }
+        String actual = "";
+        String expected = "";
         Assertions.assertEquals(expected, actual);
     }
 }

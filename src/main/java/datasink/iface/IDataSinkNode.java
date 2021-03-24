@@ -1,5 +1,6 @@
 package datasink.iface;
 
+import datasource.iface.IDataSource;
 import langdefalgo.iface.LANG_STRUCT;
 import readnode.iface.IReadNode;
 
@@ -13,6 +14,7 @@ public interface IDataSinkNode {
     void put(IReadNode readNode);
     void goBack();
 
+    IDataSource toDataSource();
     ArrayList<IReadNode> getNodes();
     void clearNodes();
 }

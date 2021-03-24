@@ -10,12 +10,12 @@ import java.util.Stack;
 import static runstate.Glob.FACTORY_DATA_SOURCE;
 
 public class SourceFluid implements IDataSource {
-    private final Stack<IDataSource> stack;
-    private final IDataSource initialSource;
-    private final LANG_STRUCT langStruct;
+    protected final Stack<IDataSource> stack;
+    protected final IDataSource initialSource;
+    protected LANG_STRUCT langStruct;
 
-    private IReadNode prevNode, currNode;
-    private boolean state;
+    protected IReadNode prevNode, currNode;
+    protected boolean state;
 
     public SourceFluid(IDataSource initialSource) {
         this.initialSource = initialSource;
@@ -43,7 +43,7 @@ public class SourceFluid implements IDataSource {
         return currNode != null;
     }
 
-    private void getOrPop(){
+    protected void getOrPop(){
         while(!stack.isEmpty()){
             currNode = stack.peek().next();
             if(currNode == null){
@@ -56,7 +56,7 @@ public class SourceFluid implements IDataSource {
     }
 
     // stack.peek() source may think it is done, but there could be more on the stack
-    private void fixNodeDoneStatus(){
+    protected void fixNodeDoneStatus(){
         if(prevNode != null){
             prevNode.setHasNext(!stack.isEmpty());
         }
@@ -71,7 +71,7 @@ public class SourceFluid implements IDataSource {
         return prevNode;
     }
 
-    private void pushOnEvent(){
+    protected void pushOnEvent(){
         if(currNode != null){
             if(state){
                 currNode.setActive(false);
@@ -81,7 +81,7 @@ public class SourceFluid implements IDataSource {
                 );
                 state = false;
             }
-            else if(currNode.textEvent() != null && this.langStruct == currNode.textEvent().langStruct()){
+            else if(currNode.hasTextEvent() && this.langStruct == currNode.textEvent().langStruct()){
                 currNode.setActive(false);
                 state = true;
             }

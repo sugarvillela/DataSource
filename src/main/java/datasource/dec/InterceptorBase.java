@@ -22,6 +22,8 @@ public abstract class InterceptorBase extends DecoratorBase{
         currNode = nextNode;
         do{
             nextNode = dataSource.next();
+//            String csv = (nextNode == null)? "null" : nextNode.csvString() + " empty: " + (nextNode.text().trim().isEmpty());
+//            System.out.println(this.getClass().getSimpleName() + ": " + csv);
         }
         while(nextNode != null && shouldSkip());
     }

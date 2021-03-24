@@ -9,5 +9,6 @@
 		RX $myRX1 rxContentA
 		FX $myFX1 fxContentA fxContentB END_FX
 	END_FUN
-	*myConst
+	*MyFun
 $*/
+nine ten

@@ -12,6 +12,6 @@ public class SourceNonEmpty extends InterceptorBase {
 
     @Override
     protected boolean shouldSkip() {
-        return nextNode.text().isEmpty();
+        return nextNode.text().trim().isEmpty();
     }
 }
