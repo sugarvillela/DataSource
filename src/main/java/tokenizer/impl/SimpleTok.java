@@ -1,6 +1,7 @@
 package tokenizer.impl;
 
 import tokenizer.iface.ITokenizer;
+import tokenizer.iface.IWhitespace;
 
 import java.util.ArrayList;
 
@@ -9,9 +10,11 @@ import java.util.ArrayList;
  * Ignores adjacent delimiters to prevent empty elements
  * Option to limit number of splits */
 public class SimpleTok implements ITokenizer {
-    private final char delimiter;
+    private IWhitespace whitespace;
     private final int limit;
-    String[] tokens;
+    private String text;
+    private char delimiter;
+    private String[] tokens;
 
     public SimpleTok(){
         this( ' ', 0x7FFFFFFF );
@@ -20,17 +23,49 @@ public class SimpleTok implements ITokenizer {
         this( delimiter, 0x7FFFFFFF );
     }
     public SimpleTok(char delimiter, int limit ){
-        this.delimiter = delimiter;
+        this.setDelimiter(delimiter);
         this.limit = limit;
     }
 
     @Override
-    public ITokenizer parse(String text) {
+    public ITokenizer setText(String text) {
+        this.text = text;
+        return this;
+    }
+
+    @Override
+    public ITokenizer setDelimiter(char... delimiter) {
+        this.delimiter = (delimiter.length == 0)? '\0' : delimiter[0];
+        if(this.delimiter == ' '){
+            whitespace = new IWhitespace() {
+                @Override
+                public boolean isWhitespace(char symbol) {
+                    return ((int)symbol) < 33;
+                }
+            };
+        }
+        else{
+            whitespace = new IWhitespace() {
+                @Override
+                public boolean isWhitespace(char symbol) {
+                    return false;
+                }
+            };
+        }
+        return this;
+    }
+
+    private boolean isDelimiter(char symbol){
+        return symbol == delimiter || whitespace.isWhitespace(symbol);
+    }
+
+    @Override
+    public ITokenizer parse() {
         // Rehearse to get size
         int count = 0;
         int i, j = 0, k = 0;
         for(i = 0; i < text.length(); i++){
-            if( text.charAt(i) == delimiter){
+            if(isDelimiter(text.charAt(i))){
                 if( i != j ){
                     count++;
                     // Limit size, if limit passed
@@ -49,7 +84,7 @@ public class SimpleTok implements ITokenizer {
         tokens = new String[count];
         j = 0;
         for(i = 0; i < text.length(); i++){
-            if( text.charAt(i) == delimiter){
+            if(isDelimiter(text.charAt(i))){
                 if( i != j ){
                     if( k >= limit-1){
                         break;
@@ -68,7 +103,8 @@ public class SimpleTok implements ITokenizer {
     }
 
     @Override
-    public ArrayList<String> getArrayList() {
+    public ArrayList<String> toList() {
+        System.out.println();
         ArrayList<String> out = new ArrayList<>(tokens.length);
         for(String tok: tokens) {
             out.add(tok);
@@ -77,7 +113,12 @@ public class SimpleTok implements ITokenizer {
     }
 
     @Override
-    public String[] getArray() {
+    public String[] toArray() {
         return tokens;
+    }
+
+    @Override
+    public int[] indents() {
+        throw new IllegalStateException("SimpleTok does not implement indents()");
     }
 }

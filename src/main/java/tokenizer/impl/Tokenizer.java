@@ -1,6 +1,7 @@
 package tokenizer.impl;
 
 import tokenizer.iface.ITokenizer;
+import tokenizer.iface.IWhitespace;
 
 import java.util.ArrayList;
 import java.util.Stack;
@@ -11,11 +12,11 @@ import java.util.Stack;
  * Supports 'skip area' (quoted or bracketed text). Tokenizer leaves these areas joined.
  * Supports multiple, nested skip symbols. Outermost symbol defines skip area.
  * Option to keep or discard delimiters, skip symbols.
- * Use builder to kill options.
+ * Use builder to set options.
  *
  * Sample usage:
  *   String text = "Sentence__with_(too_many_'delims')_and_quotes__";
- *   String[] tok = new Tokenizer.Builder().delimiters(" _").skipSymbols("('").build().parse(text).getArray();
+ *   String[] tok = Tokenizer.builder().delimiters(" _").skipSymbols("('").build().parse(text).toArray();
  * Output:
  * 	  Sentence
  * 	  with
@@ -24,16 +25,18 @@ import java.util.Stack;
  * 	  quotes
  */
 public class Tokenizer implements ITokenizer {
-    protected  String delimiters;           // input text, list of delimiters text,
-    protected char[] oMap, cMap;            // matched open/close skip char arrays
-    protected ArrayList<String> tokens;     // output
-    protected Stack<Character> cSymbols;    // Closing symbol
-    protected boolean tokenizeDelimiter;   // keep delims, skips to separate list
-    protected boolean delimiterOnce;
-    protected boolean keepSkipSymbol;
+    private IWhitespace whitespace;
+    private String delimiters;              // input text, list of delimiters text,
+    private char[] oMap, cMap;              // matched open/close skip char arrays
+    private ArrayList<String> tokens;       // output
+    private Stack<Character> cSymbols;      // Closing symbol
+    private boolean tokenizeDelimiter;      // keep delims, skips to separate list
+    private boolean delimiterOnce;
+    private boolean keepSkipSymbol;
+    private String text;
+    private int[] indents;
 
-    public Tokenizer(){
-        delimiters = " ";
+    private Tokenizer(){
         tokenizeDelimiter = false;
         keepSkipSymbol = false;
     }
@@ -60,7 +63,7 @@ public class Tokenizer implements ITokenizer {
     }
 
     private boolean isDelimiter(char symb){
-        return delimiters.indexOf(symb) != -1;
+        return delimiters.indexOf(symb) != -1 || whitespace.isWhitespace(symb);
     }
 
     private boolean haveText(int i, int j){
@@ -90,15 +93,48 @@ public class Tokenizer implements ITokenizer {
     }
 
     private boolean noMoreSkips(){
+        //System.out.println("\nclearHolding: "+cSymb.peek());
+
+        //System.out.println(cSymb);
+        //System.out.println(cSymb.empty());
         return cSymbols.empty();
     }
 
     /*====Public parts================================================================================================*/
 
     @Override
-    public ITokenizer parse(String text) {
+    public ITokenizer setText(String text) {
+        this.text = text;
+        return this;
+    }
+
+    @Override
+    public ITokenizer setDelimiter(char... delimiter) {
+        this.delimiters = new String(delimiter);
+        if(this.delimiters.contains(" ")){
+            whitespace = new IWhitespace() {
+                @Override
+                public boolean isWhitespace(char symbol) {
+                    return ((int)symbol) < 33;
+                }
+            };
+        }
+        else{
+            whitespace = new IWhitespace() {
+                @Override
+                public boolean isWhitespace(char symbol) {
+                    return false;
+                }
+            };
+        }
+        return this;
+    }
+
+    @Override
+    public ITokenizer parse() {
         cSymbols = new Stack<>();
         this.tokens = new ArrayList<>();
+        this.indents = null;
 
         int i = 0, j = 0;
         for (i = 0; i < text.length(); i++) {
@@ -106,9 +142,8 @@ public class Tokenizer implements ITokenizer {
 
             if(inSkipArea()){
                 if(leaveSkipArea(curr)){
-                    if(noMoreSkips() && haveText(i, j)){
-                        int offset = (keepSkipSymbol)? 1 : 0;
-                        tokens.add(text.substring(j, i + offset));
+                    if(noMoreSkips() && haveText(i, j) && !keepSkipSymbol){
+                        tokens.add(text.substring(j, i));
                         j = i + 1;
                     }
 
@@ -116,11 +151,12 @@ public class Tokenizer implements ITokenizer {
                 else if(enterSkipArea(curr)){}
             }
             else if(enterSkipArea(curr)){
-                if(haveText(i, j)){
-                    tokens.add(text.substring(j, i));
-                    j = i;
-                }
+
                 if(!keepSkipSymbol){
+                    if(haveText(i, j)){
+                        tokens.add(text.substring(j, i));
+                        j = i;
+                    }
                     j += 1;
                 }
             }
@@ -143,32 +179,70 @@ public class Tokenizer implements ITokenizer {
         return this;
     }
 
+    private void calculateIndents(){
+        indents = new int[tokens.size() + 1];
+        cSymbols = new Stack<>();
+        boolean last = false;
+
+        int k = (isDelimiter(text.charAt(0)))? 0 : 1;
+        for (int i = 0; i < text.length(); i++) {
+            char curr = text.charAt(i);
+
+            if(inSkipArea()){
+                if(leaveSkipArea(curr) || enterSkipArea(curr)){}
+            }
+            else if(enterSkipArea(curr)){
+                if (last){
+                    k++;
+                    last = false;
+                }
+            }
+            else if(isDelimiter(curr)){
+                indents[k]++;
+                last = true;
+            }
+            else if (last){
+                k++;
+                last = false;
+            }
+        }
+    }
+
     @Override
-    public ArrayList<String> getArrayList() {
+    public ArrayList<String> toList() {
         return this.tokens;
     }
 
     @Override
-    public String[] getArray() {
+    public String[] toArray() {
         return this.tokens.toArray(new String[0]);
+    }
+
+    @Override
+    public int[] indents() {
+        if(tokens == null){
+            throw new IllegalStateException("Must parse text before calculating indents");
+        }
+        if(indents == null){
+            this.calculateIndents();
+        }
+        return indents;
+    }
+
+    public static Builder builder(){
+        return new Builder();
     }
 
     public static class Builder implements ITokenizer.Builder {
         Tokenizer built;
 
-        public Builder(){
+        private Builder(){
             built = new Tokenizer();
         }
 
         @Override
-        public ITokenizer.Builder delimiters(String delimiters) {
-            built.delimiters = delimiters;
-            return this;
-        }
-
-        @Override
-        public ITokenizer.Builder delimiters(char oneDelimiter) {
-            built.delimiters = String.valueOf(oneDelimiter);
+        public ITokenizer.Builder delimiters(char... delimiter) {
+            built.setDelimiter(delimiter);
             return this;
         }
 
@@ -181,6 +255,13 @@ public class Tokenizer implements ITokenizer {
         @Override
         public ITokenizer.Builder skipSymbols(char oneOpeningSymbol) {
             built.setMap(String.valueOf(oneOpeningSymbol));
+            return this;
+        }
+
+        @Override
+        public ITokenizer.Builder skipSymbols(char openingSymbol, char closingSymbol) {
+            built.oMap = new char[]{openingSymbol};
+            built.cMap = new char[]{closingSymbol};
             return this;
         }
 
@@ -215,6 +296,9 @@ public class Tokenizer implements ITokenizer {
         public ITokenizer build() {
             if(built.oMap == null){
                 built.oMap = new char[0];
+            }
+            if(built.delimiters == null){
+                built.setDelimiter(' ');
             }
             return built;
         }

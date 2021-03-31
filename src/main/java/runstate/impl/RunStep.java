@@ -44,6 +44,8 @@ public class RunStep implements IRunStep {
         while(dataSource.hasNext()){
             if(backNode == null){
                 currNode = dataSource.next();
+                //LANG_STRUCT langRootEnum2 = Glob.ENUMS_BY_TYPE.langRootEnum2();
+                //Glob.DATA_SINK.getIdentifier(langRootEnum2.toString()).put(currNode);
             }
             else{
                 currNode = backNode;
@@ -55,8 +57,9 @@ public class RunStep implements IRunStep {
                 break;
             }
             else{
-                //System.out.println(currNode.csvString());
+                System.out.println(currNode.csvString());
             }
+
 
             structStack.top().getState().incTimeOnStack();
             //System.out.println(structStack.top().toString());

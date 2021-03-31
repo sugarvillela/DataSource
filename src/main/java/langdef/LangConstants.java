@@ -21,6 +21,8 @@ public abstract class LangConstants {
 
     public static final String ITEM_OPEN = "{";     // surrounds item content
     public static final String ITEM_CLOSE = "}";    // ends item content
+    public static final String COND_OPEN = "{";     // surrounds conditional content
+    public static final String COND_CLOSE = "}";    // ends conditional content
 
 
     public static final String CONT_LINE = "...";   // Matlab-like extension

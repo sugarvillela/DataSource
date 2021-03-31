@@ -11,8 +11,9 @@ public abstract class ReadNodeBase implements IReadNode {
     protected static int uqValue = 0;
 
     protected final int row, col;
-    protected final String source, text;
+    protected final String source;
 
+    protected String text;
     protected int sortValue;
     protected boolean active;
     protected ITextEventNode textEvent;
@@ -23,6 +24,11 @@ public abstract class ReadNodeBase implements IReadNode {
         this.source = source;
         this.row = row;
         this.col = col;
+        this.text = text;
+    }
+
+    @Override
+    public void setText(String text) {
         this.text = text;
     }
 

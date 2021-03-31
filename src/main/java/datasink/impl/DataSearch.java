@@ -15,6 +15,7 @@ public class DataSearch implements IDataSearch {
 
     /** Initialize with one node */
     public DataSearch(String langRoot1, IDataSinkNode rootDataSinkNode1, String langRoot2, IDataSinkNode rootDataSinkNode2) {
+        rootDataSinkNode2.setListening(false);
         map = new HashMap<>();
         map.put(langRoot1, rootDataSinkNode1);
         map.put(langRoot2, rootDataSinkNode2);

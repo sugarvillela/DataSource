@@ -8,13 +8,13 @@ import readnode.iface.IReadNode;
 
 import java.util.ArrayList;
 
-public class DataSinkNodeCore implements IDataSinkNode {
+public class DataSinkNode implements IDataSinkNode {
     private final ArrayList<IReadNode> nodes;
     private final String identifier;
     private final LANG_STRUCT parentEnum;
     private boolean listening, skippedLast;
 
-    public DataSinkNodeCore(String identifier, LANG_STRUCT parentEnum) {
+    public DataSinkNode(String identifier, LANG_STRUCT parentEnum) {
         this.identifier = identifier;
         this.parentEnum = parentEnum;
         nodes = new ArrayList<>();

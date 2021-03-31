@@ -1,9 +1,7 @@
-package datasink;
+package datasink.impl;
 
 import datasink.iface.IDataSearch;
-import datasink.impl.DataSearch;
 import datasink.iface.IDataSinkNode;
-import datasink.impl.DataSinkNodeCore;
 import datasink.iface.IDataSink;
 import langdefalgo.iface.LANG_STRUCT;
 import readnode.iface.IReadNode;
@@ -48,7 +46,7 @@ public class DataSink implements IDataSink {
 
     @Override
     public IDataSinkNode addNewSink(String identifier, LANG_STRUCT parentEnum) {
-        IDataSinkNode newSink = new DataSinkNodeCore(identifier, parentEnum);
+        IDataSinkNode newSink = new DataSinkNode(identifier, parentEnum);
         sinks.add(newSink);
         return newSink;
     }

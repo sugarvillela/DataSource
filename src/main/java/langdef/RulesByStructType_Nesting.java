@@ -3,6 +3,7 @@ package langdef;
 import runstate.Glob;
 
 import static langdef.STRUCT_KEYWORD.*;
+import static langdef.STRUCT_LIST_TYPE.*;
 import static langdef.STRUCT_LOOKUP.*;
 import static langdef.STRUCT_NON_KEYWORD.*;
 import static langdef.STRUCT_SYMBOL.*;
@@ -28,11 +29,20 @@ public class RulesByStructType_Nesting {
 
         IF.getNestingRule().setAllowedNesting(IF_TEST, RX, FX);
 
-        ELSE.getNestingRule().setAllowedNesting(
-                RX, FX, IF, FUN//, IF_ELSE)
-        );
+        ELSE.getNestingRule().setAllowedNesting(RX, FX, IF, FUN);
+
+        CATEGORY.getNestingRule().setAllowedNesting(CATEGORY);
 
         INCLUDE.getNestingRule().setAllowedNesting();
+
+        /*=====STRUCT_LIST_TYPE=======================================================================================*/
+
+        LIST_STRING.getNestingRule().setAllowedNesting(CATEGORY);
+        LIST_NUMBER.getNestingRule().setAllowedNesting(CATEGORY);
+        LIST_BOOLEAN.getNestingRule().setAllowedNesting(CATEGORY);
+        LIST_DISCRETE.getNestingRule().setAllowedNesting(CATEGORY);
+        LIST_VOTE.getNestingRule().setAllowedNesting(CATEGORY);
+        LIST_SCOPE.getNestingRule().setAllowedNesting();
 
         /*=====STRUCT_LOOKUP==========================================================================================*/
 
@@ -63,9 +73,9 @@ public class RulesByStructType_Nesting {
         /*=====STRUCT_SYMBOL==========================================================================================*/
 
         LANG_S.getNestingRule().setAllowedNesting(
-                INCLUDE, FUN, CONSTANT, ID_ACCESS, ATTRIB, RX, FX, SCOPE, IF, ELSE//,
-                //LIST_SCOPES, LIST_STRING, LIST_NUMBER, LIST_BOOLEAN, LIST_VOTE, LIST_DISCRETE
-        );
+                INCLUDE, FUN, CONSTANT, ID_ACCESS, ATTRIB, RX, FX, SCOPE, IF, ELSE,
+                LIST_STRING, LIST_NUMBER, LIST_BOOLEAN, LIST_VOTE, LIST_DISCRETE, LIST_SCOPE
+                );
 
         LANG_T_INSERT.getNestingRule().setCopyOnly(true);
         LANG_T_INSERT.getNestingRule().setAllowedNesting();

@@ -1,9 +1,6 @@
 package langdef.util;
 
-import langdef.STRUCT_KEYWORD;
-import langdef.STRUCT_LOOKUP;
-import langdef.STRUCT_NON_KEYWORD;
-import langdef.STRUCT_SYMBOL;
+import langdef.*;
 import langdefalgo.iface.EnumPOJOJoin;
 import langdefalgo.iface.LANG_STRUCT;
 import textevent.impl.TextEventTemplate;
@@ -39,6 +36,16 @@ public class EnumsByType {
 
         // push symbol = ENUM_NAME, pop symbol = END_ENUM_NAME
         for(LANG_STRUCT langStruct : STRUCT_KEYWORD.values()){
+            if((pushSymbol = langStruct.getPushSymbol()) != null){
+                map.put(pushSymbol, new TextEventTemplate(langStruct, PUSH, false));
+            }
+            if((popSymbol = langStruct.getPopSymbol()) != null){
+                map.put(popSymbol, new TextEventTemplate(langStruct, POP, false));
+            }
+        }
+
+        // push symbol = LIST<TYPE>, pop symbol = END_LIST<TYPE>
+        for(LANG_STRUCT langStruct : STRUCT_LIST_TYPE.values()){
             if((pushSymbol = langStruct.getPushSymbol()) != null){
                 map.put(pushSymbol, new TextEventTemplate(langStruct, PUSH, false));
             }

@@ -6,6 +6,7 @@ import textevent.iface.ITextEventNode;
 /** See accompanying javadoc in IDataSource.
  *  Contextual comments below in code */
 public interface IReadNode extends Comparable<IReadNode> {
+    void setText(String text);
     void setActive(boolean active);     // Set false if node should be ignored by downstream parsing
     void setEndLine(boolean endLine);   // Overridable (SourceNonComment sets true)
     void setHasNext(boolean hasNext);   // Overridable done state (used by SourceFluid to continue on source pop)

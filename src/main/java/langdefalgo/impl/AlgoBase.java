@@ -36,14 +36,14 @@ public abstract class AlgoBase implements LANG_STRUCT, EnumPOJOJoin {
     }
 
 
-    protected void onPush_checkIdentifierRule(IStackPayload stackPayload){
+    protected void onPush_checkIdentifierRule(IStackPayload stackTop){
         IReadNode pushReadNode = Glob.RUN_STATE.getCurrNode();
         IIdentifierRule identifierRule = parentEnum.getIdentifierRule();
         if(identifierRule.onPush(pushReadNode)){// start listening to identifier, if allowed
-            stackPayload.getState().setPushedIdentifier(identifierRule.getPushedIdentifier());
+            stackTop.getState().setPushedIdentifier(identifierRule.getPushedIdentifier());
         }
     }
-    protected void onPush_checkFollowRule(IStackPayload stackPayload){
+    protected void onPush_checkFollowRule(IStackPayload stackTop){
         IFollowRule followrule = parentEnum.getFollowRule();
         if(!followrule.allAreAllowed()){
             int stackLevel = Glob.RUN_STATE.size() - 1;
@@ -61,15 +61,15 @@ public abstract class AlgoBase implements LANG_STRUCT, EnumPOJOJoin {
     }
 
     @Override
-    public void onPush(IStackPayload stackPayload) {
+    public void onPush(IStackPayload stackTop) {
         //System.out.println("AlgoBase push: " + this.getParentEnum());
-        this.onPush_checkIdentifierRule(stackPayload);
-        this.onPush_checkFollowRule(stackPayload);
+        this.onPush_checkIdentifierRule(stackTop);
+        this.onPush_checkFollowRule(stackTop);
         this.onPush_putPushNode();
     }
 
-    protected void onPop_checkIdentifierRule(IStackPayload stackPayload){
-        String pushedIdentifier = stackPayload.getState().getPushedIdentifier();// stop listening to identifier
+    protected void onPop_checkIdentifierRule(IStackPayload stackTop){
+        String pushedIdentifier = stackTop.getState().getPushedIdentifier();// stop listening to identifier
         parentEnum.getIdentifierRule().onPop(pushedIdentifier);
     }
     protected void onPop_putPopNode(){
@@ -78,10 +78,10 @@ public abstract class AlgoBase implements LANG_STRUCT, EnumPOJOJoin {
         Glob.DATA_SINK.put(popNode);// pop node
     }
     @Override
-    public void onPop(IStackPayload stackPayload) {
+    public void onPop(IStackPayload stackTop) {
         //System.out.println("AlgoBase pop: " + this.getParentEnum());
         this.onPop_putPopNode();
-        this.onPop_checkIdentifierRule(stackPayload);
+        this.onPop_checkIdentifierRule(stackTop);
     }
 
     @Override
@@ -148,9 +148,4 @@ public abstract class AlgoBase implements LANG_STRUCT, EnumPOJOJoin {
         return null;
     }
 
-    @Override
-    public boolean isSelfPop() {
-        Glob.ERR_DEV.kill("This should be called on the parent enum");
-        return false;
-    }
 }

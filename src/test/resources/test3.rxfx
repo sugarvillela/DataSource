@@ -2,8 +2,12 @@
     four five
 /*$
 	SCOPE word
-		RX $myRx rxWord1 rxWord2
-		FX $myFx fxWord1 fxWord2
+		RX{
+			$myRx rxWord1 rxWord2
+		}
+		FX{
+			$myFx fxWord1 fxWord2
+		}
 	IF RX rxWordIf
 		FX fxWordIf
 	ELSE

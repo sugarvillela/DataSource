@@ -1,7 +1,10 @@
 package runstate;
 
-import datasink.DataSink;
+import datasink.impl.DataSink;
 import datasource.factory.FactoryDataSource;
+import rule_operator.OperatorRule;
+import tokenizer.iface.ITokenizer;
+import tokenizer.impl.Tokenizer;
 import utilfile.FileNameUtil;
 import utilfile.SmallFileDump;
 import err.iface.IErr;
@@ -20,12 +23,13 @@ public class Glob {
 
     public static final String              NULL_TEXT =             "-";    // for csv strings
 
+    public static final ITokenizer          TOKENIZER =             Tokenizer.builder().delimiters(' ').skipSymbols("'").build();
     public static final FileNameUtil        FILE_NAME_UTIL =        FileNameUtil.initInstance();
     public static final SmallFileDump       SMALL_FILE_DUMP =       SmallFileDump.initInstance();
     public static final FactoryDataSource   FACTORY_DATA_SOURCE =   FactoryDataSource.initInstance();
 
     public static final RunState            RUN_STATE =             RunState.initInstance();
-    //public static final ReadNodeFactory     READ_NODE_FACTORY =     ReadNodeFactory.initInstance();
+    public static final OperatorRule        OPERATOR_RULE =         OperatorRule.initInstance();
     public static final EnumsByType         ENUMS_BY_TYPE =         EnumsByType.initInstance();
     public static final PushPopUtil         PUSH_POP_UTIL =         PushPopUtil.initInstance();
     public static final DataSink            DATA_SINK =             DataSink.initInstance();

@@ -25,6 +25,7 @@ public enum STRUCT_KEYWORD implements LANG_STRUCT, EnumPOJOJoin {
     SCOPE       (ID_ALLOW),
     IF          (ID_ALLOW),
     ELSE        (ID_ALLOW),
+    CATEGORY    (ID_REQUIRE),
 
     INCLUDE     (ID_DISALLOW),
     ;
@@ -53,11 +54,6 @@ public enum STRUCT_KEYWORD implements LANG_STRUCT, EnumPOJOJoin {
     @Override
     public String getPopSymbol() {
         return "END_" + this.toString();
-    }
-
-    @Override
-    public boolean isSelfPop() {
-        return false;
     }
 
     /*=====LANG_STRUCT================================================================================================*/

@@ -49,11 +49,6 @@ public enum STRUCT_LOOKUP  implements LANG_STRUCT, EnumPOJOJoin {
         return null;
     }
 
-    @Override
-    public boolean isSelfPop() {
-        return false;
-    }
-
     /*=====LANG_STRUCT================================================================================================*/
 
     @Override

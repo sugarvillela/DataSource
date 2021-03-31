@@ -6,7 +6,7 @@ public interface IRunState extends IRunStep {
 
     /* Program state set */
     void initRunState();
-    void initPreScan();
+    void initStep1();
     void runPreScan();
 
 }

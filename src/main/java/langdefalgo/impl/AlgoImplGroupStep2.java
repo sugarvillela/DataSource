@@ -19,7 +19,7 @@ import static langdef.STRUCT_LOOKUP.*;
 import static langdef.STRUCT_NON_KEYWORD.*;
 import static langdef.STRUCT_SYMBOL.*;
 
-public class AlgoImplGroupPreScan {
+public class AlgoImplGroupStep2 {
     public static final int FIRST = 0, SECOND = 1;
 
     public void initPreScanAlgos(){
@@ -82,8 +82,8 @@ public class AlgoImplGroupPreScan {
             LANG_STRUCT langRootEnum1 = Glob.ENUMS_BY_TYPE.langRootEnum1();
             Glob.DATA_SINK.getIdentifier(langRootEnum1.toString()).setListening(false);
 
-            LANG_STRUCT langRootEnum2 = Glob.ENUMS_BY_TYPE.langRootEnum2();
-            Glob.DATA_SINK.getIdentifier(langRootEnum2.toString()).setListening(false);
+            //LANG_STRUCT langRootEnum2 = Glob.ENUMS_BY_TYPE.langRootEnum2();
+            //Glob.DATA_SINK.getIdentifier(langRootEnum2.toString()).setListening(false);
         }
 
         @Override
@@ -93,8 +93,8 @@ public class AlgoImplGroupPreScan {
             LANG_STRUCT langRootEnum1 = Glob.ENUMS_BY_TYPE.langRootEnum1();
             Glob.DATA_SINK.getIdentifier(langRootEnum1.toString()).setListening(true);
 
-            LANG_STRUCT langRootEnum2 = Glob.ENUMS_BY_TYPE.langRootEnum2();
-            Glob.DATA_SINK.getIdentifier(langRootEnum2.toString()).setListening(true);
+            //LANG_STRUCT langRootEnum2 = Glob.ENUMS_BY_TYPE.langRootEnum2();
+            //Glob.DATA_SINK.getIdentifier(langRootEnum2.toString()).setListening(true);
         }
         @Override
         protected boolean doCoreTask(IStackPayload stackTop) {
@@ -137,10 +137,6 @@ public class AlgoImplGroupPreScan {
 
     // handles run attributes in key=value form; silent push/pop so it does not persist to the next parse step
     public static class Attrib extends AlgoBase {
-        public Attrib() {
-            super();
-        }
-
         // Silent push pop; check for err on identifier
         @Override
         public void onPush(IStackPayload stackPayload) {

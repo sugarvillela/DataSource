@@ -80,12 +80,27 @@ public class PopRule implements IPopRule {
         return actionNone();
     }
 
+    @Override
+    public boolean isSelfPop() {
+        for(int i = 0; i < rules.length; i++){
+            if(rules[i].isSelfPop()){
+                return true;
+            }
+        }
+        return false;
+    }
+
     /*=====Rules======================================================================================================*/
 
     public static abstract class PopRuleBase  implements IPopRule {
         @Override
         public void setRules(IPopRule... rules) {
             Glob.ERR_DEV.kill(ERR_TYPE.DEV_ERROR);
+        }
+
+        @Override
+        public boolean isSelfPop() {
+            return false;
         }
     }
 
@@ -97,6 +112,10 @@ public class PopRule implements IPopRule {
                         actionPopMost() : actionPop();
             }
             return null;
+        }
+        @Override
+        public boolean isSelfPop() {
+            return true;
         }
     }
 

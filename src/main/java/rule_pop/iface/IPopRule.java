@@ -6,4 +6,5 @@ import stackpayload.iface.IStackPayload;
 public interface IPopRule {
     void setRules(IPopRule... rules);
     IPopAction getPopAction(IStackPayload stackTop, IReadNode readNode);
+    boolean isSelfPop();
 }

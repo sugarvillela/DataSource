@@ -1,9 +1,6 @@
 package sourcestep.impl;
 
 import datasink.iface.IDataSinkNode;
-import datasource.dec.SourceActiveOnly;
-import datasource.dec_fluid.SourceAccess;
-import datasource.iface.IDataSource;
 import org.junit.jupiter.api.*;
 import readnode.iface.IReadNode;
 import runstate.Glob;
@@ -24,7 +21,7 @@ class RunStepTest {
         String filePath = Glob.FILE_NAME_UTIL.mergeDefaultPath("test2.rxfx");
         System.out.println(filePath);
         runState.setInFilePath(filePath);
-        runState.initPreScan();
+        runState.initStep1();
     }
 
     @Test

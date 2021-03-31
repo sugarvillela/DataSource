@@ -76,6 +76,36 @@ class DecoratorTest {
     }
 
     @Test
+    void givenAttachedEnclosingSymbols_shouldDetachSymbols() {
+        String[] array = new String[]{
+                "   zero one{  two} three",
+                "four { six seven}",
+                "eight"
+        };
+        IDataSource dataSource = new SourceEnclosingSymbol(
+                new SourceTok(
+                        new SourceNonEmpty(
+                                new SourceArray(array)
+                        )
+                )
+        );
+        String actual = TestUtil.iterateAndJoin(dataSource);
+        String expected =
+                "array@0,0,0,3,1,0,1,zero,-|" +
+                "array@0,0,1,1,1,0,1,one,-|" +
+                "array@0,0,1,1,1,0,1,{,-|" +
+                "array@0,0,2,2,1,0,1,two,-|" +
+                "array@0,0,2,2,1,0,1,},-|" +
+                "array@0,0,3,1,1,1,1,three,-|" +
+                "array@0,1,0,0,1,0,1,four,-|" +
+                "array@0,1,1,1,1,0,1,{,-|" +
+                "array@0,1,2,1,1,0,1,six,-|" +
+                "array@0,1,3,1,1,1,1,seven,-|" +
+                "array@0,1,3,1,1,1,1,},-|" +
+                "array@0,2,0,0,1,1,0,eight,-";
+        Assertions.assertEquals(expected, actual);
+    }
+    @Test
     void peekNext_sameAsNonPeek(){
         IDataSource dataSource = new SourcePeek(
                 new SourceFile(FILE_NAME_UTIL.mergeDefaultPath("test.txt"))
@@ -300,25 +330,25 @@ class DecoratorTest {
         String actual = TestUtil.iterateAndJoin(dataSource, 20);
         String expected =
                 "array@0,0,0,0,1,0,1,zero,-|" +
-                        "array@0,0,1,0,1,0,1,$myIdentifier,ID_DEFINE,PUSH,myIdentifier|" +
+                        "array@0,0,1,0,1,0,1,$myIdentifier,PUSH,ID_DEFINE,myIdentifier|" +
                         "array@0,0,2,0,1,0,1,two,-|" +
                         "array@0,0,3,0,1,1,1,three,-|" +
-                        "array@0,1,0,0,1,0,1,*myAccessor,ID_ACCESS,PUSH,myAccessor|" +
+                        "array@0,1,0,0,1,0,1,*myAccessor,PUSH,ID_ACCESS,myAccessor|" +
                         "array@0,1,1,0,1,0,1,five,-|" +
-                        "array@0,1,2,0,1,0,1,INCLUDE,INCLUDE,PUSH,-|" +
+                        "array@0,1,2,0,1,0,1,INCLUDE,PUSH,INCLUDE,-|" +
                         "array@0,1,3,0,1,1,1,seven,-|" +
-                        "array@0,2,0,0,1,0,1,FUN,FUN,PUSH,-|" +
+                        "array@0,2,0,0,1,0,1,FUN,PUSH,FUN,-|" +
                         "array@0,2,1,0,1,0,1,some,-|" +
                         "array@0,2,2,0,1,0,1,stuff,-|" +
-                        "array@0,2,3,0,1,1,1,END_FUN,FUN,POP,-|" +
+                        "array@0,2,3,0,1,1,1,END_FUN,POP,FUN,-|" +
                         "array@0,3,0,0,1,0,1,twelve,-|" +
-                        "array@0,3,1,0,1,0,1,*/,LANG_T_INSERT,PUSH,-|" +
+                        "array@0,3,1,0,1,0,1,*/,PUSH,LANG_T_INSERT,-|" +
                         "array@0,3,2,0,1,0,1,inserted,-|" +
                         "array@0,3,3,0,1,0,1,stuff,-|" +
-                        "array@0,3,4,0,1,0,1,/*,LANG_T_INSERT,POP,-|" +
+                        "array@0,3,4,0,1,0,1,/*,POP,LANG_T_INSERT,-|" +
                         "array@0,3,5,0,1,1,1,seventeen,-|" +
                         "array@0,4,0,0,1,0,0,eighteen,-|" +
-                        "array@0,4,1,0,1,1,0,FX,FX,PUSH,-";
+                        "array@0,4,1,0,1,1,0,FX,PUSH,FX,-";
         Assertions.assertEquals(expected, actual);
     }
 

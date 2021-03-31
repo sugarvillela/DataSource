@@ -20,7 +20,7 @@ public class NestingRule implements INestingRule {
     }
 
     @Override
-    public boolean isCopyOnly() {
+    public boolean isCopyOnly() {// only for enums with mandatory pop pattern e.g. END_FUN
         return isCopyOnly;
     }
 

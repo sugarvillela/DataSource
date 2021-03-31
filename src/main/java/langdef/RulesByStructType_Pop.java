@@ -3,6 +3,8 @@ package langdef;
 import rule_pop.impl.PopRule;
 
 import static langdef.STRUCT_KEYWORD.*;
+import static langdef.STRUCT_LIST_TYPE.*;
+import static langdef.STRUCT_LIST_TYPE.LIST_SCOPE;
 import static langdef.STRUCT_LOOKUP.ID_ACCESS;
 import static langdef.STRUCT_NON_KEYWORD.*;
 import static langdef.STRUCT_NON_KEYWORD.FX_WORD;
@@ -29,7 +31,18 @@ public class RulesByStructType_Pop {
 
         ELSE.getPopRule().setRules(PopRule.popOnCmd());
 
+        CATEGORY.getPopRule().setRules(PopRule.popOnCmd());
+
         //INCLUDE.getPopRule().setRules();
+
+        /*=====STRUCT_LIST_TYPE=======================================================================================*/
+
+        LIST_STRING.getPopRule().setRules(PopRule.popOnBadPush());
+        LIST_NUMBER.getPopRule().setRules(PopRule.popOnBadPush());
+        LIST_BOOLEAN.getPopRule().setRules(PopRule.popOnBadPush());
+        LIST_DISCRETE.getPopRule().setRules(PopRule.popOnBadPush());
+        LIST_VOTE.getPopRule().setRules(PopRule.popOnBadPush());
+        LIST_SCOPE.getPopRule().setRules(PopRule.popOnBadPush());
 
         /*=====STRUCT_LOOKUP==========================================================================================*/
 

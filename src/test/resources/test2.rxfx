@@ -10,5 +10,14 @@
 		FX $myFX1 fxContentA fxContentB END_FX
 	END_FUN
 	*MyFun
+	LIST<STRING>
+		CATEGORY $text 
+			IN ORIG 
+		END_CATEGORY
+		CATEGORY $names 
+			BOB STEVE 
+			CATEGORY $condiments 
+				ketchup mustard
+			END_CATEGORY
 $*/
 nine ten

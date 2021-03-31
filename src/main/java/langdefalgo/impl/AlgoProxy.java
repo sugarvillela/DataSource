@@ -23,11 +23,6 @@ public class AlgoProxy implements LANG_STRUCT, EnumPOJOJoin {
     }
 
     @Override
-    public boolean isSelfPop() {
-        return childAlgo.isSelfPop();
-    }
-
-    @Override
     public boolean go(IStackPayload stackTop) {
         return childAlgo.go(stackTop);
     }

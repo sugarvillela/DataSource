@@ -9,7 +9,6 @@ import stackpayload.iface.IStackPayload;
 public interface LANG_STRUCT {
     String getPushSymbol();
     String getPopSymbol();
-    boolean isSelfPop();
 
     boolean go(IStackPayload stackTop);
 

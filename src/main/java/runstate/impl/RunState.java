@@ -7,7 +7,8 @@ import datasource.dec_tok.SourceTok;
 import langdef.RulesByStructType_Follow;
 import langdef.RulesByStructType_Nesting;
 import langdef.RulesByStructType_Pop;
-import langdefalgo.impl.AlgoImplGroupPreScan;
+import langdefalgo.impl.AlgoImplGroupStep1;
+import langdefalgo.impl.AlgoImplGroupStep2;
 import readnode.iface.IReadNode;
 import runstate.iface.IRunState;
 import runstate.iface.IRunStep;
@@ -53,8 +54,8 @@ public class RunState implements IRunState {
     }
 
     @Override
-    public void initPreScan() {
-        new AlgoImplGroupPreScan().initPreScanAlgos();
+    public void initStep1() {
+        new AlgoImplGroupStep1().initAlgos();
 
         currentSourceStep = new RunStep(
             //new SourceFirstAndLast(

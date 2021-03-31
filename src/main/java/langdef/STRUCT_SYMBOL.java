@@ -51,11 +51,6 @@ public enum STRUCT_SYMBOL implements LANG_STRUCT, EnumPOJOJoin {
         return this.popSymbol;
     }
 
-    @Override
-    public boolean isSelfPop() {
-        return true;
-    }
-
     /*=====LANG_STRUCT================================================================================================*/
 
     @Override

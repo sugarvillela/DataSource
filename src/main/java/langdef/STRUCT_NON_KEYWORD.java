@@ -124,9 +124,4 @@ public enum STRUCT_NON_KEYWORD implements LANG_STRUCT, EnumPOJOJoin {
         return null;
     }
 
-    @Override
-    public boolean isSelfPop() {
-        return false;
-    }
-
 }

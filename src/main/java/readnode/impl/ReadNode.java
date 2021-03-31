@@ -84,6 +84,7 @@ public class ReadNode extends ReadNodeBase {
         if(!active){ out.add("inactive"); }
         if(endLine){ out.add("endLine"); }
         if(hasNext){ out.add("hasNext"); }
+        //if(containerText != null){ out.add("cont: " + containerText); }
         if(text != null){ out.add("text: " + text); }
         if(textEvent != null){ out.add("textEvent: " + textEvent.friendlyString()); }
         return String.join(", ", out);
