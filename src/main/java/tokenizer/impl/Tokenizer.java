@@ -25,6 +25,14 @@ import java.util.Stack;
  * 	  quotes
  */
 public class Tokenizer implements ITokenizer {
+    private static ITokenizer instance;
+
+    public static ITokenizer initInstance(){
+        return (instance == null)?
+            (instance = Tokenizer.builder().delimiters(' ').skipSymbols("'").build())
+                : instance;
+    }
+
     private IWhitespace whitespace;
     private String delimiters;              // input text, list of delimiters text,
     private char[] oMap, cMap;              // matched open/close skip char arrays

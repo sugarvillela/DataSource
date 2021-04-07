@@ -3,7 +3,7 @@ package readnode.impl;
 import langdef.CMD;
 import readnode.iface.IReadNode;
 import runstate.Glob;
-import textevent.iface.ITextEventNode;
+import textevent.iface.ITextEvent;
 
 public abstract class ReadNodeBase implements IReadNode {
     protected static final String FORMAT_STATUS = "%s,%d,%d";
@@ -16,7 +16,7 @@ public abstract class ReadNodeBase implements IReadNode {
     protected String text;
     protected int sortValue;
     protected boolean active;
-    protected ITextEventNode textEvent;
+    protected ITextEvent textEvent;
 
     public ReadNodeBase(String source, int row, int col, String text){
         //this.sortValue = uqValue++;
@@ -38,7 +38,7 @@ public abstract class ReadNodeBase implements IReadNode {
     }
 
     @Override
-    public void setTextEvent(ITextEventNode textEventNode) {
+    public void setTextEvent(ITextEvent textEventNode) {
         this.textEvent = textEventNode;
     }
 
@@ -81,7 +81,7 @@ public abstract class ReadNodeBase implements IReadNode {
     }
 
     @Override
-    public ITextEventNode textEvent() {
+    public ITextEvent textEvent() {
         return textEvent;
     }
 

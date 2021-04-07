@@ -1,15 +1,20 @@
-    one two three
+    one two RX $rxId three
     four five
 /*$
-	SCOPE word
-		RX{
-			$myRx rxWord1 rxWord2
+	SCOPE (word) {
+		RX $myRx {
+			rxWord1 rxWord2
 		}
-		FX{
-			$myFx fxWord1 fxWord2
+		FX $myFx {
+			 fxWord1 fxWord2
 		}
-	IF RX rxWordIf
-		FX fxWordIf
-	ELSE
-		FX fxWordElse
+	}
+	*myRx
+	IF (RX {rxWordIf}){
+		FX {fxWordIf}
+	}
+		
+	ELSE{
+		*/ do more stuff /*
+	}
 $*/

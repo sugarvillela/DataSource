@@ -22,7 +22,7 @@ public class SourceFluid implements IDataSource {
         stack = new Stack<>();
         stack.push(initialSource);
 
-        this.langStruct = Glob.ENUMS_BY_TYPE.sourceFluidLangStruct();// keep all hard-code langDef in lang def package
+        this.langStruct = Glob.ENUMS_BY_TYPE.enumInclude();// keep all hard-code langDef in lang def package
         this.state = false;
 
         this.next();

@@ -1,12 +1,20 @@
 package sourcestep.impl;
 
 import datasink.iface.IDataSinkNode;
+import datasource.dec.SourceTextEvent;
+import langdef.CMD;
+import langdefalgo.iface.LANG_STRUCT;
 import org.junit.jupiter.api.*;
 import readnode.iface.IReadNode;
 import runstate.Glob;
 import runstate.impl.RunState;
+import textevent.iface.ITextEvent;
+import textevent.impl.TextEvent;
 
 import java.util.ArrayList;
+
+import static langdef.CMD.POP;
+import static langdef.CMD.PUSH;
 
 class RunStepTest {
     static RunState runState;
@@ -18,14 +26,15 @@ class RunStepTest {
     }
     @BeforeEach
     void beforeEach(){
-        String filePath = Glob.FILE_NAME_UTIL.mergeDefaultPath("test2.rxfx");
+        String filePath = Glob.FILE_NAME_UTIL.mergeDefaultPath("test6.rxfx");
         System.out.println(filePath);
         runState.setInFilePath(filePath);
-        runState.initStep1();
+
     }
 
     @Test
     void go() {
+        runState.initStep1();
         runState.go();
 
         ArrayList<IDataSinkNode> allSinks = Glob.DATA_SINK.allSinks();
@@ -35,6 +44,9 @@ class RunStepTest {
                 System.out.printf("%s \n", readNode.csvString());
             }
         }
+
+        runState.initStep2();
+        runState.go();
 
 //        System.out.println("STEP TWO");
 //
@@ -63,6 +75,38 @@ class RunStepTest {
 //                "array@0,1,3,0,1,1,1,three,-|" +
 //                "array@0,2,0,0,1,1,0,END_FUN,FUN,POP,-";
 //        Assertions.assertEquals(expected, actual);
+
     }
+
+    @Test
+    void testMuteUtil(){
+        LANG_STRUCT langT = Glob.ENUMS_BY_TYPE.enumLangT();
+        LANG_STRUCT langS = Glob.ENUMS_BY_TYPE.enumLangS();
+        LANG_STRUCT ignoreMe = Glob.ENUMS_BY_TYPE.enumIdDefine();
+
+        SourceTextEvent.ListenUtil listenUtil = new SourceTextEvent.ListenUtil();
+        ITextEvent pushEventIgnore = new TextEvent(ignoreMe, PUSH);
+        ITextEvent pushEventLangS = new TextEvent(langS, PUSH);
+        ITextEvent pushEventLangT = new TextEvent(langT, PUSH);
+        ITextEvent popEventLangS = new TextEvent(langS, POP);
+        ITextEvent popEventLangT = new TextEvent(langT, POP);
+
+        Assertions.assertFalse(listenUtil.shouldAddTextEvent(pushEventIgnore));// in lang T, no listen
+        Assertions.assertFalse(listenUtil.shouldAddTextEvent(pushEventLangT));
+
+        Assertions.assertTrue(listenUtil.shouldAddTextEvent(pushEventLangS));// to lang S, listen
+        Assertions.assertTrue(listenUtil.shouldAddTextEvent(pushEventIgnore));
+
+        Assertions.assertTrue(listenUtil.shouldAddTextEvent(pushEventLangT));// to lang T, no listen
+        Assertions.assertFalse(listenUtil.shouldAddTextEvent(pushEventIgnore));
+
+        Assertions.assertTrue(listenUtil.shouldAddTextEvent(popEventLangT));// to lang S, listen
+        Assertions.assertTrue(listenUtil.shouldAddTextEvent(pushEventIgnore));
+
+        Assertions.assertTrue(listenUtil.shouldAddTextEvent(popEventLangS));// to lang T, no listen
+        Assertions.assertFalse(listenUtil.shouldAddTextEvent(pushEventIgnore));
+
+    }
+
 
 }

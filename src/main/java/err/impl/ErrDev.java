@@ -38,11 +38,28 @@ public class ErrDev implements IErr {
 
     @Override
     public void kill(ERR_TYPE errType) {
+        this.kill(errType, Glob.RUN_STATE.getCurrNode());
+    }
+
+    @Override
+    public void kill(ERR_TYPE errType, IReadNode statusNode) {
         if(displayErrors){
             populateErr(
-                    Glob.RUN_STATE.getCurrNode(),
+                    statusNode,
                     errType.message(),
                     null
+            );
+            dispAndQuit();
+        }
+    }
+
+    @Override
+    public void kill(ERR_TYPE errType, String message) {
+        if(displayErrors){
+            populateErr(
+                    null,
+                    errType.message(),
+                    message
             );
             dispAndQuit();
         }

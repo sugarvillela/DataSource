@@ -5,7 +5,6 @@ import rule_identifier.iface.IIdentifierRule;
 import langdefalgo.iface.EnumPOJOJoin;
 import langdefalgo.iface.LANG_STRUCT;
 import rule_nesting.iface.INestingRule;
-import rule_pop.iface.IPopRule;
 import runstate.Glob;
 import stackpayload.iface.IStackPayload;
 
@@ -28,13 +27,13 @@ public class AlgoProxy implements LANG_STRUCT, EnumPOJOJoin {
     }
 
     @Override
-    public void onPush(IStackPayload stackPayload) {
-        childAlgo.onPush(stackPayload);
+    public void onPush(IStackPayload stackTop) {
+        childAlgo.onPush(stackTop);
     }
 
     @Override
-    public void onPop(IStackPayload stackPayload) {
-        childAlgo.onPop(stackPayload);
+    public void onPop(IStackPayload stackTop) {
+        childAlgo.onPop(stackTop);
     }
 
     @Override
@@ -58,8 +57,8 @@ public class AlgoProxy implements LANG_STRUCT, EnumPOJOJoin {
     }
 
     @Override
-    public IPopRule getPopRule() {
-        return childAlgo.getPopRule();
+    public boolean codeBlockRequired() {
+        return childAlgo.codeBlockRequired();
     }
 
     @Override

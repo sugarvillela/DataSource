@@ -38,7 +38,7 @@ public class ParseTree<T> extends GTreeBase <T> {
         root.setLevel(0);
         root.setIdentifier(path);
         root.setPayload(payload);
-        System.out.println("root: " + root.csvString());
+        //System.out.println("root: " + root.csvString());
         boolean more;
         do{
             tokenizer.setDelimiter(AND);
@@ -62,7 +62,7 @@ public class ParseTree<T> extends GTreeBase <T> {
                 currNode.setIdentifier("");
                 currNode.setOp(delim);
                 for (String token : tokens) {
-                    System.out.println("token: " + token);
+                    //System.out.println("token: " + token);
                     currNode.addChild(token, null);
                 }
                 return true;

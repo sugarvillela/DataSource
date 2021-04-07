@@ -6,15 +6,22 @@ import readnode.iface.IReadNode;
 import runstate.Glob;
 
 public abstract class IdentifierRuleImplGroup {
-    public static final IIdentifierRule ID_IGNORE =     new IdentifierIgnore();
-    public static final IIdentifierRule ID_REQUIRE =    new IdentifierRequire();
-    public static final IIdentifierRule ID_ALLOW =      new IdentifierAllow();
-    public static final IIdentifierRule ID_DISALLOW =   new IdentifierDisallow();
+    public static final IIdentifierRule ID_IGNORE =         new IdentifierIgnore();         // no action, no error
+    public static final IIdentifierRule ID_REQUIRE =        new IdentifierRequire();        // save id, err if absent
+    public static final IIdentifierRule ID_REQUIRE_SILENT = new IdentifierRequireSilent();  // don't save, err if absent
+    public static final IIdentifierRule ID_ALLOW =          new IdentifierAllow();          // save id, no error if absent
+    public static final IIdentifierRule ID_DISALLOW =       new IdentifierDisallow();       // don't save, err if id
 
     public static abstract class IdentifierRuleBase implements IIdentifierRule {
-        private String pushedIdentifier;
+        protected String pushedIdentifier;
 
         protected abstract boolean shouldContinue(boolean hasIdentifier);
+
+        protected boolean putInDataSink(IReadNode pushReadNode){
+            pushedIdentifier = pushReadNode.textEvent().substring();// grab before it is deleted by setIdentifier()
+            Glob.DATA_SINK.setIdentifier(pushReadNode);
+            return true;
+        }
 
         @Override
         public boolean ignore() {
@@ -33,9 +40,7 @@ public abstract class IdentifierRuleImplGroup {
                 )
             ){
                 //System.out.println("newSinkOnIdentifier");
-                pushedIdentifier = pushReadNode.textEvent().substring();// grab before it is deleted by setIdentifier()
-                Glob.DATA_SINK.setIdentifier(pushReadNode);
-                return true;
+                return putInDataSink(pushReadNode);
             }
             pushedIdentifier = null;
             return false;
@@ -83,6 +88,16 @@ public abstract class IdentifierRuleImplGroup {
                 Glob.ERR.kill(ERR_TYPE.MISSING_ID);
             }
             return hasIdentifier;
+        }
+    }
+
+    public static class IdentifierRequireSilent extends IdentifierRequire {
+        private IdentifierRequireSilent(){}
+
+        @Override
+        protected boolean putInDataSink(IReadNode pushReadNode) {
+            pushedIdentifier = null;
+            return false;
         }
     }
 

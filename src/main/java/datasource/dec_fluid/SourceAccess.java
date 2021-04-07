@@ -2,19 +2,14 @@ package datasource.dec_fluid;
 
 import datasource.iface.IDataSource;
 import langdef.CMD;
-import langdefalgo.iface.LANG_STRUCT;
 import readnode.iface.IReadNode;
 import runstate.Glob;
-
-import java.util.Stack;
-
-import static runstate.Glob.FACTORY_DATA_SOURCE;
 
 public class SourceAccess extends SourceFluid {
 
     public SourceAccess(IDataSource initialSource) {
         super(initialSource);
-        this.langStruct = Glob.ENUMS_BY_TYPE.sourceAccessLangStruct();// keep all hard-code langDef in lang def package
+        this.langStruct = Glob.ENUMS_BY_TYPE.enumIdAccess();// keep all hard-code langDef in lang def package
     }
 
     @Override
@@ -22,8 +17,6 @@ public class SourceAccess extends SourceFluid {
         prevNode = currNode;    // output one step behind
         getOrPop();             // get curr, pop if source finished
         fixNodeDoneStatus();    // make sure node.hasNext false only when stack is finished
-
-
 
         pushOnEvent();// push new file?
         return prevNode;

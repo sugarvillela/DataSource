@@ -8,19 +8,24 @@ public enum ERR_TYPE {
 
     // Attrib errors
     NOT_KEY_VAL         ("Expected 'key=value' format"),
-    UNKNOWN_KEY         ("Unknown key"),
+    UNKNOWN_KEY         ("Unknown attribute key"),
     INVALID_BOOL        ("Expected true/false boolean"),
     INVALID_INT         ("Expected integer value"),
     INVALID_STRING      ("Expected non-empty text"),
 
     // Identifier errors
-    MISPLACED_ID        ("Keyword should not be followed by an identifier"),
-    MISSING_ID          ("Expected identifier after keyword"),
+    MISPLACED_ID        ("Identifier not allowed here"),
+    MISSING_ID          ("Expected identifier after keyword/symbol"),
     DUPLICATE_ID        ("Identifier already exists"),
     UNKNOWN_ID          ("Identifier is not defined"),
 
-    UNKNOWN_LANG_STRUCT ("Expected a valid keyword/language structure"),
-    BAD_TEST_PARAM      ("Invalid SCOPE or IF parameter; use a one-word scope or RX"),
+    // Structure/syntax errors
+    UNKNOWN_LANG_STRUCT ("Expected a valid keyword/symbol"),
+    CONSTANT_NOT_SINGLE ("Expected a single item here"),
+
+    // Scope/if errors
+    BAD_TEST_PARAM      ("Invalid SCOPE/IF parameter; use one-word scope or RX, with parentheses"),
+    MISSING_CONDITIONAL ("The preceding language structure is missing a conditional expression"),
 
     DEV_ERROR           ("Developer error"),
     SYNTAX              ("Syntax error"),

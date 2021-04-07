@@ -1,7 +1,7 @@
 package readnode.impl;
 
 import readnode.iface.IReadNode;
-import textevent.iface.ITextEventNode;
+import textevent.iface.ITextEvent;
 
 import java.util.ArrayList;
 
@@ -113,7 +113,7 @@ public class ReadNode extends ReadNodeBase {
         private String source, text, containerText;
         private int row, col, indent;
         private boolean endLine, hasNext;
-        ITextEventNode textEvent;
+        ITextEvent textEvent;
 
         public NodeBuilder(){
             endLine = true;
@@ -163,7 +163,7 @@ public class ReadNode extends ReadNodeBase {
             this.hasNext = hasNext;
             return this;
         }
-        public NodeBuilder textEvent(ITextEventNode textEvent){
+        public NodeBuilder textEvent(ITextEvent textEvent){
             this.textEvent = textEvent;
             return this;
         }

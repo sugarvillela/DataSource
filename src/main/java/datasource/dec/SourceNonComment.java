@@ -11,7 +11,7 @@ public class SourceNonComment extends InterceptorBase{
 
     public SourceNonComment(IDataSource dataSource) {
         super(dataSource);
-        this.langStruct = Glob.ENUMS_BY_TYPE.sourceNonCommentLangStruct();// keep all hard-code langDef in lang def package
+        this.langStruct = Glob.ENUMS_BY_TYPE.enumComment();// keep all hard-code langDef in lang def package
     }
 
     // Tough logic, so pay attention:

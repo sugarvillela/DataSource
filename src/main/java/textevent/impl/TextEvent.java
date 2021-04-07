@@ -2,22 +2,22 @@ package textevent.impl;
 
 import langdef.CMD;
 import langdefalgo.iface.LANG_STRUCT;
-import textevent.iface.ITextEventNode;
+import textevent.iface.ITextEvent;
 
 import java.util.ArrayList;
 
 import static runstate.Glob.NULL_TEXT;
 
-public class TextEventNode implements ITextEventNode {
+public class TextEvent implements ITextEvent {
     private static final String FORMAT_CSV = "%s,%s,%s";
     private final LANG_STRUCT langStruct;
     private final CMD cmd;
     private String substring;
 
-    public TextEventNode(LANG_STRUCT langStruct, CMD cmd) {
+    public TextEvent(LANG_STRUCT langStruct, CMD cmd) {
         this(langStruct, cmd, null);
     }
-    public TextEventNode(LANG_STRUCT langStruct, CMD cmd, String substring) {
+    public TextEvent(LANG_STRUCT langStruct, CMD cmd, String substring) {
         this.langStruct = langStruct;
         this.cmd = cmd;
         this.substring = substring;

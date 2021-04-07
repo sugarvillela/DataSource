@@ -1,23 +1,33 @@
     one two three
     four five
 /*$
-	ATTRIB PROJ_NAME=wowee SOME_NUMBER=23
-	CONSTANT $myConst 69
-	RX $myRX rxContent1 rxContent2 */ six seven eight /* 
-	CONSTANT $crazy philharmonic
-	FUN $MyFun
-		RX $myRX1 rxContentA
-		FX $myFX1 fxContentA fxContentB END_FX
-	END_FUN
-	*MyFun
-	LIST<STRING>
-		CATEGORY $text 
+	ATTRIB {
+		PROJ_NAME=wowee SOME_NUMBER=23
+	}
+	
+	CONSTANT $myConst {69}
+	
+	RX $myRX {
+		rxContent1 rxContent2 */ six seven eight /* 
+	}
+	
+	CONSTANT $crazy { philharmonic}
+	
+	FUN $MyFun {
+		RX $myRX1 { rxContentA }
+		FX $myFX1 { fxContentA fxContentB }
+	}
+	
+	LIST<STRING> {
+		CATEGORY $text {
 			IN ORIG 
-		END_CATEGORY
-		CATEGORY $names 
+		}
+		CATEGORY $names {
 			BOB STEVE 
-			CATEGORY $condiments 
+			
+			CATEGORY $condiments {
 				ketchup mustard
-			END_CATEGORY
+			}
+	}
 $*/
 nine ten

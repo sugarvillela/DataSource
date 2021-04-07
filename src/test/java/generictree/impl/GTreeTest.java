@@ -6,6 +6,7 @@ import generictree.iface.IGTreeTask;
 import generictree.task.TaskDisp;
 import generictree.task.TaskLeavesToList;
 import generictree.task.TaskToList;
+import langdef.LangConstants;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -14,7 +15,7 @@ class GTreeTest {
 
     @Test
     void pathTree() {
-        IGTree<String> tree = new PathTree<>('-');
+        IGTree<String> tree = new PathTree<>(LangConstants.PATH_TREE_SEP);
         tree.put("id0", "payload0");
         tree.put("id0-id01", "payload1");
         tree.put("id0-id01-id02", "payload2");
@@ -48,7 +49,7 @@ class GTreeTest {
         }
     }
     private IGTree<String> mockPathTree(){
-        IGTree<String> tree = new PathTree<>('-');
+        IGTree<String> tree = new PathTree<>(LangConstants.PATH_TREE_SEP);
         tree.put("id0", "payload0");
         tree.put("id0-id01", "payload1");
         tree.put("id0-id01-id02", "payload2");

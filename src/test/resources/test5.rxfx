@@ -1,0 +1,29 @@
+    one two three
+    four five
+/*$
+
+	LIST<STRING> {
+		CATEGORY $text {
+			IN ORIG 
+		}
+		CATEGORY $names {
+			BOB STEVE 
+			
+			CATEGORY $condiments {
+				ketchup mustard
+			}
+		}
+	}
+	LIST<STRING> {
+		CATEGORY $movies {
+			GHOST PLATOON 
+		}
+		CATEGORY $text {
+			MORE_TEXT 
+		}
+	}
+	LIST<SCOPE> { 
+		ALL SENTENCE PHRASE WORD CHAR 
+	}
+$*/
+nine ten

@@ -104,7 +104,6 @@ public class SimpleTok implements ITokenizer {
 
     @Override
     public ArrayList<String> toList() {
-        System.out.println();
         ArrayList<String> out = new ArrayList<>(tokens.length);
         for(String tok: tokens) {
             out.add(tok);

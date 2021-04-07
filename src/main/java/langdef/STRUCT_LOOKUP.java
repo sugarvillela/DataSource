@@ -9,8 +9,6 @@ import langdefalgo.impl.AlgoBase;
 import langdefalgo.impl.AlgoProxy;
 import rule_nesting.iface.INestingRule;
 import rule_nesting.impl.NestingRule;
-import rule_pop.impl.PopRule;
-import rule_pop.iface.IPopRule;
 import runstate.Glob;
 import stackpayload.iface.IStackPayload;
 
@@ -25,18 +23,18 @@ public enum STRUCT_LOOKUP  implements LANG_STRUCT, EnumPOJOJoin {
 
     private final String pushSymbol;
     private final IIdentifierRule identifierRule;
+    protected final INestingRule nestingRule;
     private final AlgoProxy algoProxy;
-    private final INestingRule nestingRule;
     private final IFollowRule followRule;
-    private final IPopRule popRule;
+    //private final IPopRule popRule;
 
     STRUCT_LOOKUP(char pushSymbol, IIdentifierRule identifierRule) {
         this.pushSymbol = String.valueOf(pushSymbol);
         this.identifierRule = identifierRule;
-        this.algoProxy = new AlgoProxy();
         this.nestingRule = new NestingRule();
+        this.algoProxy = new AlgoProxy();
         this.followRule = new FollowRule();
-        this.popRule = new PopRule();
+        //this.popRule = new PopRule();
     }
 
     @Override
@@ -78,7 +76,7 @@ public enum STRUCT_LOOKUP  implements LANG_STRUCT, EnumPOJOJoin {
 
     @Override
     public INestingRule getNestingRule() {
-        return this.nestingRule;
+        return nestingRule;
     }
 
     @Override
@@ -87,8 +85,8 @@ public enum STRUCT_LOOKUP  implements LANG_STRUCT, EnumPOJOJoin {
     }
 
     @Override
-    public IPopRule getPopRule() {
-        return this.popRule;
+    public boolean codeBlockRequired() {
+        return false;
     }
 
     @Override

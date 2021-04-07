@@ -31,7 +31,7 @@ public class SourceLargeFile implements IDataSource {
             row = -1;
         }
         catch ( FileNotFoundException e ){
-            Glob.ERR.kill(ERR_TYPE.FILE_ERROR);
+            Glob.ERR.kill(ERR_TYPE.FILE_ERROR, e.getMessage());
             scanner = new Scanner("");
             hasData = false;
         }

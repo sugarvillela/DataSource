@@ -1,6 +1,8 @@
 package tokenizer.impl;
 
+import langdef.TokSpecialPatternInit;
 import org.junit.jupiter.api.Test;
+import runstate.Glob;
 import tokenizer.iface.ITokenizer;
 
 import java.util.regex.Matcher;
@@ -148,12 +150,14 @@ class TokenizerTest {
 //        System.out.println(unSplitOr);
 //        assertEquals("two-three", unSplitOr);
     }
-    private String protectSpecialContent(String text){
+    private String protectSpecialContent(String text){//algorithm by itself
         String IO = "{", IC = "}", CO = "(", CC = ")";
         String funFormat = "([^%s%s%s%s]+([%s][0-9A-Za-z_:.]+[%s]))";
         String rangeFormat = "([^%s%s%s%s]+([%s][0-9:]+[%s]))";
         Pattern funPat = Pattern.compile(String.format(funFormat, IO, IC, CO, CC, CO, CC));//0
         Pattern rangePat = Pattern.compile(String.format(rangeFormat, IO, IC, CO, CC, IO, IC));//0
+        //System.out.println("funPat: "+funPat.toString());
+        //System.out.println("rangePat: "+funPat.toString());
         Matcher matcher;
         if((matcher = funPat.matcher(text)).find()){
             //System.out.print("found: "+text+":\n");
@@ -166,7 +170,7 @@ class TokenizerTest {
         return text;
     }
     @Test
-    void givenTokenizeDelimiterSpecialContent_shouldKeepAllDelimiter() {
+    void givenTokenizeDelimiterSpecialContent_shouldKeepAllDelimiter() {//algorithm by itself
         ITokenizer tokenizer = Tokenizer.builder().delimiters('{', '}','(', ')').
                 skipSymbols(' ',' ').tokenizeDelimiter().build();
 
@@ -192,6 +196,38 @@ class TokenizerTest {
             text = protectSpecialContent(tests[i]);
             tok = tokenizer.setText(text).parse().toArray();
             actual = String.join("-", tok);
+            System.out.println(actual);
+            //System.out.println("\"" + actual + "\", ");
+            assertEquals(expected[i], actual);
+        }
+    }
+    @Test
+    void givenTokenizeDelimiterSpecialContent_shouldKeepAllDelimiter_usingTokSpecial() {//algorithm in place
+        new TokSpecialPatternInit().initPatterns();
+        String[] tests = {
+                "{{special{5}}}","(special{5})","{special{5:6}",")special{5:6}{","special{5:6}",
+                "(special(field.field))","}special(field.field){","{(special(MY_FIELD))}","special(MY_FIELD.field)","notSpecial"
+        };
+        String[] expected = {
+                "{-{-special{5}-}-}",
+                "(-special{5}-)",
+                "{-special{5:6}",
+                ")-special{5:6}-{",
+                "special{5:6}",
+                "(-special(field.field)-)",
+                "}-special(field.field)-{",
+                "{-(-special(MY_FIELD)-)-}",
+                "special(MY_FIELD.field)",
+                "notSpecial"
+        };
+        String actual;
+        for(int i = 0; i < tests.length; i++){
+            if(Glob.TOK_SPECIAL.tryTok(tests[i])){
+                actual = String.join("-", Glob.TOK_SPECIAL.getResult());
+            }
+            else{
+                actual = tests[i];
+            }
             System.out.println(actual);
             //System.out.println("\"" + actual + "\", ");
             assertEquals(expected[i], actual);

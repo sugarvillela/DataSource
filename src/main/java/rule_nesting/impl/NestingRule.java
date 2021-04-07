@@ -6,12 +6,18 @@ import rule_nesting.iface.INestingRule;
 import java.util.ArrayList;
 
 public class NestingRule implements INestingRule {
+    //private final LANG_STRUCT parentEnum;
     private LANG_STRUCT[] allowedNesting;
     private boolean isCopyOnly;
 
+    public NestingRule() {
+        //this.parentEnum = parentEnum;// for debug
+    }
+
     @Override
     public boolean isAllowedNesting(LANG_STRUCT langStruct){
-        for(int i = 0; i < allowedNesting.length; i++){
+        int len = allowedNesting.length;
+        for(int i = 0; i < len; i++){
             if(allowedNesting[i].equals(langStruct)){
                 return true;
             }

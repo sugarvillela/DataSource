@@ -2,8 +2,6 @@ package rule_follow.impl;
 
 import langdefalgo.iface.LANG_STRUCT;
 import rule_follow.iface.IFollowRule;
-import runstate.Glob;
-import stack.iface.IStackLogIterationItem;
 
 import java.util.Arrays;
 
@@ -17,17 +15,12 @@ public class FollowRule implements IFollowRule {
 
     @Override
     public boolean isAllowedPrev(LANG_STRUCT prevLangStruct) {
-        if(allowedPrev == null){
-            return true;
-        }
-        else{
-            for(int i = 0; i < allowedPrev.length; i++){
-                if(allowedPrev[i].equals(prevLangStruct)){
-                    return true;
-                }
+        for(int i = 0; i < allowedPrev.length; i++){
+            if(allowedPrev[i].equals(prevLangStruct)){
+                return true;
             }
-            return false;
         }
+        return false;
     }
 
     @Override

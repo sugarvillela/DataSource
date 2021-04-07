@@ -14,11 +14,11 @@ public class DataSearch implements IDataSearch {
     private final Map<String, IDataSinkNode> map;
 
     /** Initialize with one node */
-    public DataSearch(String langRoot1, IDataSinkNode rootDataSinkNode1, String langRoot2, IDataSinkNode rootDataSinkNode2) {
-        rootDataSinkNode2.setListening(false);
+    public DataSearch(String langRoot1, IDataSinkNode rootDataSinkNode1) {//, String langRoot2, IDataSinkNode rootDataSinkNode2
+        //rootDataSinkNode2.setListening(false);
         map = new HashMap<>();
         map.put(langRoot1, rootDataSinkNode1);
-        map.put(langRoot2, rootDataSinkNode2);
+        //map.put(langRoot2, rootDataSinkNode2);
     }
 
     @Override
@@ -45,7 +45,7 @@ public class DataSearch implements IDataSearch {
     @Override
     public void setIdentifier(IReadNode readNode) {
         if(this.haveIdentifier(readNode)){                      // check if already exists (user error)
-            Glob.ERR.kill(ERR_TYPE.DUPLICATE_ID);
+            Glob.ERR.kill(ERR_TYPE.DUPLICATE_ID, readNode);
         }
 
         LANG_STRUCT parentEnum = readNode.textEvent().langStruct(); // get enum
@@ -53,7 +53,7 @@ public class DataSearch implements IDataSearch {
         readNode.textEvent().setSubstring(null);                    // kill substring so it won't be re-read on playback
         IDataSinkNode sinkNode = Glob.DATA_SINK.addNewSink(identifier, parentEnum);// set new sink
         map.put(identifier, sinkNode);                               // save enum, new sink in map
-        System.out.println("put identifier: " + identifier);
+        //System.out.println("put identifier: " + identifier);
     }
 
 

@@ -2,10 +2,12 @@ package datasource.dec;
 
 import datasource.TestUtil;
 import datasource.dec_fluid.SourceFluid;
+import datasource.dec_tok.SourceTokSpecial;
 import datasource.iface.IDataSource;
 import datasource.core.SourceArray;
 import datasource.core.SourceFile;
 import datasource.dec_tok.SourceTok;
+import langdef.TokSpecialPatternInit;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -77,12 +79,14 @@ class DecoratorTest {
 
     @Test
     void givenAttachedEnclosingSymbols_shouldDetachSymbols() {
+        new TokSpecialPatternInit().initPatterns();
+
         String[] array = new String[]{
-                "   zero one{  two} three",
+                "   zero one(  two) three",
                 "four { six seven}",
-                "eight"
+                "(eight)"
         };
-        IDataSource dataSource = new SourceEnclosingSymbol(
+        IDataSource dataSource = new SourceTokSpecial(
                 new SourceTok(
                         new SourceNonEmpty(
                                 new SourceArray(array)
@@ -93,16 +97,55 @@ class DecoratorTest {
         String expected =
                 "array@0,0,0,3,1,0,1,zero,-|" +
                 "array@0,0,1,1,1,0,1,one,-|" +
-                "array@0,0,1,1,1,0,1,{,-|" +
+                "array@0,0,1,1,1,0,1,(,-|" +
                 "array@0,0,2,2,1,0,1,two,-|" +
-                "array@0,0,2,2,1,0,1,},-|" +
+                "array@0,0,2,2,1,0,1,),-|" +
                 "array@0,0,3,1,1,1,1,three,-|" +
                 "array@0,1,0,0,1,0,1,four,-|" +
                 "array@0,1,1,1,1,0,1,{,-|" +
                 "array@0,1,2,1,1,0,1,six,-|" +
                 "array@0,1,3,1,1,1,1,seven,-|" +
                 "array@0,1,3,1,1,1,1,},-|" +
-                "array@0,2,0,0,1,1,0,eight,-";
+                "array@0,2,0,0,1,1,0,(,-|" +
+                "array@0,2,0,0,1,1,0,eight,-|" +
+                "array@0,2,0,0,1,1,0,),-";
+        Assertions.assertEquals(expected, actual);
+    }
+    @Test
+    void givenAttachedEnclosingSymbolsWithProtectedText_shouldDetachSymbols() {
+        new TokSpecialPatternInit().initPatterns();
+
+        String[] array = new String[]{
+                "one $myConst {69}",
+                "three"
+//                "   zero one{5:6}  two three{5:6}}",
+//                "(four(myDog) ) six {seven()}",
+//                "(eight{2})"
+        };
+        IDataSource dataSource = new SourceTokSpecial(
+                new SourceTok(
+                        new SourceNonEmpty(
+                                new SourceArray(array)
+                        )
+                )
+        );
+        String actual = TestUtil.iterateAndJoin(dataSource);
+        String expected =
+                "array@0,0,0,3,1,0,1,zero,-|" +
+                "array@0,0,1,1,1,0,1,one{5:6},-|" +
+                "array@0,0,2,2,1,0,1,two,-|" +
+                "array@0,0,3,1,1,1,1,three{5:6},-|" +
+                "array@0,0,3,1,1,1,1,},-|" +
+                "array@0,1,0,0,1,0,1,(,-|" +
+                "array@0,1,0,0,1,0,1,four(myDog),-|" +
+                "array@0,1,1,1,1,0,1,),-|" +
+                "array@0,1,2,1,1,0,1,six,-|" +
+                "array@0,1,3,1,1,1,1,{,-|" +
+                "array@0,1,3,1,1,1,1,seven(),-|" +
+                "array@0,1,3,1,1,1,1,},-|" +
+                "array@0,2,0,0,1,1,0,(,-|" +
+                "array@0,2,0,0,1,1,0,eight{2},-|" +
+                "array@0,2,0,0,1,1,0,),-";
         Assertions.assertEquals(expected, actual);
     }
     @Test
@@ -322,7 +365,7 @@ class DecoratorTest {
                 "eighteen FX"
         };
 
-        IDataSource dataSource = new SourceTextPattern(
+        IDataSource dataSource = new SourceTextEvent(
             new SourceTok(
                     new SourceArray(array)
             )
@@ -357,7 +400,7 @@ class DecoratorTest {
         IDataSource dataSource = new SourceActiveOnly(
                 new SourceFluid(
                         new SourceNonComment(
-                                new SourceTextPattern(
+                                new SourceTextEvent(
                                         new SourceTok(
                                                 new SourceNonEmpty(
                                                         new SourceFile(FILE_NAME_UTIL.mergeDefaultPath("test1.rxfx"))

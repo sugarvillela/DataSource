@@ -1,5 +1,6 @@
-package datasource.dec;
+package datasource.dec_tok;
 
+import datasource.dec.DecoratorBase;
 import datasource.iface.IDataSource;
 import readnode.iface.IReadNode;
 import readnode.impl.ReadNode;
@@ -12,12 +13,12 @@ import java.util.Queue;
 import static langdef.LangConstants.ITEM_OPEN;
 import static langdef.LangConstants.ITEM_CLOSE;
 
-public class SourceEnclosingSymbol extends DecoratorBase{
+public class SourceTokSpecial extends DecoratorBase {
     private final String spaceOpen, spaceClose;
     private final Queue<IReadNode> queue;
     IReadNode nextNode, currNode;
 
-    public SourceEnclosingSymbol(IDataSource dataSource) {
+    public SourceTokSpecial(IDataSource dataSource) {
         super(dataSource);
         spaceOpen = String.format(" %s ", ITEM_OPEN);
         spaceClose = String.format(" %s ", ITEM_CLOSE);
@@ -35,9 +36,8 @@ public class SourceEnclosingSymbol extends DecoratorBase{
         currNode = nextNode;
         if(currNode != null){
             String text = currNode.text();
-            String changeString = text.replace(ITEM_OPEN, spaceOpen).replace(ITEM_CLOSE, spaceClose);
-            if(text.length() < changeString.length()){
-                ArrayList<String> tokens = Glob.TOKENIZER.setText(changeString).parse().toList();
+            if(Glob.TOK_SPECIAL.tryTok(text)){
+                ArrayList<String> tokens =  Glob.TOK_SPECIAL.getResult();
                 for(String token : tokens){
                     IReadNode newNode = ReadNode.builder().copy(currNode).text(token).build();
                     queue.add(newNode);

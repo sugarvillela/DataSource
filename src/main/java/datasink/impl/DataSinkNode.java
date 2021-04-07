@@ -1,7 +1,7 @@
 package datasink.impl;
 
 import datasink.iface.IDataSinkNode;
-import datasource.core.SourceNode;
+import datasource.core.SourceNodeList;
 import datasource.iface.IDataSource;
 import langdefalgo.iface.LANG_STRUCT;
 import readnode.iface.IReadNode;
@@ -53,15 +53,10 @@ public class DataSinkNode implements IDataSinkNode {
     }
 
     @Override
-    public void goBack() {
-        if(!skippedLast && !nodes.isEmpty()){
-            nodes.remove(nodes.size() - 1);
-        }
-    }
-
-    @Override
     public IDataSource toDataSource() {
-        return new SourceNode(nodes.toArray(new IReadNode[0]));
+        ArrayList<IReadNode> out = new ArrayList<>(nodes);
+        nodes.clear();
+        return new SourceNodeList(out);
     }
 
     @Override
@@ -69,8 +64,4 @@ public class DataSinkNode implements IDataSinkNode {
         return nodes;
     }
 
-    @Override
-    public void clearNodes() {
-        nodes.clear();
-    }
 }

@@ -4,7 +4,7 @@ import langdef.CMD;
 import langdefalgo.iface.LANG_STRUCT;
 
 /** Immutable data object */
-public interface ITextEventNode {
+public interface ITextEvent {
     LANG_STRUCT langStruct();
     CMD cmd();
 

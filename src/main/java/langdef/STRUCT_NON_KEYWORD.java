@@ -9,8 +9,6 @@ import langdefalgo.impl.AlgoBase;
 import langdefalgo.impl.AlgoProxy;
 import rule_nesting.iface.INestingRule;
 import rule_nesting.impl.NestingRule;
-import rule_pop.impl.PopRule;
-import rule_pop.iface.IPopRule;
 import runstate.Glob;
 import stackpayload.iface.IStackPayload;
 
@@ -19,9 +17,7 @@ import static rule_identifier.impl.IdentifierRuleImplGroup.ID_IGNORE;
 /** These are support structures used in implementation but not in the language front end. */
 public enum STRUCT_NON_KEYWORD implements LANG_STRUCT, EnumPOJOJoin {
     LANG_T      (),
-    IF_TEST     (),
-    SCOPE_TEST  (),
-    CONDITIONAL_ITEM(),
+    SCOPE_TEST_ITEM(),
     RX_WORD     (),
     FX_WORD     (),
     LANG_ROOT_1(),
@@ -30,16 +26,16 @@ public enum STRUCT_NON_KEYWORD implements LANG_STRUCT, EnumPOJOJoin {
 
     private final AlgoProxy algoProxy;
     private final IIdentifierRule identifierRule;
-    private final INestingRule nestingRule;
+    protected final INestingRule nestingRule;
     private final IFollowRule followRule;
-    private final IPopRule popRule;
+    //private final IPopRule popRule;
 
     STRUCT_NON_KEYWORD() {
         this.algoProxy = new AlgoProxy();
         this.identifierRule = ID_IGNORE;
         this.nestingRule = new NestingRule();
         this.followRule = new FollowRule();
-        this.popRule = new PopRule();
+        //this.popRule = new PopRule();
     }
 
     /*=====LANG_STRUCT================================================================================================*/
@@ -71,7 +67,7 @@ public enum STRUCT_NON_KEYWORD implements LANG_STRUCT, EnumPOJOJoin {
 
     @Override
     public INestingRule getNestingRule() {
-        return this.nestingRule;
+        return nestingRule;
     }
 
     @Override
@@ -80,8 +76,8 @@ public enum STRUCT_NON_KEYWORD implements LANG_STRUCT, EnumPOJOJoin {
     }
 
     @Override
-    public IPopRule getPopRule() {
-        return this.popRule;
+    public boolean codeBlockRequired() {
+        return false;
     }
 
     @Override

@@ -12,9 +12,7 @@ public interface IDataSinkNode {
     void setListening(boolean listening);
 
     void put(IReadNode readNode);
-    void goBack();
 
     IDataSource toDataSource();
-    ArrayList<IReadNode> getNodes();
-    void clearNodes();
+    ArrayList<IReadNode> getNodes();    // return original
 }

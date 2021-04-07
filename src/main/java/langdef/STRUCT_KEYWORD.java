@@ -9,8 +9,6 @@ import langdefalgo.impl.AlgoBase;
 import langdefalgo.impl.AlgoProxy;
 import rule_nesting.iface.INestingRule;
 import rule_nesting.impl.NestingRule;
-import rule_pop.impl.PopRule;
-import rule_pop.iface.IPopRule;
 import runstate.Glob;
 import stackpayload.iface.IStackPayload;
 
@@ -25,23 +23,28 @@ public enum STRUCT_KEYWORD implements LANG_STRUCT, EnumPOJOJoin {
     SCOPE       (ID_ALLOW),
     IF          (ID_ALLOW),
     ELSE        (ID_ALLOW),
-    CATEGORY    (ID_REQUIRE),
+    CATEGORY    (ID_REQUIRE_SILENT),
 
-    INCLUDE     (ID_DISALLOW),
+    INCLUDE     (ID_DISALLOW, false),
     ;
 
     private final IIdentifierRule identifierRule;
+    protected final INestingRule nestingRule;
     private final AlgoProxy algoProxy;
-    private final INestingRule nestingRule;
     private final IFollowRule followRule;
-    private final IPopRule popRule;
+    //private final IPopRule popRule;
+    private final boolean codeBlockRequired;
 
-    STRUCT_KEYWORD(IIdentifierRule identifierRule) {
+    STRUCT_KEYWORD(IIdentifierRule identifierRule){
+        this(identifierRule, true);
+    }
+    STRUCT_KEYWORD(IIdentifierRule identifierRule, boolean codeBlockRequired) {
+        this.codeBlockRequired = codeBlockRequired;
         this.identifierRule = identifierRule;
-        this.algoProxy = new AlgoProxy();
         this.nestingRule = new NestingRule();
+        this.algoProxy = new AlgoProxy();
         this.followRule = new FollowRule();
-        this.popRule = new PopRule();
+        //this.popRule = new PopRule();
     }
 
     /*=====TEXT_PATTERN===============================================================================================*/
@@ -85,7 +88,7 @@ public enum STRUCT_KEYWORD implements LANG_STRUCT, EnumPOJOJoin {
 
     @Override
     public INestingRule getNestingRule() {
-        return this.nestingRule;
+        return nestingRule;
     }
 
     @Override
@@ -94,8 +97,8 @@ public enum STRUCT_KEYWORD implements LANG_STRUCT, EnumPOJOJoin {
     }
 
     @Override
-    public IPopRule getPopRule() {
-        return this.popRule;
+    public boolean codeBlockRequired() {
+        return codeBlockRequired;
     }
 
     @Override

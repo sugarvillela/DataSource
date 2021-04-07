@@ -2,19 +2,24 @@ package runstate.impl;
 
 import datasource.core.SourceFile;
 import datasource.dec.*;
+import datasource.dec_fluid.SourceAccess;
 import datasource.dec_fluid.SourceFluid;
 import datasource.dec_tok.SourceTok;
+import datasource.dec_tok.SourceTokSpecial;
+import datasource.iface.IDataSource;
 import langdef.RulesByStructType_Follow;
 import langdef.RulesByStructType_Nesting;
-import langdef.RulesByStructType_Pop;
+import langdef.TokSpecialPatternInit;
+import langdefalgo.iface.LANG_STRUCT;
 import langdefalgo.impl.AlgoImplGroupStep1;
 import langdefalgo.impl.AlgoImplGroupStep2;
 import readnode.iface.IReadNode;
+import runstate.Glob;
 import runstate.iface.IRunState;
 import runstate.iface.IRunStep;
-import stack.iface.IStackLog;
 import stack.iface.IStructStack;
-import stackpayload.iface.IStackPayload;
+
+import java.util.ArrayList;
 
 public class RunState implements IRunState {
     private static RunState instance;
@@ -45,7 +50,8 @@ public class RunState implements IRunState {
     public void initRunState() {
         new RulesByStructType_Nesting().initRules();
         new RulesByStructType_Follow().initRules();
-        new RulesByStructType_Pop().initRules();
+        //new RulesByStructType_Pop().initRules();
+        new TokSpecialPatternInit().initPatterns();
 
 //        ArrayList<EnumPOJOJoin> enumPOJOJoins = Glob.ENUMS_BY_TYPE.allEnumAlgoJoin();
 //        for(EnumPOJOJoin enumPOJOJoin : enumPOJOJoins){
@@ -57,12 +63,12 @@ public class RunState implements IRunState {
     public void initStep1() {
         new AlgoImplGroupStep1().initAlgos();
 
-        currentSourceStep = new RunStep(
-            //new SourceFirstAndLast(
-                new SourceActiveOnly(
-                    new SourceFluid(
-                        new SourceNonComment(
-                            new SourceTextPattern(
+        currentSourceStep = new RunStep1(
+            new SourceActiveOnly(
+                new SourceFluid(
+                    new SourceNonComment(
+                        new SourceTextEvent(
+                            new SourceTokSpecial(
                                 new SourceTok(
                                     new SourceNonEmpty(
                                         new SourceFile(filePath)
@@ -72,13 +78,23 @@ public class RunState implements IRunState {
                         )
                     )
                 )
-            //)
+            )
         );
     }
 
     @Override
-    public void runPreScan() {
+    public void initStep2() {
+        new AlgoImplGroupStep2().initAlgos();
+        IDataSource outputStep1 =
+                Glob.DATA_SINK.getIdentifier(Glob.ENUMS_BY_TYPE.enumLangRoot1().toString()).toDataSource();
 
+        currentSourceStep = new RunStep2(
+            new SourceActiveOnly(
+                new SourceAccess(
+                        outputStep1
+                )
+            )
+        );
     }
 
     /*=====SourceStep methods, delegate to currSourceStep=============================================================*/
@@ -94,47 +110,8 @@ public class RunState implements IRunState {
     }
 
     @Override
-    public void goBack(IReadNode backNode) {
-        currentSourceStep.goBack(backNode);
-    }
-
-    @Override
     public IStructStack getStack() {
         return currentSourceStep.getStack();
     }
 
-    @Override
-    public void setCurrNode(IReadNode newNode) {
-        currentSourceStep.setCurrNode(newNode);
-    }
-
-    @Override
-    public void push(IStackPayload stackPayload) {
-        currentSourceStep.push(stackPayload);
-    }
-
-    @Override
-    public void pop() {
-        currentSourceStep.pop();
-    }
-
-    @Override
-    public void popMost() {
-        currentSourceStep.popMost();
-    }
-
-    @Override
-    public IStackPayload top() {
-        return currentSourceStep.top();
-    }
-
-    @Override
-    public int size() {
-        return currentSourceStep.size();
-    }
-
-    @Override
-    public IStackLog getStackLog() {
-        return currentSourceStep.getStackLog();
-    }
 }

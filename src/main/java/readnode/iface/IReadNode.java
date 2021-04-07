@@ -1,7 +1,7 @@
 package readnode.iface;
 
 import langdef.CMD;
-import textevent.iface.ITextEventNode;
+import textevent.iface.ITextEvent;
 
 /** See accompanying javadoc in IDataSource.
  *  Contextual comments below in code */
@@ -10,7 +10,7 @@ public interface IReadNode extends Comparable<IReadNode> {
     void setActive(boolean active);     // Set false if node should be ignored by downstream parsing
     void setEndLine(boolean endLine);   // Overridable (SourceNonComment sets true)
     void setHasNext(boolean hasNext);   // Overridable done state (used by SourceFluid to continue on source pop)
-    void setTextEvent(ITextEventNode textEventNode); //  (set by SourceTextPattern)
+    void setTextEvent(ITextEvent textEventNode); //  (set by SourceTextPattern)
     void renumberSortValue();
 
     // immutable status
@@ -28,7 +28,7 @@ public interface IReadNode extends Comparable<IReadNode> {
     boolean endLine();                  // Row mode: always true; Tokenize mode: true on last word
     boolean hasNext();                  // Row mode: false on last row; Tokenize mode: false on all words in last row (overridden by SourceFluid to continue on source pop)
     boolean hasTextEvent();             // Default false unless textEvent is kill
-    ITextEventNode textEvent();         // Null unless text matches a LANG_STRUCT enum (kill by PatternMatch)
+    ITextEvent textEvent();         // Null unless text matches a LANG_STRUCT enum (kill by PatternMatch)
 
     // to string
     String indentedText();              // Row mode: same as text(); Tokenize mode: recreate indented text (goBack spaces still discarded)

@@ -23,7 +23,7 @@ public class SmallFileDump {
                 list.add(line);
             }
         } catch (IOException e) {
-            Glob.ERR.kill(ERR_TYPE.FILE_ERROR);
+            Glob.ERR.kill(ERR_TYPE.FILE_ERROR, e.getMessage());
         }
         return list;// returns empty list on fail
     }

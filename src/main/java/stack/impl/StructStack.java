@@ -26,7 +26,7 @@ public class StructStack implements IStructStack {
         }
         stack.push(stackPayload);
         stackPayload.onPush();
-        stackPayload.addToStackLog(stackLog, null);
+        stackPayload.addToStackLog(stackLog);
     }
 
     @Override
@@ -35,8 +35,8 @@ public class StructStack implements IStructStack {
             stack.peek().onPop();
             stack.pop();
             if(!stack.isEmpty()){
-                stack.peek().addToStackLog(stackLog, null);
-                stack.peek().getLangStructEnum().onRegainTop();
+                stack.peek().addToStackLog(stackLog);
+                stack.peek().getParentEnum().onRegainTop();
             }
         }
     }

@@ -15,6 +15,7 @@ import static langdef.CMD.PUSH;
 import static langdef.STRUCT_KEYWORD.INCLUDE;
 import static langdef.STRUCT_LOOKUP.*;
 import static langdef.STRUCT_NON_KEYWORD.*;
+import static langdef.STRUCT_SYMBOL.CODE_BLOCK;
 import static langdef.STRUCT_SYMBOL.LANG_S;
 
 /** Keeping hard-coded lang def names in langDef package, this class exports
@@ -111,25 +112,28 @@ public class EnumsByType {
         return list;
     }
 
-    public LANG_STRUCT sourceFluidLangStruct(){
+    public LANG_STRUCT enumInclude(){
         return INCLUDE;
     }
-    public LANG_STRUCT sourceAccessLangStruct(){
+    public LANG_STRUCT enumIdAccess(){
         return ID_ACCESS;
     }
-    public LANG_STRUCT sourceNonCommentLangStruct(){
+    public LANG_STRUCT enumComment(){
         return COMMENT;
     }
-    public LANG_STRUCT sourceTextPatternIdDefine(){
+    public LANG_STRUCT enumIdDefine(){
         return ID_DEFINE;
     }
-    public LANG_STRUCT targetLangEnum(){
+    public LANG_STRUCT enumLangT(){
         return LANG_T;
     }
-    public LANG_STRUCT sourceLangEnum(){
+    public LANG_STRUCT enumLangS(){
         return LANG_S;
     }
-    public LANG_STRUCT langRootEnum1(){
+    public LANG_STRUCT enumCodeBlock(){
+        return CODE_BLOCK;
+    }
+    public LANG_STRUCT enumLangRoot1(){
         return LANG_ROOT_1;
     }
     public LANG_STRUCT langRootEnum2(){

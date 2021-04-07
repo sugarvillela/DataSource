@@ -1,16 +1,17 @@
 package langdef;
 
+import generictree.listsink.ListSink;
+import generictree.iface.IGTree;
 import langdefalgo.iface.EnumPOJOJoin;
 import langdefalgo.iface.LANG_STRUCT;
 import langdefalgo.impl.AlgoBase;
 import langdefalgo.impl.AlgoProxy;
+import readnode.iface.IReadNode;
 import rule_follow.iface.IFollowRule;
 import rule_follow.impl.FollowRule;
 import rule_identifier.iface.IIdentifierRule;
 import rule_nesting.iface.INestingRule;
 import rule_nesting.impl.NestingRule;
-import rule_pop.iface.IPopRule;
-import rule_pop.impl.PopRule;
 import runstate.Glob;
 import stackpayload.iface.IStackPayload;
 
@@ -26,20 +27,25 @@ public enum STRUCT_LIST_TYPE implements LANG_STRUCT, EnumPOJOJoin {
     ;
 
     private final IIdentifierRule identifierRule;
+    protected final INestingRule nestingRule;
     private final AlgoProxy algoProxy;
-    private final INestingRule nestingRule;
     private final IFollowRule followRule;
-    private final IPopRule popRule;
+    //private final IPopRule popRule;
     private final String pushSymbol;
+
+    private final IGTree<IReadNode> listSink;
 
     STRUCT_LIST_TYPE() {
         this.identifierRule = ID_DISALLOW;
-        this.algoProxy = new AlgoProxy();
         this.nestingRule = new NestingRule();
+        this.algoProxy = new AlgoProxy();
         this.followRule = new FollowRule();
-        this.popRule = new PopRule();
+        //this.popRule = new PopRule();
         this.pushSymbol = this.toString().replace('_', '<') + '>';// template-like notation
+        this.listSink = new ListSink();
     }
+
+    /*=====STRUCT_LIST_TYPE methods===================================================================================*/
 
     public static STRUCT_LIST_TYPE from(String text){
         try {
@@ -55,8 +61,11 @@ public enum STRUCT_LIST_TYPE implements LANG_STRUCT, EnumPOJOJoin {
             return null;
         }
     }
+    public IGTree<IReadNode> getListSink(){
+        return listSink;
+    }
 
-    /*=====LANG_STRUCT===============================================================================================*/
+    /*=====LANG_STRUCT================================================================================================*/
 
     @Override
     public String getPushSymbol() {
@@ -96,7 +105,7 @@ public enum STRUCT_LIST_TYPE implements LANG_STRUCT, EnumPOJOJoin {
 
     @Override
     public INestingRule getNestingRule() {
-        return this.nestingRule;
+        return nestingRule;
     }
 
     @Override
@@ -105,8 +114,8 @@ public enum STRUCT_LIST_TYPE implements LANG_STRUCT, EnumPOJOJoin {
     }
 
     @Override
-    public IPopRule getPopRule() {
-        return this.popRule;
+    public boolean codeBlockRequired() {
+        return true;
     }
 
     @Override

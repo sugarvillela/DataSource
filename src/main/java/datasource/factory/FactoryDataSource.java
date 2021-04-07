@@ -25,7 +25,7 @@ public class FactoryDataSource {
 
     private IDataSource getSmall1(IDataSource dataSource){
         return new SourceNonComment(
-                new SourceTextPattern(
+                new SourceTextEvent(
                         new SourceTok(
                                 new SourceNonEmpty(dataSource))
                 )
@@ -37,7 +37,7 @@ public class FactoryDataSource {
                 new SourceActiveOnly(
                         new SourceFluid(
                                 new SourceNonComment(
-                                        new SourceTextPattern(
+                                        new SourceTextEvent(
                                                 new SourceTok(
                                                         new SourceNonEmpty(dataSource))
                                         )

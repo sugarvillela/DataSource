@@ -8,13 +8,17 @@ import readnode.iface.IReadNode;
  *    Err:      for transpiler user: quit on bad program input; always on
  */
 public interface IErr {
-    boolean check(ERR_TYPE errType);
+    boolean check(ERR_TYPE errType);                    // use if RunState.currNode() gives correct position
 
-    void kill(ERR_TYPE errType);
+    void kill(ERR_TYPE errType);                        // use if RunState.currNode() gives correct position
 
-    void kill(IReadNode statusNode, String message);
+    void kill(ERR_TYPE errType, IReadNode statusNode);  // use if RunState.currNode() not correct position
 
-    void kill(String message, String text);
+    void kill(ERR_TYPE errType, String message);        // use for file errors etc.
 
-    void kill(String message);
+    void kill(IReadNode statusNode, String message);    // use for a more helpful err message
+
+    void kill(String message, String text);             // use for a more helpful err message
+
+    void kill(String message);                          // use for a more helpful err message
 }

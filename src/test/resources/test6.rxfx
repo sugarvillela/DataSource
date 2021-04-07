@@ -1,0 +1,20 @@
+    one two three
+    four five
+/*$
+	CONSTANT $myConst {69}
+	
+	RX $myRX {
+		rxContent1 rxContent2 */ six seven eight /* 
+	}
+	
+	*MyFun
+	
+	CONSTANT $crazy { philharmonic}
+	
+	FUN $MyFun {
+		RX $myRX1 { rxContentA }
+		FX $myFX1 { fxContentA fxContentB }
+	}
+	
+$*/
+nine ten

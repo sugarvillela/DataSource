@@ -15,22 +15,16 @@ public class RulesByStructType_Nesting {
         /*=====STRUCT_KEYWORD=========================================================================================*/
 
         ATTRIB.getNestingRule().setAllowedNesting();
-
         CONSTANT.getNestingRule().setAllowedNesting(Glob.ENUMS_BY_TYPE.allFrontEndLangStruct());
-
         RX.getNestingRule().setAllowedNesting(LANG_T_INSERT);
-
-        FX.getNestingRule().setAllowedNesting();
+        FX.getNestingRule().setAllowedNesting(LANG_T_INSERT);
 
         FUN.getNestingRule().setCopyOnly(true);
-        FUN.getNestingRule().setAllowedNesting();
+        FUN.getNestingRule().setAllowedNesting(Glob.ENUMS_BY_TYPE.allFrontEndLangStruct());
 
         SCOPE.getNestingRule().setAllowedNesting(SCOPE_TEST, SCOPE, RX, FX);
-
-        IF.getNestingRule().setAllowedNesting(IF_TEST, RX, FX);
-
-        ELSE.getNestingRule().setAllowedNesting(RX, FX, IF, FUN);
-
+        IF.getNestingRule().setAllowedNesting(SCOPE_TEST, RX, FX);
+        ELSE.getNestingRule().setAllowedNesting(RX, FX, IF, ELSE, SCOPE, LANG_T_INSERT);
         CATEGORY.getNestingRule().setAllowedNesting(CATEGORY);
 
         INCLUDE.getNestingRule().setAllowedNesting();
@@ -45,31 +39,18 @@ public class RulesByStructType_Nesting {
         LIST_SCOPE.getNestingRule().setAllowedNesting();
 
         /*=====STRUCT_LOOKUP==========================================================================================*/
-
+        // ID_DEFINE
+        // COMMENT
         ID_ACCESS.getNestingRule().setAllowedNesting();
 
         /*=====STRUCT_NON_KEYWORD=====================================================================================*/
 
-        LANG_T.getNestingRule().setAllowedNesting(
-                LANG_S
-        );
-
-        IF_TEST.getNestingRule().setAllowedNesting(
-                RX
-        );
-
-        SCOPE_TEST.getNestingRule().setAllowedNesting(
-                RX, CONDITIONAL_ITEM
-        );
-
-        CONDITIONAL_ITEM.getNestingRule().setAllowedNesting(
-                IF, ELSE
-        );
-
+        LANG_T.getNestingRule().setAllowedNesting(LANG_S);
+        SCOPE_TEST_ITEM.getNestingRule().setAllowedNesting();
         RX_WORD.getNestingRule().setAllowedNesting();
-
         FX_WORD.getNestingRule().setAllowedNesting();
-
+        // LANG_ROOT_1
+        // LANG_ROOT_2
         /*=====STRUCT_SYMBOL==========================================================================================*/
 
         LANG_S.getNestingRule().setAllowedNesting(
@@ -79,7 +60,8 @@ public class RulesByStructType_Nesting {
 
         LANG_T_INSERT.getNestingRule().setCopyOnly(true);
         LANG_T_INSERT.getNestingRule().setAllowedNesting();
-
-        ANTI_FX.getNestingRule().setAllowedNesting();
+        SCOPE_TEST.getNestingRule().setAllowedNesting(RX, SCOPE_TEST_ITEM);
+        // CODE_BLOCK
+        A_FX.getNestingRule().setAllowedNesting();
     }
 }
