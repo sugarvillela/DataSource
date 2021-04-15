@@ -1,5 +1,6 @@
 package stackpayload.impl;
 
+import err.ERR_TYPE;
 import langdefalgo.iface.LANG_STRUCT;
 import langdefalgo.impl.AlgoBase;
 import langdefalgo.impl.AlgoProxy;
@@ -78,6 +79,24 @@ public abstract class StackPayloadBase implements IStackPayload {
         parentEnum.onPop(this);
     }
 
+    @Override
+    public IStackPayload getSelf(){// never null
+        IStackPayload out = this;
+        try{
+            while(out.getParentEnum() == Glob.ENUMS_BY_TYPE.enumCodeBlock()){
+                out = out.getBelow();
+            }
+        }
+        catch(NullPointerException e){// should never happen
+            Glob.ERR_DEV.kill(ERR_TYPE.DEV_ERROR, e.getMessage());
+        }
+        return out;
+    }
+
+    @Override
+    public IStackPayload getSelfNonAlias(){
+        return this;
+    }
     @Override
     public IStackPayload getBelow() {
         return below;

@@ -58,21 +58,26 @@ public class DataSearch implements IDataSearch {
 
 
     @Override
-    public IDataSinkNode getIdentifier() {
-        return this.getIdentifier(Glob.RUN_STATE.getCurrNode());
+    public IDataSinkNode getIdentifierOrErr() {
+        return this.getIdentifierOrErr(Glob.RUN_STATE.getCurrNode());
     }
 
     @Override
-    public IDataSinkNode getIdentifier(IReadNode readNode) {
-        return this.getIdentifier(readNode.textEvent().substring());
+    public IDataSinkNode getIdentifierOrErr(IReadNode readNode) {
+        return this.getIdentifierOrErr(readNode.textEvent().substring());
     }
 
     @Override
-    public IDataSinkNode getIdentifier(String identifier) {
+    public IDataSinkNode getIdentifierOrErr(String identifier) {
         IDataSinkNode sinkNode = map.get(identifier);
         if(sinkNode == null){                                     // check if bad identifier (user error)
-            Glob.ERR.kill(ERR_TYPE.UNKNOWN_ID.toString(), identifier);
+            Glob.ERR.kill(ERR_TYPE.UNKNOWN_ID.message(), identifier);
         }
         return sinkNode;
+    }
+
+    @Override
+    public IDataSinkNode getIdentifier(String identifier) {// return null if no exist
+        return map.get(identifier);
     }
 }

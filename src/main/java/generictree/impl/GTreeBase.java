@@ -3,7 +3,13 @@ package generictree.impl;
 import generictree.iface.IGTree;
 import generictree.iface.IGTreeNode;
 import generictree.iface.IGTreeParse;
+import generictree.iface.IGTreeTask;
 import generictree.parse.GTreeParse;
+import generictree.task.TaskDisp;
+import generictree.task.TaskToList;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public abstract class GTreeBase <T> implements IGTree<T> {
     protected final IGTreeParse<T> parseObject;
@@ -21,6 +27,24 @@ public abstract class GTreeBase <T> implements IGTree<T> {
     @Override
     public boolean put(String path) {
         return this.put(path, null);
+    }
+
+    @Override
+    public void clear() {
+        if(root != null){
+            List<IGTreeNode<T>> list = new ArrayList<>();
+            IGTreeTask<T> task = new TaskToList<T>(list);
+            this.getParse().breadthFirst(this.getRoot(), task);
+            for(int i = list.size() -1; i >= 0; i--){
+                IGTreeNode<T> currNode = list.get(i);
+                System.out.println(currNode.friendlyString());
+                if(!currNode.isLeaf()){
+                    System.out.println("clear");
+                     currNode.getChildren().clear();
+                }
+            }
+            root = null;
+        }
     }
 
     @Override

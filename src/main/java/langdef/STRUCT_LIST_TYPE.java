@@ -1,8 +1,10 @@
 package langdef;
 
-import generictree.listsink.ListSink;
+import err.ERR_TYPE;
+import generictree.listsink.ListTree;
 import generictree.iface.IGTree;
 import langdefalgo.iface.EnumPOJOJoin;
+import langdefalgo.iface.IAlgoStrategy;
 import langdefalgo.iface.LANG_STRUCT;
 import langdefalgo.impl.AlgoBase;
 import langdefalgo.impl.AlgoProxy;
@@ -33,7 +35,7 @@ public enum STRUCT_LIST_TYPE implements LANG_STRUCT, EnumPOJOJoin {
     //private final IPopRule popRule;
     private final String pushSymbol;
 
-    private final IGTree<IReadNode> listSink;
+    private final IGTree<IReadNode> listTree;
 
     STRUCT_LIST_TYPE() {
         this.identifierRule = ID_DISALLOW;
@@ -42,7 +44,7 @@ public enum STRUCT_LIST_TYPE implements LANG_STRUCT, EnumPOJOJoin {
         this.followRule = new FollowRule();
         //this.popRule = new PopRule();
         this.pushSymbol = this.toString().replace('_', '<') + '>';// template-like notation
-        this.listSink = new ListSink();
+        this.listTree = new ListTree();
     }
 
     /*=====STRUCT_LIST_TYPE methods===================================================================================*/
@@ -61,8 +63,8 @@ public enum STRUCT_LIST_TYPE implements LANG_STRUCT, EnumPOJOJoin {
             return null;
         }
     }
-    public IGTree<IReadNode> getListSink(){
-        return listSink;
+    public IGTree<IReadNode> getListTree(){
+        return listTree;
     }
 
     /*=====LANG_STRUCT================================================================================================*/
@@ -84,13 +86,18 @@ public enum STRUCT_LIST_TYPE implements LANG_STRUCT, EnumPOJOJoin {
     }
 
     @Override
-    public void onPush(IStackPayload stackPayload) {
-        algoProxy.onPush(stackPayload);
+    public void onPush(IStackPayload stackTop) {
+        algoProxy.onPush(stackTop);
     }
 
     @Override
-    public void onPop(IStackPayload stackPayload) {
-        algoProxy.onPop(stackPayload);
+    public void onPop(IStackPayload stackTop) {
+        algoProxy.onPop(stackTop);
+    }
+
+    @Override
+    public void onNest(IStackPayload newTop) {
+        algoProxy.onNest(newTop);
     }
 
     @Override
@@ -114,6 +121,11 @@ public enum STRUCT_LIST_TYPE implements LANG_STRUCT, EnumPOJOJoin {
     }
 
     @Override
+    public boolean doCoreTask(IStackPayload stackTop) {
+        return algoProxy.doCoreTask(stackTop);
+    }
+
+    @Override
     public boolean codeBlockRequired() {
         return true;
     }
@@ -126,18 +138,18 @@ public enum STRUCT_LIST_TYPE implements LANG_STRUCT, EnumPOJOJoin {
     /*=====EnumPOJOJoin===============================================================================================*/
 
     @Override
-    public void initAlgo(AlgoBase childAlgo) {
-        this.algoProxy.initAlgo(this, childAlgo);
+    public void initAlgo(AlgoBase childAlgo, IAlgoStrategy[] pushes, IAlgoStrategy[] pops) {
+        this.algoProxy.initAlgo(this, childAlgo, pushes, pops);
     }
 
     @Override
-    public void initAlgo(LANG_STRUCT parentEnum, AlgoBase childAlgo) {
-        Glob.ERR_DEV.kill("Call two-arg initAlgo() only on child algo");
+    public void initAlgo(LANG_STRUCT parentEnum, AlgoBase childAlgo, IAlgoStrategy[] pushes, IAlgoStrategy[] pops) {
+        Glob.ERR_DEV.kill(ERR_TYPE.DEV_ERROR);
     }
 
     @Override
     public LANG_STRUCT getParentEnum() {
-        Glob.ERR_DEV.kill("Call getParentEnum only on child algo");
+        Glob.ERR_DEV.kill(ERR_TYPE.DEV_ERROR);
         return null;
     }
 

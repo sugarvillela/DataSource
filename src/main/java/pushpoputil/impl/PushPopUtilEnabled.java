@@ -1,5 +1,6 @@
 package pushpoputil.impl;
 
+import err.ERR_TYPE;
 import langdef.CMD;
 import langdefalgo.iface.EnumPOJOJoin;
 import langdefalgo.iface.LANG_STRUCT;
@@ -20,7 +21,7 @@ class PushPopUtilEnabled implements IPushPopUtil {
     }
     private boolean tryPop(IReadNode readNode, IStackPayload stackTop) {
         if(readNode.textEvent().langStruct() == Glob.ENUMS_BY_TYPE.enumLangS()){
-            Glob.RUN_STATE.getStack().popMost();
+            Glob.RUN_STATE.getStack().popMost();//pop all but LANG_S
         }
         else if(readNode.textEvent().langStruct() == Glob.ENUMS_BY_TYPE.enumCodeBlock()){
             Glob.RUN_STATE.getStack().pop();//pop twice
@@ -30,35 +31,42 @@ class PushPopUtilEnabled implements IPushPopUtil {
 
         }
         else{
-            Glob.RUN_STATE.getStack().pop();//pop one
+            Glob.RUN_STATE.getStack().pop();//pop once
         }
         return true;
     }
+
     private boolean tryPush(IReadNode readNode, IStackPayload stackTop) {
-        LANG_STRUCT currTopEnum = stackTop.getParentEnum();
         LANG_STRUCT newTopEnum = readNode.textEvent().langStruct();
-        if(
-            (newTopEnum == Glob.ENUMS_BY_TYPE.enumCodeBlock() && currTopEnum.codeBlockRequired()) ||
-            (currTopEnum == Glob.ENUMS_BY_TYPE.enumCodeBlock() && ((EnumPOJOJoin)currTopEnum).
-                    getChildAlgo().getNestingRule().isAllowedNesting(newTopEnum)) ||
-            currTopEnum.getNestingRule().isAllowedNesting(newTopEnum)
-        ){
-            IStackPayload newTopPayload = readNode.textEvent().langStruct().newStackPayload();
-            Glob.RUN_STATE.getStack().push(newTopPayload);
+
+        if((newTopEnum == Glob.ENUMS_BY_TYPE.enumCodeBlock())){
+            if(stackTop.getParentEnum().codeBlockRequired()){
+                doPush(readNode);
+                return true;
+            }
+            else{
+                Glob.ERR.kill(ERR_TYPE.SYNTAX);
+            }
+        }
+        //System.out.println("enum = " + stackTop.getSelf().getParentEnum());
+        if(stackTop.getSelf().getParentEnum().getNestingRule().isAllowedNesting(newTopEnum)){
+            doPush(readNode);
             return true;
         }
-        else{
-            String message = String.format("Disallowed nesting: %s cannot be nested in %s",
-                    readNode.textEvent().langStruct(),
-                    stackTop.getParentEnum()
-            );
-            Glob.ERR.kill(message);
-        }
+
+        String message = String.format("Disallowed nesting: %s cannot be nested in %s",
+                readNode.textEvent().langStruct(),
+                stackTop.getSelf().getParentEnum()
+        );
+        Glob.ERR.kill(message);
         return false;
     }
 
-    @Override
-    public void setEnabled(boolean enabled) {
-
+    private void doPush(IReadNode readNode){
+        IStackPayload newTop = readNode.textEvent().langStruct().newStackPayload();
+        Glob.RUN_STATE.getStack().push(newTop);
     }
+
+    @Override
+    public void setEnabled(boolean enabled) {}
 }

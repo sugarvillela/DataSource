@@ -1,6 +1,7 @@
 package tokenizer.impl;
 
 import langdef.TokSpecialPatternInit;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import runstate.Glob;
 import tokenizer.iface.ITokenizer;
@@ -99,6 +100,9 @@ class TokenizerTest {
         System.out.println(unTok);
         assertEquals("Sentence|with|too_many_'delims'|a|and|quotes", unTok);
     }
+
+    /*=====GTree ParseTree uses=======================================================================================*/
+
     @Test
     void givenSublang_splitOnAssignedDelim() {
         char AND = '&', OR = '|';
@@ -123,8 +127,9 @@ class TokenizerTest {
         System.out.println(unSplitOr);
         assertEquals("two-three", unSplitOr);
     }
+
     @Test
-    void givenSublangKeepSkipsAndConnectedChar_leavesCharConnected() {
+    void givenSublangKeepSkipsAndConnectedChar_leaveCharConnected() {
         char AND = '&', OR = '|';
         String text = "zero|!(one&two)|three";
         ITokenizer tokenizer = Tokenizer.builder().skipSymbols("('").keepSkipSymbol().build();
@@ -150,6 +155,21 @@ class TokenizerTest {
 //        System.out.println(unSplitOr);
 //        assertEquals("two-three", unSplitOr);
     }
+
+    /*=====SubLang RxPattern uses=====================================================================================*/
+
+    @Test
+    void givenValidSubLangPattern_tokenize(){
+        char[] allChars = {'=', '>', '<'};
+        String text = "firstHalf>secondHalf '>' thirdHalf";
+        String actual = String.join("|", Tokenizer.builder().delimiters(allChars).
+                skipSymbols('\'').tokenizeDelimiter().keepSkipSymbol().build().setText(text).parse().toList());
+        String expected = "firstHalf|>|secondHalf '>' thirdHalf";;
+        Assertions.assertEquals(expected, actual);
+    }
+
+    /*=====TokenizerSpecial===========================================================================================*/
+
     private String protectSpecialContent(String text){//algorithm by itself
         String IO = "{", IC = "}", CO = "(", CC = ")";
         String funFormat = "([^%s%s%s%s]+([%s][0-9A-Za-z_:.]+[%s]))";

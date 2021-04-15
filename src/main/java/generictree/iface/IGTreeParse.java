@@ -1,5 +1,7 @@
 package generictree.iface;
 
+import java.util.List;
+
 public interface IGTreeParse <T> {
     IGTreeNode<T> findById(IGTreeNode<T> root, String identifier);
 
@@ -10,6 +12,8 @@ public interface IGTreeParse <T> {
     String[] getFullPath(IGTreeNode<T> root, String... partialPath);
 
     boolean putByPath(T payload, int level, IGTreeNode<T> root, String... path);
+
+    List<String> getAllPaths(IGTreeNode<T> root, char pathSep);
 
     /*====General tree parse algorithms===============================================================================*/
 

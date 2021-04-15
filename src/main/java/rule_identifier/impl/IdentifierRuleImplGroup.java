@@ -55,7 +55,7 @@ public abstract class IdentifierRuleImplGroup {
                 )
             ){
                 //System.out.println("newSinkOnIdentifier");
-                Glob.DATA_SINK.getIdentifier(pushedIdentifier).setListening(false);
+                Glob.DATA_SINK.getIdentifierOrErr(pushedIdentifier).setListening(false);
             }
         }
 

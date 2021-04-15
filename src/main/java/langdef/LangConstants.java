@@ -28,5 +28,5 @@ public abstract class LangConstants {
     public static final String CONT_LINE = "...";   // Matlab-like extension
     public static final String ACCESS_MOD = "*";    // FX access: input string instead of rx string
     public static final String TARG = "TARG";       // Specify target-language-style regex for RX
-    public static final char   PATH_TREE_SEP = '-'; // for STRUCT_LIST_TYPE, RX, FX tree paths
+    public static final char   PATH_TREE_SEP = '.'; // for STRUCT_LIST_TYPE, RX, FX tree paths
 }

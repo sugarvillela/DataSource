@@ -19,7 +19,7 @@ public class DataSink implements IDataSink {
     private final IDataSearch dataSearch;
     private ArrayList<IDataSinkNode> sinks;
 
-    public DataSink() {
+    private DataSink() {
         sinks = new ArrayList<>();
 
         // initialize with one sinkNode for the root language sink
@@ -119,13 +119,18 @@ public class DataSink implements IDataSink {
     }
 
     @Override
-    public IDataSinkNode getIdentifier() {
-        return dataSearch.getIdentifier();
+    public IDataSinkNode getIdentifierOrErr() {
+        return dataSearch.getIdentifierOrErr();
     }
 
     @Override
-    public IDataSinkNode getIdentifier(IReadNode readNode) {
-        return dataSearch.getIdentifier(readNode);
+    public IDataSinkNode getIdentifierOrErr(IReadNode readNode) {
+        return dataSearch.getIdentifierOrErr(readNode);
+    }
+
+    @Override
+    public IDataSinkNode getIdentifierOrErr(String identifier) {
+        return dataSearch.getIdentifierOrErr(identifier);
     }
 
     @Override

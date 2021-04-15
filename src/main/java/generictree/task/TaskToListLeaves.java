@@ -5,12 +5,12 @@ import generictree.iface.IGTreeTask;
 
 import java.util.List;
 
-public class TaskLeavesToList<T> implements IGTreeTask<T> {
+public class TaskToListLeaves<T> implements IGTreeTask<T> {
     private final List<IGTreeNode<T>> list;
 
     /** Pass task to GTreeParse; breadth- or depth-first doesn't matter
      * @param list non-null, empty list, results appear in list on completion */
-    public TaskLeavesToList(List<IGTreeNode<T>> list) {
+    public TaskToListLeaves(List<IGTreeNode<T>> list) {
         this.list = list;
     }
 

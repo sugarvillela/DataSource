@@ -7,7 +7,7 @@ import tokenizer.toknode.NodeTokenizer;
 public class SourceCol extends SourceNode{
     public SourceCol(String text, String containerSource, int containerRow, boolean containerHasNext){
         super(
-            new NodeTokenizer(Glob.TOKENIZER).parse(text.trim(), containerSource, containerRow, containerHasNext).getArray()
+            new NodeTokenizer(Glob.TOKENIZER).parse(text, containerSource, containerRow, containerHasNext).getArray()
         );
     }
 }

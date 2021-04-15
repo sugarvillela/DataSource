@@ -2,7 +2,6 @@ package sourcestep.impl;
 
 import datasink.iface.IDataSinkNode;
 import datasource.dec.SourceTextEvent;
-import langdef.CMD;
 import langdefalgo.iface.LANG_STRUCT;
 import org.junit.jupiter.api.*;
 import readnode.iface.IReadNode;
@@ -26,7 +25,7 @@ class RunStepTest {
     }
     @BeforeEach
     void beforeEach(){
-        String filePath = Glob.FILE_NAME_UTIL.mergeDefaultPath("test6.rxfx");
+        String filePath = Glob.FILE_NAME_UTIL.mergeDefaultPath("test2.rxfx");
         System.out.println(filePath);
         runState.setInFilePath(filePath);
 
@@ -37,6 +36,9 @@ class RunStepTest {
         runState.initStep1();
         runState.go();
 
+        runState.initStep2();
+        runState.go();
+
         ArrayList<IDataSinkNode> allSinks = Glob.DATA_SINK.allSinks();
         for(IDataSinkNode sinkNode : allSinks){
             System.out.printf("\nSinkNode: %s %s \n", sinkNode.getParentEnum(), sinkNode.getIdentifier());
@@ -45,15 +47,14 @@ class RunStepTest {
             }
         }
 
-        runState.initStep2();
-        runState.go();
+
 
 //        System.out.println("STEP TWO");
 //
 //        IDataSource stepTwo =
 //            new SourceActiveOnly(
 //                new SourceAccess(
-//                    Glob.DATA_SINK.getIdentifier(Glob.ENUMS_BY_TYPE.langRootEnum2().toString()).toDataSource()
+//                    Glob.DATA_SINK.getIdentifierOrErr(Glob.ENUMS_BY_TYPE.langRootEnum2().toString()).toDataSource()
 //                )
 //        );
 //        while(stepTwo.hasNext()){
@@ -62,7 +63,7 @@ class RunStepTest {
 //        }
 //        ArrayList<IDataSinkNode> allSinks = Glob.DATA_SINK.allSinks();
 //        for(IDataSinkNode sinkNode : allSinks){
-//            System.out.printf("\nSinkNode: %s %s \n", sinkNode.getParentEnum(), sinkNode.getIdentifier());
+//            System.out.printf("\nSinkNode: %s %s \n", sinkNode.getParentEnum(), sinkNode.getIdentifierOrErr());
 //            for(IReadNode readNode : sinkNode.getNodes()){
 //                System.out.printf("%s \n", readNode.csvString());
 //            }

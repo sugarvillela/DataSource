@@ -1,5 +1,6 @@
 package runstate;
 
+import datasink.constutil.ConstUtil;
 import datasink.impl.DataSink;
 import datasource.factory.FactoryDataSource;
 import tokenizer_special.impl.TokSpecial;
@@ -36,6 +37,7 @@ public class Glob {
     public static final EnumsByType         ENUMS_BY_TYPE =         EnumsByType.initInstance();
     public static final PushPopUtil         PUSH_POP_UTIL =         PushPopUtil.initInstance();
     public static final DataSink            DATA_SINK =             DataSink.initInstance();
+    public static final ConstUtil           CONSTANT_UTIL =         ConstUtil.initInstance();
     //public static final DataSink            DATA_SINK =             DataSink.initInstance();
 
 }

@@ -5,7 +5,7 @@ import stackpayload.iface.IStackPayload;
 
 class PushPopUtilDisabled implements IPushPopUtil {
     @Override
-    public boolean handleTextEvent(IStackPayload stackPayload) {
+    public boolean handleTextEvent(IStackPayload stackTop) {
         return false;
     }
 

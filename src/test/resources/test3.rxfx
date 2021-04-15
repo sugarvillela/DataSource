@@ -1,7 +1,7 @@
     one two RX $rxId three
     four five
 /*$
-	SCOPE (word) {
+	SCOPE (word ) {
 		RX $myRx {
 			rxWord1 rxWord2
 		}

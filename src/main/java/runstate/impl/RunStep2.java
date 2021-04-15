@@ -16,9 +16,7 @@ public class RunStep2  extends RunStepBase {
         System.out.println("RunStep2 go");
         this.prepareFirstTick();
         while(dataSource.hasNext()){
-            System.out.println("a");
             currNode = dataSource.next();
-            System.out.println("b");
             if(currNode == null){
                 System.out.println("overrun");
                 break;
@@ -29,21 +27,11 @@ public class RunStep2  extends RunStepBase {
 
             //structStack.top().getState().incTimeOnStack();
             //System.out.println(structStack.top().toString());
-            //structStack.top().go();
+            structStack.top().go();
         }
 
-        System.out.println("\nfinished");
+        System.out.println("\nfinished step 2");
         System.out.println(structStack.getStackLog().reportString());
-        System.out.println();
-    }
-
-    @Override
-    public IReadNode getCurrNode() {
-        return null;
-    }
-
-    @Override
-    public IStructStack getStack() {
-        return null;
+        System.out.println("_____\n");
     }
 }

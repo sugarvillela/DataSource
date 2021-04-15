@@ -19,8 +19,8 @@ public class PushPopUtil implements IPushPopUtil {
     }
 
     @Override
-    public boolean handleTextEvent(IStackPayload stackPayload) {
-        return currUtil.handleTextEvent(stackPayload);
+    public boolean handleTextEvent(IStackPayload stackTop) {
+        return currUtil.handleTextEvent(stackTop);
     }
 
     @Override

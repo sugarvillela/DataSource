@@ -22,9 +22,12 @@ public class SmallFileDump {
             while ((line = bufferedReader.readLine()) != null) {
                 list.add(line);
             }
-        } catch (IOException e) {
+        } catch (NullPointerException e) {
+            Glob.ERR.kill(ERR_TYPE.FILE_ERROR, "The file path may be null");
+        }
+        catch (IOException e) {
             Glob.ERR.kill(ERR_TYPE.FILE_ERROR, e.getMessage());
         }
-        return list;// returns empty list on fail
+        return list;
     }
 }

@@ -16,6 +16,7 @@ public interface IGTreeNode <T> {
     void setParent(IGTreeNode <T> parent);
     IGTreeNode<T> parent();
 
+    boolean isRoot();
     boolean isLeaf();
 
     ArrayList<IGTreeNode <T>> getChildren();

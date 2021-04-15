@@ -11,6 +11,8 @@ import textevent.impl.TextEvent;
 import textevent.impl.TextEventTemplate;
 
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static langdef.CMD.PUSH;
 
@@ -24,20 +26,17 @@ import static langdef.CMD.PUSH;
  *    marked inactive and removed by SourceActiveOnly.
  *  */
 public class SourceTextEvent extends DecoratorBase{
-    private final Map<String, TextEventTemplate> map;
+    private final TextEventUtil textEventUtil;
     private final ListenUtil listenUtil;
     private final IdentifierUtil identifierUtil;
-    private final LANG_STRUCT idDefine;
-    private IReadNode prevNode, currNode;
-    private ITextEvent textEvent;
+    private IReadNode currNode;
 
     public SourceTextEvent(IDataSource dataSource) {
         super(dataSource);
-        map = Glob.ENUMS_BY_TYPE.langStructEventMapForPatternMatch();
+        textEventUtil = new TextEventUtil();
         listenUtil = new ListenUtil();
         identifierUtil = new IdentifierUtil();
 
-        idDefine = Glob.ENUMS_BY_TYPE.enumIdDefine();
         next();
     }
 
@@ -46,55 +45,68 @@ public class SourceTextEvent extends DecoratorBase{
         return currNode != null;
     }
 
-    /*=====structure find=============================================================================================*/
-
-    private boolean findTextEvent(){
-        ITextEventTemplate textEventTemplate;
-        String text = currNode.text();
-
-        textEvent = null;
-        if((textEventTemplate = map.get(text)) != null){
-            textEvent = new TextEvent(
-                    textEventTemplate.langStruct(), textEventTemplate.cmd()
-            );
-        }
-        else if((textEventTemplate = map.get(text.substring(0, 1))) != null && textEventTemplate.useSubstring()){
-            textEvent = new TextEvent(
-                    textEventTemplate.langStruct(), textEventTemplate.cmd(), text.substring(1)
-            );
-        }
-        return textEvent != null;
-    }
-
     @Override
     public IReadNode next() {
-        prevNode = currNode;
+        IReadNode prevNode = currNode;
         currNode = dataSource.next();
         if(currNode != null){
-
-            if(
-                    this.findTextEvent() &&
-                    listenUtil.tryAddTextEvent(textEvent, currNode) &&
-                            identifierUtil.tryCopySubstring(textEvent, prevNode, currNode)
-            ){
-                if(listenUtil.tryAddTextEvent(textEvent, currNode)){
-                    currNode.setTextEvent(textEvent);
-                    identifierUtil.tryCopySubstring(textEvent, prevNode, currNode);
-//                    if(shouldCopySubstring()){
-//                        if(prevNode.textEvent().langStruct() == Glob.ENUMS_BY_TYPE.enumCodeBlock()){
-//                            this.setCodeBlockIdentifierError();
-//                        }
-//                        else{
-//                            copySubstring();
-//                        }
-//                    }
-                }
-
+            ITextEvent textEvent;
+            if (
+                textEventUtil.findTextEvent(currNode.text()) &&
+                listenUtil.tryAddTextEvent((textEvent = textEventUtil.getTextEvent()), currNode)
+            ) {
+                identifierUtil.tryCopySubstring(textEvent, prevNode, currNode);
             }
         }
         return prevNode;
     }
 
+    public static class TextEventUtil {
+        private final Map<String, TextEventTemplate> map;
+        private final Pattern PAT;
+        private ITextEvent textEvent;
+
+        public TextEventUtil() {
+            map = Glob.ENUMS_BY_TYPE.langStructEventMapForPatternMatch();
+            PAT = Pattern.compile("^[a-zA-Z][a-zA-Z0-9_]*$");
+        }
+
+        public boolean findTextEvent(String text){
+            return findRegularEvent(text) || findIdentifierEvent(text);//textEvent != null;
+        }
+
+        public ITextEvent getTextEvent(){
+            return textEvent;
+        }
+
+        private boolean findRegularEvent(String text){
+            ITextEventTemplate textEventTemplate;
+            if((textEventTemplate = map.get(text)) != null){
+                textEvent = new TextEvent(
+                        textEventTemplate.langStruct(), textEventTemplate.cmd()
+                );
+                return true;
+            }
+            return false;
+        }
+
+        private boolean findIdentifierEvent(String text){
+            ITextEventTemplate textEventTemplate;
+            if(
+                (textEventTemplate = map.get(text.substring(0, 1))) != null &&
+                textEventTemplate.useSubstring() &&
+                PAT.matcher(text.substring(1)).find()
+            ){
+                textEvent = new TextEvent(
+                        textEventTemplate.langStruct(), textEventTemplate.cmd(), text.substring(1)
+                );
+                return true;
+            }
+            textEvent = null;
+            return false;
+        }
+
+    }
     public static class ListenUtil {
         private boolean L, P;   // Listen now, listen previous
 

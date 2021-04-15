@@ -11,13 +11,16 @@ public interface LANG_STRUCT {
 
     boolean go(IStackPayload stackTop);
 
-    void onPush(IStackPayload stackPayload);
-    void onPop(IStackPayload stackPayload);
+    void onPush(IStackPayload stackTop);
+    void onPop(IStackPayload stackTop);
+    void onNest(IStackPayload newTop);
     void onRegainTop();
 
     IIdentifierRule getIdentifierRule();
     INestingRule getNestingRule();
     IFollowRule getFollowRule();
+
+    boolean doCoreTask(IStackPayload stackTop);
 
     boolean codeBlockRequired();
 

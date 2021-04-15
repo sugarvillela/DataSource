@@ -12,6 +12,7 @@ import java.util.Map;
 
 import static langdef.CMD.POP;
 import static langdef.CMD.PUSH;
+import static langdef.STRUCT_KEYWORD.CONSTANT;
 import static langdef.STRUCT_KEYWORD.INCLUDE;
 import static langdef.STRUCT_LOOKUP.*;
 import static langdef.STRUCT_NON_KEYWORD.*;
@@ -120,6 +121,9 @@ public class EnumsByType {
     }
     public LANG_STRUCT enumComment(){
         return COMMENT;
+    }
+    public LANG_STRUCT enumConstant(){
+        return CONSTANT;
     }
     public LANG_STRUCT enumIdDefine(){
         return ID_DEFINE;

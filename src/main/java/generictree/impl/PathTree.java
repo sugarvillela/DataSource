@@ -16,6 +16,7 @@ public class PathTree <T> extends GTreeBase <T> {
 
     @Override
     public boolean put(String path, T payload) {
+        //System.out.println(">>>>>>>" + path);
         if(root == null){
             root = new ParseTreeNode<>();
             root.setLevel(0);

@@ -94,7 +94,7 @@ public abstract class ReadNodeBase implements IReadNode {
 
     @Override
     public String friendlyStatusString() {
-        return String.format(FORMAT_FRIENDLY_STATUS, source, row, col);
+        return String.format(FORMAT_FRIENDLY_STATUS, source, (row + 1), (col + 1));
     }
 
     // sorting

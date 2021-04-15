@@ -31,6 +31,11 @@ public abstract class RunStepBase implements IRunStep {
     }
 
     @Override
+    public void setCurrNode(IReadNode currNode) {// for testing
+        this.currNode = currNode;
+    }
+
+    @Override
     public IReadNode getCurrNode() {// backNode always null except after goBack() and before go()
         return currNode;
     }

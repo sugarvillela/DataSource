@@ -24,9 +24,9 @@ public class StackLog implements IStackLog {
 
     @Override
     public ArrayList<LANG_STRUCT> lastIteration(int stackLevel) {
-        //final int MAX_LOOK_BACK = 4;
-        final int end = 0;//Math.max(0, stackLog.size() - 1 - MAX_LOOK_BACK);
-        for(int i = stackLog.size() - 1; i >= end; i--){
+        final int MAX_LOOK_BACK = 2;
+        final int end = Math.max(0, stackLog.size() - 1 - MAX_LOOK_BACK);
+        for(int i = stackLog.size() - 1; i > end; i--){
             ArrayList<LANG_STRUCT> curr = stackLog.get(i);
             if(curr.size() > stackLevel){
                 return curr;

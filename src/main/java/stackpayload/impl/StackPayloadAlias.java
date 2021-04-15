@@ -1,6 +1,7 @@
 package stackpayload.impl;
 
 import langdefalgo.iface.LANG_STRUCT;
+import stackpayload.iface.IPayloadState;
 import stackpayload.iface.IStackPayload;
 
 public class StackPayloadAlias extends StackPayloadBase{
@@ -16,6 +17,11 @@ public class StackPayloadAlias extends StackPayloadBase{
     @Override
     public IStackPayload getBelowNonAlias() {
         return below;
+    }
+
+    @Override
+    public IPayloadState getState() {
+        return below.getState();
     }
 
     @Override

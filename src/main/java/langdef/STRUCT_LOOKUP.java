@@ -1,5 +1,7 @@
 package langdef;
 
+import err.ERR_TYPE;
+import langdefalgo.iface.IAlgoStrategy;
 import rule_follow.iface.IFollowRule;
 import rule_follow.impl.FollowRule;
 import rule_identifier.iface.IIdentifierRule;
@@ -55,13 +57,18 @@ public enum STRUCT_LOOKUP  implements LANG_STRUCT, EnumPOJOJoin {
     }
 
     @Override
-    public void onPush(IStackPayload stackPayload) {
-        algoProxy.onPush(stackPayload);
+    public void onPush(IStackPayload stackTop) {
+        algoProxy.onPush(stackTop);
     }
 
     @Override
-    public void onPop(IStackPayload stackPayload) {
-        algoProxy.onPop(stackPayload);
+    public void onPop(IStackPayload stackTop) {
+        algoProxy.onPop(stackTop);
+    }
+
+    @Override
+    public void onNest(IStackPayload newTop) {
+        algoProxy.onNest(newTop);
     }
 
     @Override
@@ -85,6 +92,11 @@ public enum STRUCT_LOOKUP  implements LANG_STRUCT, EnumPOJOJoin {
     }
 
     @Override
+    public boolean doCoreTask(IStackPayload stackTop) {
+        return algoProxy.doCoreTask(stackTop);
+    }
+
+    @Override
     public boolean codeBlockRequired() {
         return false;
     }
@@ -97,18 +109,18 @@ public enum STRUCT_LOOKUP  implements LANG_STRUCT, EnumPOJOJoin {
     /*=====EnumAlgoJoin===============================================================================================*/
 
     @Override
-    public void initAlgo(AlgoBase childAlgo) {
-        this.algoProxy.initAlgo(this, childAlgo);
+    public void initAlgo(AlgoBase childAlgo, IAlgoStrategy[] pushes, IAlgoStrategy[] pops) {
+        this.algoProxy.initAlgo(this, childAlgo, pushes, pops);
     }
 
     @Override
-    public void initAlgo(LANG_STRUCT parentEnum, AlgoBase childAlgo) {
-        Glob.ERR_DEV.kill("Call two-arg initAlgo() only on child algo");
+    public void initAlgo(LANG_STRUCT parentEnum, AlgoBase childAlgo, IAlgoStrategy[] pushes, IAlgoStrategy[] pops) {
+        Glob.ERR_DEV.kill(ERR_TYPE.DEV_ERROR);
     }
 
     @Override
     public LANG_STRUCT getParentEnum() {
-        Glob.ERR_DEV.kill("Call getParentEnum only on child algo");
+        Glob.ERR_DEV.kill(ERR_TYPE.DEV_ERROR);
         return null;
     }
 

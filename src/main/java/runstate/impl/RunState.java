@@ -10,7 +10,6 @@ import datasource.iface.IDataSource;
 import langdef.RulesByStructType_Follow;
 import langdef.RulesByStructType_Nesting;
 import langdef.TokSpecialPatternInit;
-import langdefalgo.iface.LANG_STRUCT;
 import langdefalgo.impl.AlgoImplGroupStep1;
 import langdefalgo.impl.AlgoImplGroupStep2;
 import readnode.iface.IReadNode;
@@ -18,8 +17,6 @@ import runstate.Glob;
 import runstate.iface.IRunState;
 import runstate.iface.IRunStep;
 import stack.iface.IStructStack;
-
-import java.util.ArrayList;
 
 public class RunState implements IRunState {
     private static RunState instance;
@@ -60,6 +57,11 @@ public class RunState implements IRunState {
     }
 
     @Override
+    public void initTest() {
+        currentSourceStep = new RunStep1(null);
+    }
+
+    @Override
     public void initStep1() {
         new AlgoImplGroupStep1().initAlgos();
 
@@ -86,7 +88,7 @@ public class RunState implements IRunState {
     public void initStep2() {
         new AlgoImplGroupStep2().initAlgos();
         IDataSource outputStep1 =
-                Glob.DATA_SINK.getIdentifier(Glob.ENUMS_BY_TYPE.enumLangRoot1().toString()).toDataSource();
+                Glob.DATA_SINK.getIdentifierOrErr(Glob.ENUMS_BY_TYPE.enumLangRoot1().toString()).toDataSource();
 
         currentSourceStep = new RunStep2(
             new SourceActiveOnly(
@@ -102,6 +104,11 @@ public class RunState implements IRunState {
     @Override
     public void go() {
         currentSourceStep.go();
+    }
+
+    @Override
+    public void setCurrNode(IReadNode currNode) {
+        currentSourceStep.setCurrNode(currNode);
     }
 
     @Override

@@ -22,6 +22,10 @@ public interface IStackPayload {
     void addToStackLog(IStackLog stackLog, ArrayList<LANG_STRUCT> newIteration);
 
     void setBelow(IStackPayload below);
+
+    IStackPayload getSelf();
+    IStackPayload getSelfNonAlias();
+
     IStackPayload getBelow();
     IStackPayload getBelowNonAlias();
 

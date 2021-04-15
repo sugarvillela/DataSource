@@ -8,10 +8,10 @@ import langdef.LangConstants;
 import readnode.iface.IReadNode;
 import runstate.Glob;
 
-public class ListSink implements IGTree<IReadNode> {
+public class ListTree implements IGTree<IReadNode> {
     private final IGTree<IReadNode> tree;
 
-    public ListSink() {
+    public ListTree() {
         tree =  new PathTree<>(LangConstants.PATH_TREE_SEP);
     }
 
@@ -28,6 +28,11 @@ public class ListSink implements IGTree<IReadNode> {
     @Override
     public boolean put(String path, IReadNode payload) {
         return tree.put(path, payload);
+    }
+
+    @Override
+    public void clear() {
+        tree.clear();
     }
 
     @Override

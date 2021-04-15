@@ -82,6 +82,7 @@ public class ParseTree<T> extends GTreeBase <T> {
     public String toString(){
         return unParse(root);
     }
+
     private String unParse(IGTreeNode<T> currNode){
         String format = currNode.wrapped()? "%s(%s)" : "%s%s";
         String negateSymbol = currNode.negated()? String.valueOf(NEGATE_SYMBOL) : "";

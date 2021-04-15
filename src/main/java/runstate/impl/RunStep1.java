@@ -19,7 +19,6 @@ public class RunStep1 extends RunStepBase {
         super(dataSource);
     }
 
-
     private void finishLastTick(){
         IReadNode wordPopNode = ReadNode.builder().copy(currNode).textEvent(new TextEvent(Glob.ENUMS_BY_TYPE.enumLangT(), CMD.POP)).build();
         Glob.DATA_SINK.put(wordPopNode);
@@ -35,7 +34,7 @@ public class RunStep1 extends RunStepBase {
                 break;
             }
             else{
-                //System.out.println(currNode.csvString());
+                System.out.println(currNode.csvString());
             }
 
             structStack.top().getState().incTimeOnStack();
@@ -44,10 +43,21 @@ public class RunStep1 extends RunStepBase {
         }
         //this.finishLastTick();
 
-//        System.out.println("\nfinished");
-//        System.out.println(structStack.getStackLog().reportString());
-//        System.out.println();
 
+        System.out.println("\nfinished step 1");
+        System.out.println(structStack.getStackLog().reportString());
+        System.out.println("_____\n");
+
+//        System.out.println("\nCONSTANT_UTIL stuff1");
+//        IReadNode node = Glob.CONSTANT_UTIL.getIdentifier("stuff1");
+//        System.out.println(node == null? null : node.csvString());
+//        System.out.println("\nCONSTANT_UTIL stuff2");
+//        node = Glob.CONSTANT_UTIL.getIdentifier("stuff2");
+//        System.out.println(node == null? null : node.csvString());
+//        System.out.println("\nCONSTANT_UTIL myRX");
+//        node = Glob.CONSTANT_UTIL.getIdentifier("myRX");
+//        System.out.println(node == null? null : node.csvString());
+//
 //        RUNTIME_ATTRIB.props.display();
     }
 

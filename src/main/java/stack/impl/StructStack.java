@@ -16,17 +16,22 @@ public class StructStack implements IStructStack {
     }
 
     @Override
-    public void push(IStackPayload stackPayload) {
+    public void push(IStackPayload newTop) {
         //System.out.println("StructStack push: " + stackPayload.getLangStructEnum().toString());
         if(!stack.isEmpty()){
 
-            stackPayload.setBelow(stack.peek());
+            newTop.setBelow(stack.peek());
 //            stack.peek().getState().onPushAbove();
 //            stack.peek().getState().onPushAdjAbove();
         }
-        stack.push(stackPayload);
-        stackPayload.onPush();
-        stackPayload.addToStackLog(stackLog);
+        stack.push(newTop);
+        newTop.onPush();
+        newTop.addToStackLog(stackLog);
+
+        IStackPayload oldTop = newTop.getBelow();
+        if(oldTop != null){
+            oldTop.getParentEnum().onNest(newTop);
+        }
     }
 
     @Override

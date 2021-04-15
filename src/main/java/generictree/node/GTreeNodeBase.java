@@ -67,6 +67,11 @@ public abstract class GTreeNodeBase<T> implements IGTreeNode<T> {
     }
 
     @Override
+    public boolean isRoot() {
+        return parent == null;
+    }
+
+    @Override
     public boolean isLeaf() {
         return children.isEmpty();
     }

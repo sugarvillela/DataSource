@@ -52,7 +52,7 @@ public class PayloadState implements IPayloadState {
     @Override
     public void incTimeOnStack() {
         timeOnStack++;
-        IStackPayload below = parentPayload.getBelow();
+        IStackPayload below = parentPayload.getBelowNonAlias();
         if(below != null){
             below.getState().incTimeOnStack();
         }

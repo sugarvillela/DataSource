@@ -16,15 +16,15 @@ public class RulesByStructType_Nesting {
 
         ATTRIB.getNestingRule().setAllowedNesting();
         CONSTANT.getNestingRule().setAllowedNesting(Glob.ENUMS_BY_TYPE.allFrontEndLangStruct());
-        RX.getNestingRule().setAllowedNesting(LANG_T_INSERT);
-        FX.getNestingRule().setAllowedNesting(LANG_T_INSERT);
+        RX.getNestingRule().setAllowedNesting(LANG_T_INSERT, RX_WORD, ID_ACCESS);
+        FX.getNestingRule().setAllowedNesting(LANG_T_INSERT, FX_WORD, ID_ACCESS);
 
         FUN.getNestingRule().setCopyOnly(true);
         FUN.getNestingRule().setAllowedNesting(Glob.ENUMS_BY_TYPE.allFrontEndLangStruct());
 
-        SCOPE.getNestingRule().setAllowedNesting(SCOPE_TEST, SCOPE, RX, FX);
-        IF.getNestingRule().setAllowedNesting(SCOPE_TEST, RX, FX);
-        ELSE.getNestingRule().setAllowedNesting(RX, FX, IF, ELSE, SCOPE, LANG_T_INSERT);
+        SCOPE.getNestingRule().setAllowedNesting(SCOPE_TEST, SCOPE, RX, FX, IF, ELSE, ID_ACCESS);
+        IF.getNestingRule().setAllowedNesting(SCOPE_TEST, RX, FX, ID_ACCESS);
+        ELSE.getNestingRule().setAllowedNesting(RX, FX, IF, ELSE, SCOPE, LANG_T_INSERT, ID_ACCESS);
         CATEGORY.getNestingRule().setAllowedNesting(CATEGORY);
 
         INCLUDE.getNestingRule().setAllowedNesting();
@@ -47,14 +47,14 @@ public class RulesByStructType_Nesting {
 
         LANG_T.getNestingRule().setAllowedNesting(LANG_S);
         SCOPE_TEST_ITEM.getNestingRule().setAllowedNesting();
-        RX_WORD.getNestingRule().setAllowedNesting();
-        FX_WORD.getNestingRule().setAllowedNesting();
+        RX_WORD.getNestingRule().setAllowedNesting(ID_ACCESS, LANG_T_INSERT);
+        FX_WORD.getNestingRule().setAllowedNesting(ID_ACCESS, LANG_T_INSERT);
         // LANG_ROOT_1
         // LANG_ROOT_2
         /*=====STRUCT_SYMBOL==========================================================================================*/
 
         LANG_S.getNestingRule().setAllowedNesting(
-                INCLUDE, FUN, CONSTANT, ID_ACCESS, ATTRIB, RX, FX, SCOPE, IF, ELSE,
+                ID_ACCESS, FUN, CONSTANT, ID_ACCESS, ATTRIB, RX, FX, SCOPE, IF, ELSE,
                 LIST_STRING, LIST_NUMBER, LIST_BOOLEAN, LIST_VOTE, LIST_DISCRETE, LIST_SCOPE
                 );
 

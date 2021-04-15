@@ -1,5 +1,7 @@
 package langdefalgo.impl;
 
+import err.ERR_TYPE;
+import langdefalgo.iface.IAlgoStrategy;
 import rule_follow.iface.IFollowRule;
 import rule_identifier.iface.IIdentifierRule;
 import langdefalgo.iface.EnumPOJOJoin;
@@ -37,6 +39,11 @@ public class AlgoProxy implements LANG_STRUCT, EnumPOJOJoin {
     }
 
     @Override
+    public void onNest(IStackPayload newTop) {
+        childAlgo.onNest(newTop);
+    }
+
+    @Override
     public void onRegainTop() {
         childAlgo.onRegainTop();
     }
@@ -57,6 +64,11 @@ public class AlgoProxy implements LANG_STRUCT, EnumPOJOJoin {
     }
 
     @Override
+    public boolean doCoreTask(IStackPayload stackTop) {
+        return childAlgo.doCoreTask(stackTop);
+    }
+
+    @Override
     public boolean codeBlockRequired() {
         return childAlgo.codeBlockRequired();
     }
@@ -69,13 +81,13 @@ public class AlgoProxy implements LANG_STRUCT, EnumPOJOJoin {
     /*=====EnumPOJOJoin===============================================================================================*/
 
     @Override
-    public void initAlgo(AlgoBase childAlgo) {
-        Glob.ERR_DEV.kill("Call one-arg initAlgo() only on parent enum");
+    public void initAlgo(AlgoBase childAlgo, IAlgoStrategy[] pushes, IAlgoStrategy[] pops) {
+        Glob.ERR_DEV.kill(ERR_TYPE.DEV_ERROR);
     }
 
     @Override
-    public void initAlgo(LANG_STRUCT parentEnum, AlgoBase childAlgo) {
-        childAlgo.initAlgo(parentEnum, null);
+    public void initAlgo(LANG_STRUCT parentEnum, AlgoBase childAlgo, IAlgoStrategy[] pushes, IAlgoStrategy[] pops) {
+        childAlgo.initAlgo(parentEnum, null, pushes, pops);
         this.childAlgo = childAlgo;
         //((EnumPOJOJoin) this.algoProxy).initAlgo(this, childAlgo);
     }

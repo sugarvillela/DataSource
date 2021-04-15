@@ -5,6 +5,8 @@ import generictree.iface.IGTreeParse;
 import generictree.iface.IGTreeTask;
 
 import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Queue;
 
 public class GTreeParse<T> implements IGTreeParse<T> {
@@ -78,6 +80,11 @@ public class GTreeParse<T> implements IGTreeParse<T> {
     }
 
     @Override
+    public List<String> getAllPaths(IGTreeNode<T> root, char pathSep) {
+        return new AllPathsUtil(root, pathSep).getPaths();
+    }
+
+    @Override
     public boolean preOrder(IGTreeNode<T> root, IGTreeTask<T> task) {
         boolean result = task.doTask(root);
         for(IGTreeNode<T> child : root.getChildren()){
@@ -112,5 +119,35 @@ public class GTreeParse<T> implements IGTreeParse<T> {
         }
 
         return result;
+    }
+
+    private static class AllPathsUtil <T>{
+        private final IGTreeNode<T> root;
+        private final List<String> paths;
+        private final char pathSep;
+
+        AllPathsUtil(IGTreeNode<T> root, char pathSep){
+            this.root = root;
+            this.pathSep = pathSep;
+            this.paths = new ArrayList<>();
+            if(root != null){
+                this.recurse(root, "");
+            }
+        }
+        private void recurse(IGTreeNode<T> curr, String currPath) {
+            if(curr.isLeaf()){
+                paths.add(currPath + pathSep + curr.identifier());
+            }
+            else{
+                for(IGTreeNode<T> child : curr.getChildren()){
+                    String newPath = (curr.isRoot())?
+                        curr.identifier() : currPath + pathSep + curr.identifier();
+                    recurse(child, newPath);
+                }
+            }
+        }
+        public List<String> getPaths(){
+            return paths;
+        }
     }
 }

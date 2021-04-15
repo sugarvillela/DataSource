@@ -34,7 +34,7 @@ public class SourceAccess extends SourceFluid {
         ){
             if(currNode.textEvent().cmd() == CMD.PUSH){
                 //System.out.println("inner: " + currNode.textEvent().substring());
-                stack.push(Glob.DATA_SINK.getIdentifier(currNode.textEvent().substring()).toDataSource());
+                stack.push(Glob.DATA_SINK.getIdentifierOrErr(currNode).toDataSource());
             }
             currNode.setActive(false);
         }

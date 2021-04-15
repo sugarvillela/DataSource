@@ -11,7 +11,9 @@ public interface IDataSearch {
     void setIdentifier();
     void setIdentifier(IReadNode readNode);
 
-    IDataSinkNode getIdentifier();
-    IDataSinkNode getIdentifier(IReadNode readNode);
+    IDataSinkNode getIdentifierOrErr();
+    IDataSinkNode getIdentifierOrErr(IReadNode readNode);
+    IDataSinkNode getIdentifierOrErr(String identifier);
+
     IDataSinkNode getIdentifier(String identifier);
 }

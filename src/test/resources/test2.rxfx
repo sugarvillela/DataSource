@@ -1,21 +1,22 @@
-    one two three
-    four five
+       one two three
+        four five
 /*$
 	ATTRIB {
-		PROJ_NAME=wowee SOME_NUMBER=23
+		PROJ_NAME=wowee SOME_NUMBER=123
 	}
 	
-	CONSTANT $myConst {69}
+	CONSTANT $stuff1 {MY_STUFF1}
+	CONSTANT $stuff2 {MY_STUFF2}
 	
 	RX $myRX {
-		rxContent1 rxContent2 */ six seven eight /* 
+		rxContent1 rxContent2 *stuff1 */   six seven eight /* 
 	}
 	
 	CONSTANT $crazy { philharmonic}
 	
 	FUN $MyFun {
 		RX $myRX1 { rxContentA }
-		FX $myFX1 { fxContentA fxContentB }
+		FX $myFX1 {  fxContentB *stuff2 *[1:3]drop()} # *[1:3]drop()
 	}
 	
 	LIST<STRING> {
@@ -28,6 +29,8 @@
 			CATEGORY $condiments {
 				ketchup mustard
 			}
+		}
 	}
+	*MyFun
 $*/
 nine ten

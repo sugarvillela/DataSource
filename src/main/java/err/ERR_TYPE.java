@@ -22,10 +22,11 @@ public enum ERR_TYPE {
     // Structure/syntax errors
     UNKNOWN_LANG_STRUCT ("Expected a valid keyword/symbol"),
     CONSTANT_NOT_SINGLE ("Expected a single item here"),
+    NO_ENCLOSING_BRACES ("Expected enclosing braces here"),
 
     // Scope/if errors
     BAD_TEST_PARAM      ("Invalid SCOPE/IF parameter; use one-word scope or RX, with parentheses"),
-    MISSING_CONDITIONAL ("The preceding language structure is missing a conditional expression"),
+    MISSING_CONDITIONAL ("Expected a conditional expression"),
 
     DEV_ERROR           ("Developer error"),
     SYNTAX              ("Syntax error"),
