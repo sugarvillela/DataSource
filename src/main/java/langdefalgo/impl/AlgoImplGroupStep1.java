@@ -78,7 +78,6 @@ public class AlgoImplGroupStep1 {
                 pushes(IDENTIFY),
                 pops()
         );
-        //INCLUDE.initAlgo(new CopyWithAddNode(), null, null);
 
         // Struct list type
         LIST_STRING.initAlgo(new ListTypeAlgo(), pushes(IDENTIFY, MUTE_ROOT), pops(UN_MUTE_ROOT));
@@ -175,20 +174,6 @@ public class AlgoImplGroupStep1 {
         }
     }
 
-    // core task copies current read node(s) with ADD_TO text event
-    private static class CopyWithAddNode extends AlgoBase {
-        protected void putAddNode(){
-            IReadNode currNode = Glob.RUN_STATE.getCurrNode();
-            currNode.setTextEvent(new TextEvent(parentEnum, CMD.ADD_TO, currNode.text()));
-            Glob.DATA_SINK.put(currNode);
-        }
-        @Override
-        public boolean doCoreTask(IStackPayload stackTop) {
-            this.putAddNode();
-            return true;
-        }
-    }
-
     // enum only nests other enums; should never reach core task
     private static class ErrOnCoreTask extends AlgoBase {
         private final ERR_TYPE errType;
@@ -201,48 +186,6 @@ public class AlgoImplGroupStep1 {
         public boolean doCoreTask(IStackPayload stackTop) {
             Glob.ERR.kill(errType);
             return false;
-        }
-    }
-
-    // RX, FX: adds a word algo to each word; virtual push/pop (to sink, not actually pushed)
-    private static class WordGroup extends AlgoBase{
-        private final LANG_STRUCT wordStruct;
-
-        public WordGroup(LANG_STRUCT wordStruct) {
-            this.wordStruct = wordStruct;
-        }
-
-        @Override
-        public boolean doCoreTask(IStackPayload stackTop) {// add push/pop node without pushing to stack
-            IReadNode currNode = Glob.RUN_STATE.getCurrNode();
-
-//            IReadNode wordPushNode = ReadNode.builder().copy(currNode).textEvent(new TextEvent(wordStruct, CMD.PUSH)).build();
-//            Glob.DATA_SINK.put(wordPushNode);
-
-            IReadNode addNode = ReadNode.builder().copy(currNode).textEvent(new TextEvent(wordStruct, CMD.ADD_TO, currNode.text())).build();
-            Glob.DATA_SINK.put(addNode);
-
-//            IReadNode wordPopNode = ReadNode.builder().copy(currNode).textEvent(new TextEvent(wordStruct, CMD.POP)).build();
-//            Glob.DATA_SINK.put(wordPopNode);
-            return false;
-        }
-
-        @Override
-        public void onPush(IStackPayload stackTop) {
-            super.onPush(stackTop);
-            IReadNode currNode = Glob.RUN_STATE.getCurrNode();
-
-            IReadNode wordPushNode = ReadNode.builder().copy(currNode).textEvent(new TextEvent(wordStruct, CMD.PUSH)).build();
-            Glob.DATA_SINK.put(wordPushNode);
-        }
-
-        @Override
-        public void onPop(IStackPayload stackTop) {
-            IReadNode currNode = Glob.RUN_STATE.getCurrNode();
-
-            IReadNode wordPopNode = ReadNode.builder().copy(currNode).textEvent(new TextEvent(wordStruct, CMD.POP)).build();
-            Glob.DATA_SINK.put(wordPopNode);
-            super.onPop(stackTop);
         }
     }
 
@@ -277,7 +220,7 @@ public class AlgoImplGroupStep1 {
         }
     }
 
-    private static class ScopeTest extends CopyWithAddNode {
+    private static class ScopeTest extends AlgoBase {
         // Nests RX or SCOPE_TEST_ITEM, not both.
         // If RX, core task never called;
         // Else if not RX, copies with add node;
@@ -299,7 +242,7 @@ public class AlgoImplGroupStep1 {
         public boolean doCoreTask(IStackPayload stackTop) {
             if(stackTop.getState().getInt() == FIRST){
                 stackTop.getState().set(SECOND);
-                this.putAddNode();
+                Glob.DATA_SINK.put();
                 return true;
             }
             else{

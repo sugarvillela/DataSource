@@ -1,4 +1,4 @@
-package sublang.iface;
+package langdefsubalgo.iface;
 
 public interface ILogicTreeNode {
 }

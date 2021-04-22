@@ -13,11 +13,18 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class TokenizerTest {
     @Test
-    void givenTooManyDelimiters_shouldTokenizeWithoutExtraElements() {
+    void simpleTok_givenTooManyDelimiters_shouldTokenizeWithoutExtraElements() {
         String text = "Sentence__with_(too_many_'delims')__and_quotes__";
         String[] tok = new SimpleTok('_').setText(text).parse().toArray();
         String unTok = String.join("|", tok);
         assertEquals("Sentence|with|(too|many|'delims')|and|quotes", unTok);
+    }
+    @Test
+    void simpleTok_givenEscapeChar_shouldIgnoreDelimiter() {
+        String text = "Sentence__\\_with_(too_many_'delims')__and_quotes__";
+        String[] tok = new SimpleTok('_').setText(text).parse().toArray();
+        String unTok = String.join("|", tok);
+        assertEquals("Sentence|_with|(too|many|'delims')|and|quotes", unTok);
     }
     @Test
     void givenSkipArea_shouldNotTokenizeInSkipArea() {
@@ -100,7 +107,30 @@ class TokenizerTest {
         System.out.println(unTok);
         assertEquals("Sentence|with|too_many_'delims'|a|and|quotes", unTok);
     }
+    @Test
+    void tokenizer_givenEscapeChar_shouldIgnoreDelimiter() {
+        String text = "Sentence__\\_with_(too_many_'delims')__and_quotes__";
+        String[] tok = Tokenizer.builder().delimiters('_').build().setText(text).parse().toArray();
+        String unTok = String.join("|", tok);
+        assertEquals("Sentence|_with|(too|many|'delims')|and|quotes", unTok);
+    }
+    @Test
+    void tokenizer_givenEscapeChar_shouldIgnoreSkip() {
+        String text = "I skip 'tokenizing \\'in here\\' but not' out here";
+        String[] tok = Tokenizer.builder().delimiters(' ').skipSymbols("'").keepSkipSymbol().
+                build().setText(text).parse().toArray();
+        String unTok = String.join("|", tok);
+        assertEquals("I|skip|'tokenizing 'in here' but not'|out|here", unTok);
+    }
 
+    @Test
+    void tokenizer_givenEscapeChar_shouldIgnoreSkipAndKeepEscape() {
+        String text = "I skip 'tokenizing \\'in here\\' but not' out here";
+        String[] tok = Tokenizer.builder().delimiters(' ').skipSymbols("'").keepSkipSymbol().
+                keepEscapeSymbol().build().setText(text).parse().toArray();
+        String unTok = String.join("|", tok);
+        assertEquals("I|skip|'tokenizing \\'in here\\' but not'|out|here", unTok);
+    }
     /*=====GTree ParseTree uses=======================================================================================*/
 
     @Test

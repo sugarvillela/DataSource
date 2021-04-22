@@ -47,6 +47,11 @@ public interface ITokenizer {
          * Setting keepSkipSymbol leaves the symbols in */
         Builder keepSkipSymbol();
 
+        /**Tokenizer obeys and removes escape symbols by default
+         * Setting keepEscapeSymbol leaves the symbols in
+         * (for cases where further processing needs to obey them too) */
+        Builder keepEscapeSymbol();
+
         /**Tokenizer discards delimiters by default
          * Setting delimiterToElement causes delimiter to be written to
          * its own element (repeated delimiters are not ignored) */

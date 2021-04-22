@@ -1,4 +1,4 @@
-package sublang;
+package langdefsub;
 
 public enum COMPARE {
     EQUAL   ('='),

@@ -1,9 +1,6 @@
-package sublang.impl;
+package langdefsubalgo.impl;
 
 import generictree.iface.IGTree;
-import generictree.iface.IGTreeParse;
-import generictree.task.TaskDisp;
-import generictree.task.TaskToList;
 import langdef.CMD;
 import langdef.LangConstants;
 import org.junit.jupiter.api.Test;
@@ -11,9 +8,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import readnode.iface.IReadNode;
 import readnode.impl.ReadNode;
-import runstate.Glob;
-import sublang.iface.ILogicTree;
-import sublang.iface.ILogicTreeNode;
+import langdefsubalgo.iface.ILogicTree;
 import textevent.impl.TextEvent;
 
 import java.util.List;
@@ -80,9 +75,9 @@ public class RxTest {
 
     @Test
     void buildFromCurr(){
-        Glob.RUN_STATE.initTest();
-        Glob.RUN_STATE.setCurrNode(getMockRxPayload());
-        ILogicTree logicTree = new LogicTree();
+//        Glob.RUN_STATE.initTest();
+//        Glob.RUN_STATE.setCurrNode(getMockRxPayload());
+        ILogicTree logicTree = new LogicTree(getMockRxPayload());
         //logicTree.build();
 
 //        IGTreeParse<ILogicTreeNode> parse = logicTree.getTree().getParse();

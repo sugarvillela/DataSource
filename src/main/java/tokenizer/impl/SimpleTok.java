@@ -10,6 +10,7 @@ import java.util.ArrayList;
  * Ignores adjacent delimiters to prevent empty elements
  * Option to limit number of splits */
 public class SimpleTok implements ITokenizer {
+    private static final char escape = '\\';
     private IWhitespace whitespace;
     private final int limit;
     private String text;
@@ -55,6 +56,9 @@ public class SimpleTok implements ITokenizer {
         return this;
     }
 
+    private boolean isEscape(char symbol){
+        return symbol == escape;
+    }
     private boolean isDelimiter(char symbol){
         return symbol == delimiter || whitespace.isWhitespace(symbol);
     }
@@ -62,10 +66,17 @@ public class SimpleTok implements ITokenizer {
     @Override
     public ITokenizer parse() {
         // Rehearse to get size
-        int count = 0;
+        int count = 0, len = text.length();
+        boolean escaped = false;
         int i, j = 0, k = 0;
-        for(i = 0; i < text.length(); i++){
-            if(isDelimiter(text.charAt(i))){
+        for(i = 0; i < len; i++){
+            if(isEscape(text.charAt(i))){
+                escaped = true;
+            }
+            else if(escaped){
+                escaped = false;
+            }
+            else if(isDelimiter(text.charAt(i))){
                 if( i != j ){
                     count++;
                     // Limit size, if limit passed
@@ -83,8 +94,19 @@ public class SimpleTok implements ITokenizer {
         // Set array and run again to populate
         tokens = new String[count];
         j = 0;
-        for(i = 0; i < text.length(); i++){
-            if(isDelimiter(text.charAt(i))){
+        escaped = false;
+        for(i = 0; i < len; i++){
+            if(isEscape(text.charAt(i))){
+                text = text.substring(0, i) + text.substring(i + 1);
+                System.out.println("new text:" + text);
+                len--;
+                i--;
+                escaped = true;
+            }
+            else if(escaped){
+                escaped = false;
+            }
+            else if(isDelimiter(text.charAt(i))){
                 if( i != j ){
                     if( k >= limit-1){
                         break;

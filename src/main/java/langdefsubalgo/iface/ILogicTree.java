@@ -1,4 +1,4 @@
-package sublang.iface;
+package langdefsubalgo.iface;
 
 import generictree.iface.IGTree;
 import langdefalgo.iface.LANG_STRUCT;

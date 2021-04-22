@@ -1,17 +1,14 @@
-package sublang.impl;
+package langdefsubalgo.impl;
 
 import generictree.iface.IGTree;
 import generictree.iface.IGTreeNode;
-import generictree.iface.IGTreeParse;
 import generictree.impl.ParseTree;
-import generictree.task.TaskDisp;
 import generictree.task.TaskToListLeaves;
 import langdefalgo.iface.LANG_STRUCT;
 import readnode.iface.IReadNode;
-import runstate.Glob;
-import sublang.iface.ILogicTree;
-import sublang.iface.ILogicTreeNode;
-import sublang.iface.IRxFunPattern;
+import langdefsubalgo.iface.ILogicTree;
+import langdefsubalgo.iface.ILogicTreeNode;
+import langdefsubalgo.iface.IRxFunPattern;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,12 +17,11 @@ public class LogicTree implements ILogicTree {
     private final LANG_STRUCT langStruct;
     private final IGTree<ILogicTreeNode> parseTree;
 
-    public LogicTree() {
-        IReadNode currNode = Glob.RUN_STATE.getCurrNode();
+    public LogicTree(IReadNode currNode) {
         System.out.println(currNode.csvString());
 
         this.langStruct = currNode.textEvent().langStruct();
-        parseTree = new ParseTree<>();
+        this.parseTree = new ParseTree<>();
         this.populate(currNode.text());
     }
 

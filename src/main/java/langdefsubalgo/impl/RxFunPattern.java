@@ -1,25 +1,28 @@
-package sublang.impl;
+package langdefsubalgo.impl;
 
 import err.ERR_TYPE;
-import langdefalgo.iface.LANG_STRUCT;
 import runstate.Glob;
-import sublang.COMPARE;
-import sublang.iface.IRxFun;
-import sublang.iface.IRxFunPattern;
+import langdefsub.COMPARE;
+import langdefsubalgo.iface.IRxFun;
+import langdefsubalgo.iface.IRxFunList;
+import langdefsubalgo.iface.IRxFunPattern;
 import tokenizer.iface.ITokenizer;
 import tokenizer.impl.Tokenizer;
 
 import java.util.ArrayList;
 
 public class RxFunPattern implements IRxFunPattern {
-    private static final ITokenizer T = Tokenizer.builder().delimiters(COMPARE.allChars()).
+    private static final ITokenizer TOK_ON_COMPARE = Tokenizer.builder().delimiters(COMPARE.allChars()).
             skipSymbols('\'').tokenizeDelimiter().keepSkipSymbol().build();
 
     private final COMPARE compare;
-    private final String textLeft, textRight;
+    //private final String textLeft, textRight;
+    private IRxFunList listLeft, listRight;
 
     public RxFunPattern(String text) {
-        ArrayList<String> tok = T.setText(text).parse().toList();
+        String textLeft, textRight;
+        ArrayList<String> tok = TOK_ON_COMPARE.setText(text).parse().toList();
+
         if(tok.size() != 3){
             Glob.ERR.kill(ERR_TYPE.SYNTAX);
         }
@@ -27,6 +30,9 @@ public class RxFunPattern implements IRxFunPattern {
         textLeft = tok.get(0);
         compare = COMPARE.fromChar(tok.get(1).charAt(0));
         textRight = tok.get(2);
+
+        listLeft = new RxFunList(textLeft);
+        listRight = new RxFunList(textRight);
 
         System.out.println("===RxFunPattern===");
         System.out.println(textLeft);
@@ -36,19 +42,23 @@ public class RxFunPattern implements IRxFunPattern {
     }
 
 
+    @Override
+    public void validate() {// validate left-compare-right
+
+    }
 
     @Override
     public IRxFun[] left() {
-        return new IRxFun[0];
+        return listLeft.toArray();
     }
 
     @Override
     public COMPARE compare() {
-        return null;
+        return compare;
     }
 
     @Override
     public IRxFun[] right() {
-        return new IRxFun[0];
+        return listRight.toArray();
     }
 }
