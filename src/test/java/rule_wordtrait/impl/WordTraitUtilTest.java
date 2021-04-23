@@ -1,22 +1,24 @@
-package wordtraitutil.impl;
+package rule_wordtrait.impl;
 
 import err.ERR_TYPE;
+import langdefsub.PAR_TYPE;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import wordtraitutil.WORD_TRAIT;
-import wordtraitutil.iface.ITraitPatternUtil;
-import wordtraitutil.iface.IWordTraitClient;
-import wordtraitutil.iface.IWordTraitParser;
+import rule_wordtrait.WordTraitRule;
+import rule_wordtrait.iface.ITraitPatternUtil;
+import rule_wordtrait.iface.IWordTraitClient;
+import rule_wordtrait.iface.ICharTraitParser;
 
 import java.util.Arrays;
 
-import static wordtraitutil.impl.CharTraitImplGroup.*;
-import static wordtraitutil.WORD_TRAIT.*;
+import static rule_wordtrait.impl.CharTraitImplGroup.*;
+import static langdefsub.PAR_TYPE.*;
+import static rule_wordtrait.impl.WordTraitActionImplGroup.*;
 
 class WordTraitUtilTest {
 
-    private IWordTraitParser getWordTraitUtil(){
-        return WordTraitParser.builder().skipSymbols('\'').
+    private ICharTraitParser getWordTraitUtil(){
+        return CharTraitParser.builder().skipSymbols('\'').
                 traits(
                         new CharTrait('\''),
                         new CharTrait('.'),
@@ -33,7 +35,7 @@ class WordTraitUtilTest {
 
     @Test
     void givenWordTraitUtil_returnAllTraitsAsString(){
-        IWordTraitParser wordTrait = getWordTraitUtil();
+        ICharTraitParser wordTrait = getWordTraitUtil();
         String actual, expected;
         actual = wordTrait.getWatchedTraits();
         expected = "'*,.:ACN[_";
@@ -42,7 +44,7 @@ class WordTraitUtilTest {
 
     @Test
     void givenStringWithTraits_returnTraitString(){
-        IWordTraitParser wordTrait = getWordTraitUtil();
+        ICharTraitParser wordTrait = getWordTraitUtil();
         String text, actual, expected;
 
         text = "23";// num par
@@ -103,7 +105,7 @@ class WordTraitUtilTest {
 
     @Test
     void givenOddballInput_returnCorrect(){
-        IWordTraitParser wordTrait = getWordTraitUtil();
+        ICharTraitParser wordTrait = getWordTraitUtil();
         String text, actual, expected;
         text = "''";// string par
         actual = wordTrait.setText(text).parse().getFoundTraits();
@@ -190,174 +192,162 @@ class WordTraitUtilTest {
         Assertions.assertFalse(actual);
     }
 
-    @Test
-    void givenText_matchEnum(){
-        IWordTraitParser wordTrait = getWordTraitUtil();
-        String text;
-        WORD_TRAIT actual, expected;
-
-        text = "23";// num par
-        expected = NUM_PAR;
-        actual = WORD_TRAIT.fromTraitText(wordTrait.setText(text).parse().getFoundTraits());
-        Assertions.assertEquals(expected, actual);
-
-        text = "2,3,4"; // num list
-        expected = NUM_LIST;
-        actual = WORD_TRAIT.fromTraitText(wordTrait.setText(text).parse().getFoundTraits());
-        Assertions.assertEquals(expected, actual);
-
-        text = "'a'"; // string
-        expected = STR_PAR;
-        actual = WORD_TRAIT.fromTraitText(wordTrait.setText(text).parse().getFoundTraits());
-        Assertions.assertEquals(expected, actual);
-
-        text = "'Larry','Moe','Curly'"; // string list
-        expected = STR_LIST;
-        actual = WORD_TRAIT.fromTraitText(wordTrait.setText(text).parse().getFoundTraits());
-        Assertions.assertEquals(expected, actual);
-
-        text = "abc_1"; // identifier
-        expected = ID_PAR;
-        actual = WORD_TRAIT.fromTraitText(wordTrait.setText(text).parse().getFoundTraits());
-        Assertions.assertEquals(expected, actual);
-
-        text = "MyId"; // identifier
-        expected = ID_PAR;
-        actual = WORD_TRAIT.fromTraitText(wordTrait.setText(text).parse().getFoundTraits());
-        Assertions.assertEquals(expected, actual);
-
-        text = "id1"; // identifier
-        expected = ID_PAR;
-        actual = WORD_TRAIT.fromTraitText(wordTrait.setText(text).parse().getFoundTraits());
-        Assertions.assertEquals(expected, actual);
-
-        text = "A,B_2,myVar"; // identifier list
-        expected = ID_LIST;
-        actual = WORD_TRAIT.fromTraitText(wordTrait.setText(text).parse().getFoundTraits());
-        Assertions.assertEquals(expected, actual);
-
-        text = "A,B,myVar"; // identifier list
-        expected = ID_LIST;
-        actual = WORD_TRAIT.fromTraitText(wordTrait.setText(text).parse().getFoundTraits());
-        Assertions.assertEquals(expected, actual);
-
-        text = "path1.path2.path_3";// identifier path
-        expected = ID_SEP;
-        actual = WORD_TRAIT.fromTraitText(wordTrait.setText(text).parse().getFoundTraits());
-        Assertions.assertEquals(expected, actual);
-
-        text = "2:3"; // numeric range
-        expected = NUM_RANGE;
-        actual = WORD_TRAIT.fromTraitText(wordTrait.setText(text).parse().getFoundTraits());
-        Assertions.assertEquals(expected, actual);
-
-        text = "*abc_1"; // id access
-        expected = STAR_ID;
-        actual = WORD_TRAIT.fromTraitText(wordTrait.setText(text).parse().getFoundTraits());
-        Assertions.assertEquals(expected, actual);
-
-        text = "*[2]"; // fx access
-        expected = STAR_NUM;
-        actual = WORD_TRAIT.fromTraitText(wordTrait.setText(text).parse().getFoundTraits());
-        Assertions.assertEquals(expected, actual);
-
-        text = "*[8:11]"; // id access
-        expected = STAR_RANGE;
-        actual = WORD_TRAIT.fromTraitText(wordTrait.setText(text).parse().getFoundTraits());
-        Assertions.assertEquals(expected, actual);
+    private WordTraitRule initRule(){
+        ICharTraitParser parser = CharTraitParser.builder().
+            skipSymbols('\'').keepEscapeSymbol().
+            traits(
+                new CharTraitImplGroup.CharTrait('\''),
+                new CharTraitImplGroup.CharTrait('.'),
+                new CharTraitImplGroup.CharTrait(','),
+                new CharTraitImplGroup.CharTrait(':'),
+                new CharTraitImplGroup.CharTrait('*'),
+                new CharTraitImplGroup.CharTrait('['),
+                new CharTraitImplGroup.CharTrait('_'),
+                new CharTraitImplGroup.CharTraitAlpha('A'),
+                new CharTraitImplGroup.CharTraitVisibleAscii('C'),
+                new CharTraitImplGroup.CharTraitNumeric('N')
+            ).build();
+        WordTraitRule rule = new WordTraitRule();
+        rule.initWordTraitRule(
+            new TraitPatternMatch(
+                parser, "-'-*-,-.-:-A+C+N-[-_", NUM_PAR, WordTraitActionNumber.initInstance()
+            ),
+            new TraitPatternMatch(
+                parser, "-'-*+,-.-:-A+C+N-[-_", NUM_LIST, WordTraitActionNumbers.initInstance(',')
+            ),
+            new TraitPatternMatch(
+                parser, "+'-*-,-.-:-A+C-N-[-_", STR_PAR, WordTraitActionQuoted.initInstance()
+            ),
+            new TraitPatternMatch(
+                parser, "+'-*+,-.-:-A+C-N-[-_", STR_LIST, WordTraitActionQuotedList.initInstance()
+            ),
+            new TraitPatternMatch(
+                parser, "-'-*-,-.-:+A+C.N-[._", ID_PAR, WordTraitActionString.initInstance()
+            ),
+            new TraitPatternMatch(
+                parser, "-'-*+,-.-:+A+C.N-[._", ID_LIST, WordTraitActionStrings.initInstance(',')
+            ),
+            new TraitPatternMatch(
+                parser, "-'-*-,+.-:+A+C.N-[._", ID_SEP, WordTraitActionStrings.initInstance('.')
+            ),
+            new TraitPatternMatch(
+                parser, "-'+*-,-.-:+A+C.N-[._", STAR_ID, WordTraitActionString.initInstance()
+            ),
+            new TraitPatternMatch(
+                parser, "-'-*-,-.+:-A+C+N-[-_", NUM_RANGE, WordTraitActionNumbers.initInstance(':')
+            ),
+            new TraitPatternMatch(
+                parser, "-'+*-,-.-:-A+C+N+[-_", STAR_NUM, WordTraitActionNumber.initInstance()
+            ),
+            new TraitPatternMatch(
+                parser, "-'+*-,-.+:-A+C+N+[-_", STAR_RANGE, WordTraitActionNumbers.initInstance(':')
+            )
+        );
+        return rule;
     }
 
     @Test
     void givenText_extractContent(){
+        WordTraitRule rule = initRule();
         IWordTraitClient client = new TestClient();
         String text, expected, actual;
         ERR_TYPE expectedErrType = ERR_TYPE.NONE;
         ERR_TYPE actualErrType;
-        text = "23";
 
-        actualErrType = WORD_TRAIT.tryParse(client, text);
-        expected = "strings=null|numbers=[23]|wordTraitEnum=NUM_PAR";
+        text = "23";
+        actualErrType = rule.tryParse(client, text);
+        expected = "strings=null|numbers=[23]|parTypeEnum=NUM_PAR";
         actual = client.toString();
         Assertions.assertEquals(expectedErrType, actualErrType);
         Assertions.assertEquals(expected, actual);
 
         text = "2,3,4"; // num list
-        actualErrType = WORD_TRAIT.tryParse(client, text);
-        expected = "strings=null|numbers=[2, 3, 4]|wordTraitEnum=NUM_LIST";
+        actualErrType = rule.tryParse(client, text);
+        expected = "strings=null|numbers=[2, 3, 4]|parTypeEnum=NUM_LIST";
         actual = client.toString();
+        Assertions.assertEquals(expectedErrType, actualErrType);
         Assertions.assertEquals(expected, actual);
 
         text = "'a'"; // string
-        actualErrType = WORD_TRAIT.tryParse(client, text);
-        expected = "strings=[a]|numbers=null|wordTraitEnum=STR_PAR";
+        actualErrType = rule.tryParse(client, text);
+        expected = "strings=[a]|numbers=null|parTypeEnum=STR_PAR";
         actual = client.toString();
+        Assertions.assertEquals(expectedErrType, actualErrType);
         Assertions.assertEquals(expected, actual);
 
         text = "'Larry','Moe','Curly'"; // string list
-        actualErrType = WORD_TRAIT.tryParse(client, text);
-        expected = "strings=[Larry, Moe, Curly]|numbers=null|wordTraitEnum=STR_LIST";
+        actualErrType = rule.tryParse(client, text);
+        expected = "strings=[Larry, Moe, Curly]|numbers=null|parTypeEnum=STR_LIST";
         actual = client.toString();
+        Assertions.assertEquals(expectedErrType, actualErrType);
         Assertions.assertEquals(expected, actual);
 
         text = "abc_1"; // identifier
-        actualErrType = WORD_TRAIT.tryParse(client, text);
-        expected = "strings=[abc_1]|numbers=null|wordTraitEnum=ID_PAR";
+        actualErrType = rule.tryParse(client, text);
+        expected = "strings=[abc_1]|numbers=null|parTypeEnum=ID_PAR";
         actual = client.toString();
+        Assertions.assertEquals(expectedErrType, actualErrType);
         Assertions.assertEquals(expected, actual);
 
         text = "MyId"; // identifier
-        actualErrType = WORD_TRAIT.tryParse(client, text);
-        expected = "strings=[MyId]|numbers=null|wordTraitEnum=ID_PAR";
+        actualErrType = rule.tryParse(client, text);
+        expected = "strings=[MyId]|numbers=null|parTypeEnum=ID_PAR";
         actual = client.toString();
+        Assertions.assertEquals(expectedErrType, actualErrType);
         Assertions.assertEquals(expected, actual);
 
         text = "id1"; // identifier
-        actualErrType = WORD_TRAIT.tryParse(client, text);
-        expected = "strings=[id1]|numbers=null|wordTraitEnum=ID_PAR";
+        actualErrType = rule.tryParse(client, text);
+        expected = "strings=[id1]|numbers=null|parTypeEnum=ID_PAR";
         actual = client.toString();
+        Assertions.assertEquals(expectedErrType, actualErrType);
         Assertions.assertEquals(expected, actual);
 
         text = "A,B_2,myVar"; // identifier list
-        actualErrType = WORD_TRAIT.tryParse(client, text);
-        expected = "strings=[A, B_2, myVar]|numbers=null|wordTraitEnum=ID_LIST";
+        actualErrType = rule.tryParse(client, text);
+        expected = "strings=[A, B_2, myVar]|numbers=null|parTypeEnum=ID_LIST";
         actual = client.toString();
+        Assertions.assertEquals(expectedErrType, actualErrType);
         Assertions.assertEquals(expected, actual);
 
         text = "A,B,myVar"; // identifier list
-        actualErrType = WORD_TRAIT.tryParse(client, text);
-        expected = "strings=[A, B, myVar]|numbers=null|wordTraitEnum=ID_LIST";
+        actualErrType = rule.tryParse(client, text);
+        expected = "strings=[A, B, myVar]|numbers=null|parTypeEnum=ID_LIST";
         actual = client.toString();
+        Assertions.assertEquals(expectedErrType, actualErrType);
         Assertions.assertEquals(expected, actual);
 
         text = "path1.path2.path_3";// identifier path
-        actualErrType = WORD_TRAIT.tryParse(client, text);
-        expected = "strings=[path1, path2, path_3]|numbers=null|wordTraitEnum=ID_SEP";
+        actualErrType = rule.tryParse(client, text);
+        expected = "strings=[path1, path2, path_3]|numbers=null|parTypeEnum=ID_SEP";
         actual = client.toString();
+        Assertions.assertEquals(expectedErrType, actualErrType);
         Assertions.assertEquals(expected, actual);
 
         text = "2:3"; // numeric range
-        actualErrType = WORD_TRAIT.tryParse(client, text);
-        expected = "strings=null|numbers=[2, 3]|wordTraitEnum=NUM_RANGE";
+        actualErrType = rule.tryParse(client, text);
+        expected = "strings=null|numbers=[2, 3]|parTypeEnum=NUM_RANGE";
         actual = client.toString();
+        Assertions.assertEquals(expectedErrType, actualErrType);
         Assertions.assertEquals(expected, actual);
 
         text = "*abc_1"; // id access
-        actualErrType = WORD_TRAIT.tryParse(client, text);
-        expected = "strings=[*abc_1]|numbers=null|wordTraitEnum=STAR_ID";
+        actualErrType = rule.tryParse(client, text);
+        expected = "strings=[*abc_1]|numbers=null|parTypeEnum=STAR_ID";
         actual = client.toString();
+        Assertions.assertEquals(expectedErrType, actualErrType);
         Assertions.assertEquals(expected, actual);
 
-//        text = "*[2]"; // fx access
-//        WORD_TRAIT.tryParse(client, text);
-//
-//        text = "*[8:11]"; // id access
-//        WORD_TRAIT.tryParse(client, text);
+        // bad test
+        text = "'Larry','Mo'e','Curly'"; // string list
+        actualErrType = rule.tryParse(client, text);
+        Assertions.assertEquals(ERR_TYPE.UNKNOWN_PATTERN, actualErrType);
     }
 
     public static class TestClient implements IWordTraitClient {
         private String[] strings;
         private int[] numbers;
-        private WORD_TRAIT wordTraitEnum;
+        private PAR_TYPE parTypeEnum;
 
         @Override
         public void receiveContent(String... content) {
@@ -376,8 +366,8 @@ class WordTraitUtilTest {
         }
 
         @Override
-        public void receiveContent(WORD_TRAIT content) {
-            wordTraitEnum = content;
+        public void receiveContent(PAR_TYPE content) {
+            parTypeEnum = content;
             //System.out.println("receive content: enum");
             //System.out.println(content);
         }
@@ -387,7 +377,7 @@ class WordTraitUtilTest {
             return
                     "strings=" + Arrays.toString(strings) +
                     "|numbers=" + Arrays.toString(numbers) +
-                    "|wordTraitEnum=" + wordTraitEnum;
+                    "|parTypeEnum=" + parTypeEnum;
         }
     }
 }

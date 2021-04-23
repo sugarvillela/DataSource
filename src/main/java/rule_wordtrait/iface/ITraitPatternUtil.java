@@ -1,4 +1,4 @@
-package wordtraitutil.iface;
+package rule_wordtrait.iface;
 
 /** A utility for TRAIT_PATTERN enums to match text.
  *  Implementation takes advantage of two things known about the data:

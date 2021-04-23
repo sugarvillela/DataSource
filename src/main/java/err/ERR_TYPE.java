@@ -28,6 +28,10 @@ public enum ERR_TYPE {
     BAD_TEST_PARAM      ("Invalid SCOPE/IF parameter; use one-word scope or RX, with parentheses"),
     MISSING_CONDITIONAL ("Expected a conditional expression"),
 
+    // Sublang errors
+    UNKNOWN_PATTERN     ("Unknown pattern"),
+    UNKNOWN_CHAR        ("Contains an unknown symbol"),
+
     DEV_ERROR           ("Developer error"),
     SYNTAX              ("Syntax error"),
     FILE_ERROR          ("Something went wrong with a file"),

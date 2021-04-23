@@ -1,6 +1,6 @@
-package wordtraitutil.impl;
+package rule_wordtrait.impl;
 
-import wordtraitutil.iface.ICharTrait;
+import rule_wordtrait.iface.ICharTrait;
 
 public abstract class CharTraitImplGroup {
     public static class CharTrait implements ICharTrait, Comparable<ICharTrait> {

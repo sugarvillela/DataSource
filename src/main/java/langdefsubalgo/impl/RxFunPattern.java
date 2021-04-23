@@ -13,7 +13,7 @@ import java.util.ArrayList;
 
 public class RxFunPattern implements IRxFunPattern {
     private static final ITokenizer TOK_ON_COMPARE = Tokenizer.builder().delimiters(COMPARE.allChars()).
-            skipSymbols('\'').tokenizeDelimiter().keepSkipSymbol().build();
+            skipSymbols("'(").tokenizeDelimiter().keepSkipSymbol().keepEscapeSymbol().build();
 
     private final COMPARE compare;
     //private final String textLeft, textRight;

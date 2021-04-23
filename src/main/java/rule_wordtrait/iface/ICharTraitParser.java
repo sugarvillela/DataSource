@@ -1,11 +1,9 @@
-package wordtraitutil.iface;
+package rule_wordtrait.iface;
 
-import wordtraitutil.WORD_TRAIT;
+public interface ICharTraitParser {
+    ICharTraitParser setText(String text);
 
-public interface IWordTraitParser {
-    IWordTraitParser setText(String text);
-
-    IWordTraitParser parse();
+    ICharTraitParser parse();
 
     boolean foundTrait();
 
@@ -27,6 +25,6 @@ public interface IWordTraitParser {
 
         IBuilder keepEscapeSymbol();
 
-        IWordTraitParser build();
+        ICharTraitParser build();
     }
 }

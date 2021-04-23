@@ -1,6 +1,6 @@
-package wordtraitutil.impl;
+package rule_wordtrait.impl;
 
-import wordtraitutil.iface.ITraitPatternUtil;
+import rule_wordtrait.iface.ITraitPatternUtil;
 
 import java.util.Arrays;
 

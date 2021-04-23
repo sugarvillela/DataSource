@@ -1,13 +1,13 @@
-package wordtraitutil.impl;
+package rule_wordtrait.impl;
 
-import wordtraitutil.iface.ICharTrait;
-import wordtraitutil.iface.IWordTraitParser;
+import rule_wordtrait.iface.ICharTrait;
+import rule_wordtrait.iface.ICharTraitParser;
 
 import java.util.Arrays;
 import java.util.Stack;
 
 /** Char search utility that obeys skip areas, escapes. Algorithm similar to Tokenizer class */
-public class WordTraitParser implements IWordTraitParser {
+public class CharTraitParser implements ICharTraitParser {
     private static final char escape = '\\';
     private ICharTrait[] traits;           // List of traits to look for
     private char[] oMap, cMap;              // matched open/close skip char arrays
@@ -16,7 +16,7 @@ public class WordTraitParser implements IWordTraitParser {
     private boolean foundTrait;             // state, reset on every parse
     private String text;
 
-    private WordTraitParser(){
+    private CharTraitParser(){
         keepEscapeSymbol = false;
     }
 
@@ -88,13 +88,13 @@ public class WordTraitParser implements IWordTraitParser {
     /*====Public parts================================================================================================*/
 
     @Override
-    public IWordTraitParser setText(String text) {
+    public ICharTraitParser setText(String text) {
         this.text = text;
         return this;
     }
 
     @Override
-    public IWordTraitParser parse() {
+    public ICharTraitParser parse() {
         this.clear();
 
         int len = text.length();
@@ -173,10 +173,10 @@ public class WordTraitParser implements IWordTraitParser {
     }
 
     public static class Builder implements IBuilder{
-        private final WordTraitParser built;
+        private final CharTraitParser built;
 
         public Builder() {
-            built = new WordTraitParser();
+            built = new CharTraitParser();
         }
 
         @Override
@@ -219,7 +219,7 @@ public class WordTraitParser implements IWordTraitParser {
         }
 
         @Override
-        public IWordTraitParser build(){
+        public ICharTraitParser build(){
             return built;
         }
     }

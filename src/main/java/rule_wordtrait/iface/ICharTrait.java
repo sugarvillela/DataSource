@@ -1,4 +1,4 @@
-package wordtraitutil.iface;
+package rule_wordtrait.iface;
 
 public interface ICharTrait {
     void clear();

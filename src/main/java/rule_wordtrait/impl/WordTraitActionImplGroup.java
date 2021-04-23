@@ -1,10 +1,9 @@
-package wordtraitutil.impl;
+package rule_wordtrait.impl;
 
-import err.ERR_TYPE;
 import tokenizer.iface.ITokenizer;
 import tokenizer.impl.Tokenizer;
-import wordtraitutil.iface.IWordTraitAction;
-import wordtraitutil.iface.IWordTraitClient;
+import rule_wordtrait.iface.IWordTraitAction;
+import rule_wordtrait.iface.IWordTraitClient;
 
 import java.util.List;
 
@@ -33,9 +32,8 @@ public class WordTraitActionImplGroup {
         }
 
         @Override
-        public ERR_TYPE doAction(IWordTraitClient client, String text) {
+        public void doAction(IWordTraitClient client, String text) {
             client.receiveContent(tokenizer.setText(text).parse().toArray());
-            return ERR_TYPE.NONE;
         }
     }
 
@@ -49,14 +47,13 @@ public class WordTraitActionImplGroup {
         }
 
         @Override
-        public ERR_TYPE doAction(IWordTraitClient client, String text) {
+        public void doAction(IWordTraitClient client, String text) {
             List<String> stringList = tokenizer.setText(text).parse().toList();
             int[] intList = new int[stringList.size()];
             for(int i = 0; i < stringList.size(); i++){
                 intList[i] = Integer.parseInt(stringList.get(i)); // validated by WORD_TRAIT pattern match
             }
             client.receiveContent(intList);
-            return ERR_TYPE.NONE;
         }
     }
 
@@ -72,9 +69,8 @@ public class WordTraitActionImplGroup {
         private WordTraitActionString(){}
 
         @Override
-        public ERR_TYPE doAction(IWordTraitClient client, String text) {
+        public void doAction(IWordTraitClient client, String text) {
             client.receiveContent(text);
-            return ERR_TYPE.NONE;
         }
     }
 
@@ -88,33 +84,14 @@ public class WordTraitActionImplGroup {
         private WordTraitActionNumber(){}
 
         @Override
-        public ERR_TYPE doAction(IWordTraitClient client, String text) {
+        public void doAction(IWordTraitClient client, String text) {
             client.receiveContent(Integer.parseInt(text));
-            return ERR_TYPE.NONE;
         }
     }
 
     /*=====Quoted extractors==========================================================================================*/
 
-    public static abstract class WordTraitActionQuotedBase implements IWordTraitAction {
-        protected final ITokenizer quoteTokenizer;
-        protected final String quote;
-
-        public WordTraitActionQuotedBase() {
-            this.quote = "'";
-            quoteTokenizer = Tokenizer.builder().delimiters('\'').tokenizeDelimiter().
-                    keepEscapeSymbol().build();
-        }
-        protected String unquote(String text){
-            List<String> tok = quoteTokenizer.setText(text).parse().toList();
-            if(tok.size() == 3 && quote.equals(tok.get(0)) &&  quote.equals(tok.get(2))){
-                return tok.get(1);
-            }
-            return null;
-        }
-    }
-
-    public static class WordTraitActionQuoted extends WordTraitActionQuotedBase {
+    public static class WordTraitActionQuoted implements IWordTraitAction {
         private static WordTraitActionQuoted instance;
 
         public static WordTraitActionQuoted initInstance(){
@@ -124,17 +101,12 @@ public class WordTraitActionImplGroup {
         private WordTraitActionQuoted() {}
 
         @Override
-        public ERR_TYPE doAction(IWordTraitClient client, String text) {
-            String unquote = this.unquote(text);
-            if(unquote != null){
-                client.receiveContent(unquote);
-                return ERR_TYPE.NONE;
-            }
-            return ERR_TYPE.UNKNOWN_PATTERN;
+        public void doAction(IWordTraitClient client, String text) {
+            client.receiveContent(text.substring(1, text.length() - 1));
         }
     }
 
-    public static class WordTraitActionQuotedList extends WordTraitActionQuotedBase {
+    public static class WordTraitActionQuotedList implements IWordTraitAction {
         private static WordTraitActionQuotedList instance;
 
         public static WordTraitActionQuotedList initInstance(){
@@ -149,16 +121,13 @@ public class WordTraitActionImplGroup {
         }
 
         @Override
-        public ERR_TYPE doAction(IWordTraitClient client, String text) {
+        public void doAction(IWordTraitClient client, String text) {
             List<String> quotedList = listTokenizer.setText(text).parse().toList();
             String[] unquotedList = new String[quotedList.size()];
             for(int i = 0; i < quotedList.size(); i++){
-                unquotedList[i] = this.unquote(quotedList.get(i));
-                if(unquotedList[i] == null){
-                    return ERR_TYPE.UNKNOWN_PATTERN;
-                }
+                unquotedList[i] = quotedList.get(i).substring(1, quotedList.get(i).length() - 1);
             }
-            return ERR_TYPE.NONE;
+            client.receiveContent(unquotedList);
         }
     }
 }
