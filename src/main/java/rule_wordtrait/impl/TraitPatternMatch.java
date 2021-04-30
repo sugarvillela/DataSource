@@ -6,6 +6,9 @@ import rule_wordtrait.iface.IWordTraitClient;
 import rule_wordtrait.iface.ICharTraitParser;
 import rule_wordtrait.iface.ITraitPatternMatch;
 
+import static langdefsub.PAR_TYPE.EMPTY_PAR;
+import static rule_wordtrait.impl.WordTraitActionImplGroup.ActionEmptyPar;
+
 public class TraitPatternMatch implements ITraitPatternMatch {
     private final ICharTraitParser charTraitParser;
     private final String pattern;
@@ -21,13 +24,12 @@ public class TraitPatternMatch implements ITraitPatternMatch {
 
     @Override
     public boolean tryParse(IWordTraitClient client, String text) {
-        String traitText = charTraitParser.setText(text).parse().getFoundTraits();
-
-        if(TraitPatternUtil.initInstance().match(traitText, pattern)){
-            client.receiveContent(parType);
-            action.doAction(client, text);
-            return true;
+        if(text.isEmpty()){
+            return ActionEmptyPar.initInstance().doAction(client, EMPTY_PAR, null);
         }
-        return false;
+        String traitText = charTraitParser.setText(text).parse().getFoundTraits();
+        //System.out.printf("TraitPatternMatch: for text %s traitText = %s \n", text, traitText);
+        return TraitPatternUtil.initInstance().match(traitText, pattern) &&
+                action.doAction(client, parType, text);
     }
 }

@@ -8,25 +8,25 @@ import generictree.node.ParseTreeNode;
  * @param <T> the IGTreeNode payload type
  */
 public class PathTree <T> extends GTreeBase <T> {
-    private final String splitChar;
+    private final char splitChar;
 
     public PathTree(char splitChar) {
-        this.splitChar = String.valueOf(splitChar);
+        this.splitChar = splitChar;
     }
 
     @Override
-    public boolean put(String path, T payload) {
+    public boolean put(T payload, String... path) {
         //System.out.println(">>>>>>>" + path);
+        path = tokenizePathOnSingle(splitChar, path);
         if(root == null){
             root = new ParseTreeNode<>();
             root.setLevel(0);
-            root.setIdentifier(path);
+            root.setIdentifier(path[0]);
             root.setPayload(payload);
             return true;
         }
         else{
-            String[] tok = path.split("[" + splitChar + "]");
-            return parseObject.putByPath(payload, 0, root, tok);
+            return parseObject.putByPath(payload, 0, root, path);
         }
     }
 }

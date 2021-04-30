@@ -30,7 +30,7 @@ public enum ERR_TYPE {
 
     // Sublang errors
     UNKNOWN_PATTERN     ("Unknown pattern"),
-    UNKNOWN_CHAR        ("Contains an unknown symbol"),
+    UNKNOWN_FUNCTION    ("Not a valid RxFx sub-language function"),
 
     DEV_ERROR           ("Developer error"),
     SYNTAX              ("Syntax error"),

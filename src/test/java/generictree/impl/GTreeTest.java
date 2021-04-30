@@ -15,36 +15,47 @@ import java.util.ArrayList;
 import java.util.List;
 
 class GTreeTest {
+    private static class Payload {
+        public final String text;
 
+        public Payload(String text) {
+            this.text = text;
+        }
+
+        @Override
+        public String toString() {
+            return text;
+        }
+    }
     @Test
     void initialTests() {
-        IGTree<String> tree = new PathTree<>(LangConstants.PATH_TREE_SEP);
-        tree.put("id0", "payload0");
-        tree.put("id0.id01", "payload1");
-        tree.put("id0.id01.id02", "payload2");
-        tree.put("id0.id01.id02.id03a", "payload3a");
-        tree.put("id0.id01.id02.id03b", "payload3b");
-        tree.put("id0.id_b", "payloadb");
-        tree.put("id0.id_c0", "payloadc0");
-        tree.put("id0.id_b.id_c1", "payloadc1");
-        ArrayList<IGTreeNode<String>> list = new ArrayList<>();
+        IGTree<Payload> tree = new PathTree<>(LangConstants.PATH_TREE_SEP);
+        tree.put(new Payload("payload0"), "id0");
+        tree.put(new Payload("payload1"), "id0.id01");
+        tree.put(new Payload("payload2"), "id0.id01.id02");
+        tree.put(new Payload("payload3a"), "id0.id01.id02.id03a");
+        tree.put(new Payload("payload3b"), "id0.id01.id02.id03b");
+        tree.put(new Payload("payloadb"), "id0.id_b");
+        tree.put(new Payload("payloadc0"), "id0.id_c0");
+        tree.put(new Payload("payloadc1"), "id0.id_b.id_c1");
+        ArrayList<IGTreeNode<Payload>> list = new ArrayList<>();
 
         tree.getParse().preOrder(tree.getRoot(), new TaskToList<>(list));
-        for(IGTreeNode<String> node : list){
+        for(IGTreeNode<Payload> node : list){
             System.out.println(node.friendlyString());
         }
 
         System.out.println("======");
-        ArrayList<IGTreeNode<String>> leaves = new ArrayList<>();
+        ArrayList<IGTreeNode<Payload>> leaves = new ArrayList<>();
 
         tree.getParse().preOrder(tree.getRoot(), new TaskToListLeaves<>(leaves));
-        for(IGTreeNode<String> node : leaves){
+        for(IGTreeNode<Payload> node : leaves){
             System.out.println(node.csvString());
         }
 
         System.out.println("======");
-        IGTreeNode<String> found;
-        if((found = tree.getParse().findById(tree.getRoot(), "id_c1")) != null){
+        IGTreeNode<Payload> found;
+        if((found = tree.getParse().treeNodeFromId(tree.getRoot(), "id_c1")) != null){
             System.out.println("found: " + found.csvString());
         }
         else{
@@ -54,71 +65,99 @@ class GTreeTest {
 
     /*=====PathTree tests=============================================================================================*/
 
-    private IGTree<String> mockPathTree(){
-        IGTree<String> tree = new PathTree<>(LangConstants.PATH_TREE_SEP);
-        tree.put("id0", "payload0");
-        tree.put("id0.id01", "payload1");
-        tree.put("id0.id01.id02", "payload2");
-        tree.put("id0.id01.id02.id03", "payload3");
-        tree.put("id0.id01.id02.id03.id04", "payload4");
-        tree.put("id0.id01.id02.id03b", "payload3b");
-        tree.put("id0.idb", "payloadb");
-        tree.put("id0.idc", "payloadc");
-        tree.put("id0.idb.idd", "payloadd");
+    private IGTree<Payload> mockPathTree(){
+        IGTree<Payload> tree = new PathTree<>(LangConstants.PATH_TREE_SEP);
+        tree.put(new Payload("payload0"), "id0");
+        tree.put(new Payload("payload1"), "id0.id01");
+        tree.put(new Payload("payload2"), "id0.id01.id02");
+        tree.put(new Payload("payload3"), "id0.id01.id02.id03");
+        tree.put(new Payload("payload4"), "id0.id01.id02.id03.id04");
+        tree.put(new Payload("payload3b"), "id0.id01.id02.id03b");
+        tree.put(new Payload("payloadb"), "id0.idb");
+        tree.put(new Payload("payloadc0"), "id0.idc");
+        tree.put(new Payload("payloadd"), "id0.idb.idd");
+
         return tree;
     }
 
     @Test
     void givenPopulatedTree_displayBreadthFirst() {
-        IGTree<String> tree = mockPathTree();
-        IGTreeTask<String> task = new TaskDisp<>();
+        IGTree<Payload> tree = mockPathTree();
+        IGTreeTask<Payload> task = new TaskDisp<>();
         tree.getParse().breadthFirst(tree.getRoot(), task);
     }
+
     @Test
     void givenPopulatedTree_returnNodeForGivenIdentifier() {
-        IGTree<String> tree = mockPathTree();
-        IGTreeNode<String> found = tree.getParse().findByPartialPath(0, tree.getRoot(), "id01", "id02", "id03");
-        String friendlyString = (found == null)? "null" : found.friendlyString();
-        System.out.println("friendlyString: " + friendlyString);
+        IGTree<Payload> tree = mockPathTree();
+        String actual, expected;
+        IGTreeNode<Payload> found;
 
-        found = tree.getParse().findByPartialPath(0, tree.getRoot(), "id03");
-        friendlyString = (found == null)? "null" : found.friendlyString();
-        System.out.println("friendlyString: " + friendlyString);
+        found = tree.getParse().treeNodeFromPartialPath(0, tree.getRoot(), "id01", "id02", "id03");
+        expected = "(level: 3), bran, (children: 1), (op: -), (negated: -), (id: id03), (parent: id02), payload3";
+        actual = (found == null)? "null" : found.friendlyString();
+        System.out.println("friendlyString: " + actual);
+        Assertions.assertEquals(expected, actual);
 
-        found = tree.getParse().findByPartialPath(0, tree.getRoot(), "id0", "id01", "id02", "id03", "id04");
-        friendlyString = (found == null)? "null" : found.friendlyString();
-        System.out.println("friendlyString: " + friendlyString);
+        found = tree.getParse().treeNodeFromPartialPath(0, tree.getRoot(), "id03");
+        expected = "(level: 3), bran, (children: 1), (op: -), (negated: -), (id: id03), (parent: id02), payload3";
+        actual = (found == null)? "null" : found.friendlyString();
+        System.out.println("friendlyString: " + actual);
+        Assertions.assertEquals(expected, actual);
+
+        found = tree.getParse().treeNodeFromPartialPath(0, tree.getRoot(), "id0", "id01", "id02", "id03", "id04");
+        expected = "(level: 4), leaf, (children: 0), (op: -), (negated: -), (id: id04), (parent: id03), payload4";
+        actual = (found == null)? "null" : found.friendlyString();
+        System.out.println("friendlyString: " + actual);
+        Assertions.assertEquals(expected, actual);
     }
+
     @Test
     void givenPopulatedTree_returnFullPathForGivenIdentifier() {
-        IGTree<String> tree = mockPathTree();
-        String[] path  = tree.getParse().getFullPath(tree.getRoot(), "id02", "id03");
-        String pathString = (path == null)? "null" : String.join(", ", path);
-        System.out.println("pathString: " + pathString);
+        IGTree<Payload> tree = mockPathTree();
+        String actual, expected;
+        String[] path;
 
-        path  = tree.getParse().getFullPath(tree.getRoot(), "id04");
-        pathString = (path == null)? "null" : String.join(", ", path);
-        System.out.println("pathString: " + pathString);
+        path = tree.getParse().pathFromPartialPath(tree.getRoot(), "id02", "id03");
+        expected = "id0, id01, id02, id03";
+        actual = (path == null)? "null" : String.join(", ", path);
+        System.out.println("pathString: " + actual);
+        Assertions.assertEquals(expected, actual);
 
-        path  = tree.getParse().getFullPath(tree.getRoot(), "idb");
-        pathString = (path == null)? "null" : String.join(", ", path);
-        System.out.println("pathString: " + pathString);
+        path  = tree.getParse().pathFromPartialPath(tree.getRoot(), "id04");
+        expected = "id0, id01, id02, id03, id04";
+        actual = (path == null)? "null" : String.join(", ", path);
+        System.out.println("pathString: " + actual);
+        Assertions.assertEquals(expected, actual);
+
+        path  = tree.getParse().pathFromPartialPath(tree.getRoot(), "idb");
+        expected = "id0, idb";
+        actual = (path == null)? "null" : String.join(", ", path);
+        System.out.println("pathString: " + actual);
+        Assertions.assertEquals(expected, actual);
     }
+
     @Test
     void givenPopulatedTree_returnAllPaths() {
-        IGTree<String> tree = mockPathTree();
-        IGTreeParse<String> parse = tree.getParse();
+        IGTree<Payload> tree = mockPathTree();
+        IGTreeParse<Payload> parse = tree.getParse();
         List<String> paths = parse.getAllPaths(tree.getRoot(), '.');
-        System.out.println("givenPopulatedTree_returnAllPaths");
-        for(String path : paths){
-            System.out.println(path);
-        }
-        System.out.println("======");
+        String actual = String.join("|", paths);
+//        System.out.println("givenPopulatedTree_returnAllPaths");
+//        for(String path : paths){
+//            System.out.println("\"" + path + "|\" +");
+//        }
+
+        String expected = "id0.id01.id02.id03.id04|" +
+                "id0.id01.id02.id03b|" +
+                "id0.idb.idd|" +
+                "id0.idc";
+        Assertions.assertEquals(expected, actual);
     }
 
     @Test
     void givenPopulatedTree_clearAllRecursively() {
-        IGTree<String> tree = mockPathTree();
+        IGTree<Payload> tree = mockPathTree();
 
         tree.getParse().preOrder(tree.getRoot(), new TaskDisp<>());
         System.out.println("====");
@@ -133,22 +172,34 @@ class GTreeTest {
 
     @Test
     void givenFormattedString_populateParseTree() {
-        IGTree<String> tree = new ParseTree<>();
+        IGTree<Payload> tree = new ParseTree<>();
         tree.put("zero|!(one&!two)|three");
-        tree.getRoot().csvString();
-        ArrayList<IGTreeNode<String>> list = new ArrayList<>();
-        tree.getParse().preOrder(tree.getRoot(), new TaskToList<>(list));
-        for(IGTreeNode<String> node : list){
-            System.out.println(node.friendlyString());
+        //tree.getRoot().csvString();
+        ArrayList<IGTreeNode<Payload>> list = new ArrayList<>();
+        tree.getParse().breadthFirst(tree.getRoot(), new TaskToList<>(list));
+
+        ArrayList<String> actualList = new ArrayList<>();
+        for(IGTreeNode<Payload> node : list){
+            actualList.add(node.friendlyString());
+            //System.out.println("\"" + node.friendlyString() + "|\" +");
         }
+        String expected = "(level: 0), bran, (children: 3), (op: |), (negated: -), (id: root), (parent: -), -|" +
+                "(level: 1), leaf, (children: 0), (op: -), (negated: -), (id: zero), (parent: root), -|" +
+                "(level: 1), bran, (children: 2), (op: &), (negated: !), (id: &), (parent: root), -|" +
+                "(level: 1), leaf, (children: 0), (op: -), (negated: -), (id: three), (parent: root), -|" +
+                "(level: 2), leaf, (children: 0), (op: -), (negated: -), (id: one), (parent: &), -|" +
+                "(level: 2), leaf, (children: 0), (op: -), (negated: !), (id: two), (parent: &), -";
+        String actual = String.join("|", actualList);
+        Assertions.assertEquals(expected, actual);
     }
-    private IGTree<String> mockParseTree(){
-        IGTree<String> tree = new ParseTree<>();
+
+    private IGTree<Payload> mockParseTree(){
+        IGTree<Payload> tree = new ParseTree<>();
         tree.put("zero|!(one&two)|!three");
         // display?
-        ArrayList<IGTreeNode<String>> list = new ArrayList<>();
+        ArrayList<IGTreeNode<Payload>> list = new ArrayList<>();
         tree.getParse().preOrder(tree.getRoot(), new TaskToList<>(list));
-        for(IGTreeNode<String> node : list){
+        for(IGTreeNode<Payload> node : list){
             System.out.println(node.friendlyString());
         }
         return tree;
@@ -156,13 +207,11 @@ class GTreeTest {
 
     @Test
     void givenPopulatedTree_buildFormattedString() {// formatted for target language
-        IGTree<String> tree = mockParseTree();
+        IGTree<Payload> tree = mockParseTree();
 
         String actual = tree.toString();
         String expected = "zero || !(one && two) || !three";
         System.out.println(actual);
         Assertions.assertEquals(expected, actual);
     }
-
-
 }

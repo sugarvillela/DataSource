@@ -3,6 +3,9 @@ package runstate;
 import datasink.constutil.ConstUtil;
 import datasink.impl.DataSink;
 import datasource.factory.FactoryDataSource;
+import langdef.util.ListTypeSearch;
+import langdefsubalgo.validators.ValidFunList;
+import rule_wordtrait.WordTraitRule;
 import tokenizer_special.impl.TokSpecial;
 import tokenizer.iface.ITokenizer;
 import tokenizer.impl.Tokenizer;
@@ -35,9 +38,11 @@ public class Glob {
     public static final RunState            RUN_STATE =             RunState.initInstance();
 
     public static final EnumsByType         ENUMS_BY_TYPE =         EnumsByType.initInstance();
+    public static final ListTypeSearch      LIST_TYPE_SEARCH =      ListTypeSearch.initInstance();
     public static final PushPopUtil         PUSH_POP_UTIL =         PushPopUtil.initInstance();
     public static final DataSink            DATA_SINK =             DataSink.initInstance();
     public static final ConstUtil           CONSTANT_UTIL =         ConstUtil.initInstance();
-    //public static final DataSink            DATA_SINK =             DataSink.initInstance();
+
+    public static final ValidFunList        VALID_FUN_LIST =        ValidFunList.initInstance();
 
 }

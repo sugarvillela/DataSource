@@ -97,7 +97,7 @@ public class ErrDev implements IErr {
             errInfo[1] = (message);
         }
         if(text != null){
-            errInfo[4] = (": '" + text + "'");
+            errInfo[4] = text;
         }
     }
 

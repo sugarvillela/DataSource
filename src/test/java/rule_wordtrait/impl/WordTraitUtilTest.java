@@ -167,6 +167,17 @@ class WordTraitUtilTest {
         actual = traitPatternUtil.match(text, pattern);
         Assertions.assertTrue(actual);
     }
+    @Test
+    void givenTextAndPattern_matchPattern2(){
+        ITraitPatternUtil traitPatternUtil = TraitPatternUtil.initInstance();
+        String text, pattern;
+        boolean actual;
+        text = "C{}";
+        pattern = "+C+{+}";
+        pattern = traitPatternUtil.sortPattern(pattern);
+        actual = traitPatternUtil.match(text, pattern);
+        Assertions.assertTrue(actual);
+    }
 
     @Test
     void givenTextAndPattern_noMatchPattern(){
@@ -192,6 +203,139 @@ class WordTraitUtilTest {
         Assertions.assertFalse(actual);
     }
 
+    private WordTraitRule initRxWordRangeTest(){
+        ICharTraitParser parser = CharTraitParser.builder().
+                skipSymbols("'{").keepEscapeSymbol().
+                traits(
+                        new CharTraitImplGroup.CharTrait('{'),
+                        new CharTraitImplGroup.CharTrait('}'),
+                        new CharTraitImplGroup.CharTraitVisibleAscii('C')
+                ).build();
+        WordTraitRule rule = new WordTraitRule();
+        rule.initWordTraitRule(
+                new TraitPatternMatch(// WordTraitActionNumRange.initInstance(':')
+                        parser, "+C+{+}", YES, ActionOnRxWordRangeYes.initInstance('{', '}')
+                ),
+                new TraitPatternMatch(
+                        parser, "+C-{-}", NO, ActionOnNo.initInstance()
+                )
+        );
+        return rule;
+    }
+
+    @Test
+    void givenRxWordRange_findRange(){
+        WordTraitRule rule = initRxWordRangeTest();
+        TestClient client = new TestClient();
+        String text, expected, actual;
+        ERR_TYPE expectedErrType = ERR_TYPE.NONE;
+        ERR_TYPE actualErrType;
+
+        text = "myFun(678){1:3}";
+        actualErrType = rule.tryParse(client, text);
+        expected = "strings=[myFun(678)]|numbers=[1, 3]|parTypeEnum=YES";
+        actual = client.toString();
+        Assertions.assertEquals(expectedErrType, actualErrType);
+        Assertions.assertEquals(expected, actual);
+
+        client.resetTest();
+        text = "binky.bonk{:3}";
+        actualErrType = rule.tryParse(client, text);
+        expected = "strings=[binky.bonk]|numbers=[0, 3]|parTypeEnum=YES";
+        actual = client.toString();
+        Assertions.assertEquals(expectedErrType, actualErrType);
+        Assertions.assertEquals(expected, actual);
+
+        client.resetTest();
+        text = "myFun('str'){1:}";
+        actualErrType = rule.tryParse(client, text);
+        expected = "strings=[myFun('str')]|numbers=[1, 1024]|parTypeEnum=YES";
+        actual = client.toString();
+        Assertions.assertEquals(expectedErrType, actualErrType);
+        Assertions.assertEquals(expected, actual);
+    }
+
+    @Test
+    void givenNoRxWordRange_noFindRange(){
+        WordTraitRule rule = initRxWordRangeTest();
+        TestClient client = new TestClient();
+        String text, expected, actual;
+        ERR_TYPE actualErrType;
+
+        text = "myFun(678)";
+        actualErrType = rule.tryParse(client, text);
+        expected = "strings=[myFun(678)]|numbers=null|parTypeEnum=NO";
+        actual = client.toString();
+        Assertions.assertEquals(ERR_TYPE.NONE, actualErrType);
+        Assertions.assertEquals(expected, actual);
+
+        client.resetTest();
+        text = "binky.bonk{}";
+        actualErrType = rule.tryParse(client, text);
+        expected = "strings=[binky.bonk]|numbers=[0, 3]|parTypeEnum=YES";
+        actual = client.toString();
+        Assertions.assertEquals(ERR_TYPE.UNKNOWN_PATTERN, actualErrType);
+
+        client.resetTest();
+        text = "myFun('str'){2:3:4}";
+        actualErrType = rule.tryParse(client, text);
+        expected = "strings=[myFun('str')]|numbers=[1, 1024]|parTypeEnum=YES";
+        actual = client.toString();
+        Assertions.assertEquals(ERR_TYPE.UNKNOWN_PATTERN, actualErrType);
+    }
+
+    private WordTraitRule initFunTest(){
+        ICharTraitParser parser = CharTraitParser.builder().
+                skipSymbols("'(").keepEscapeSymbol().
+                traits(
+                        new CharTraitImplGroup.CharTrait('('),
+                        new CharTraitImplGroup.CharTrait(')'),
+                        new CharTraitImplGroup.CharTraitVisibleAscii('C')
+                ).build();
+        WordTraitRule rule = new WordTraitRule();
+        rule.initWordTraitRule(
+            new TraitPatternMatch(
+                    parser, "+C+(+)", YES, ActionOnFunParYes.initInstance('(', ')')
+            ),
+            new TraitPatternMatch(
+                parser, "+C-(-)", NO, ActionOnNo.initInstance()
+            )
+        );
+        return rule;
+    }
+
+    @Test
+    void givenFunParentheses_findFun(){
+        WordTraitRule rule = initFunTest();
+        TestClient client = new TestClient();
+        String text, expected, actual;
+        ERR_TYPE expectedErrType = ERR_TYPE.NONE;
+        ERR_TYPE actualErrType;
+
+        text = "myFun(678)";
+        actualErrType = rule.tryParse(client, text);
+        expected = "strings=[myFun, 678]|numbers=null|parTypeEnum=YES";
+        actual = client.toString();
+        Assertions.assertEquals(expectedErrType, actualErrType);
+        Assertions.assertEquals(expected, actual);
+
+        client.resetTest();
+        text = "noFun";
+        actualErrType = rule.tryParse(client, text);
+        expected = "strings=[noFun]|numbers=null|parTypeEnum=NO";
+        actual = client.toString();
+        Assertions.assertEquals(expectedErrType, actualErrType);
+        Assertions.assertEquals(expected, actual);
+
+        client.resetTest();
+        text = "emptyPar()";
+        actualErrType = rule.tryParse(client, text);
+        expected = "strings=[emptyPar, ]|numbers=null|parTypeEnum=YES";
+        actual = client.toString();
+        Assertions.assertEquals(expectedErrType, actualErrType);
+        Assertions.assertEquals(expected, actual);
+    }
+
     private WordTraitRule initRule(){
         ICharTraitParser parser = CharTraitParser.builder().
             skipSymbols('\'').keepEscapeSymbol().
@@ -207,40 +351,41 @@ class WordTraitUtilTest {
                 new CharTraitImplGroup.CharTraitVisibleAscii('C'),
                 new CharTraitImplGroup.CharTraitNumeric('N')
             ).build();
+
         WordTraitRule rule = new WordTraitRule();
         rule.initWordTraitRule(
             new TraitPatternMatch(
-                parser, "-'-*-,-.-:-A+C+N-[-_", NUM_PAR, WordTraitActionNumber.initInstance()
+                parser, "-'-*-,-.-:-A+C+N-[-_", NUM_PAR, ActionNumber.initInstance()
             ),
             new TraitPatternMatch(
-                parser, "-'-*+,-.-:-A+C+N-[-_", NUM_LIST, WordTraitActionNumbers.initInstance(',')
+                parser, "-'-*+,-.-:-A+C+N-[-_", NUM_LIST, ActionNumbers.initInstance(',')
             ),
             new TraitPatternMatch(
-                parser, "+'-*-,-.-:-A+C-N-[-_", STR_PAR, WordTraitActionQuoted.initInstance()
+                parser, "+'-*-,-.-:-A+C-N-[-_", STR_PAR, ActionQuotedString.initInstance()
             ),
             new TraitPatternMatch(
-                parser, "+'-*+,-.-:-A+C-N-[-_", STR_LIST, WordTraitActionQuotedList.initInstance()
+                parser, "+'-*+,-.-:-A+C-N-[-_", STR_LIST, ActionQuotedStringList.initInstance()
             ),
             new TraitPatternMatch(
-                parser, "-'-*-,-.-:+A+C.N-[._", ID_PAR, WordTraitActionString.initInstance()
+                parser, "-'-*-,-.-:+A+C.N-[._", ID_PAR, ActionStringId.initInstance()
             ),
             new TraitPatternMatch(
-                parser, "-'-*+,-.-:+A+C.N-[._", ID_LIST, WordTraitActionStrings.initInstance(',')
+                parser, "-'-*+,-.-:+A+C.N-[._", ID_LIST, ActionStringIds.initInstance(',')
             ),
             new TraitPatternMatch(
-                parser, "-'-*-,+.-:+A+C.N-[._", ID_SEP, WordTraitActionStrings.initInstance('.')
+                parser, "-'-*-,+.-:+A+C.N-[._", ID_PATH, ActionStringIds.initInstance('.')
             ),
             new TraitPatternMatch(
-                parser, "-'+*-,-.-:+A+C.N-[._", STAR_ID, WordTraitActionString.initInstance()
+                parser, "-'+*-,-.-:+A+C.N-[._", STAR_ID, ActionStringId.initInstance()
             ),
             new TraitPatternMatch(
-                parser, "-'-*-,-.+:-A+C+N-[-_", NUM_RANGE, WordTraitActionNumbers.initInstance(':')
+                parser, "-'-*-,-.+:-A+C+N-[-_", NUM_RANGE, ActionNumRange.initInstance()
             ),
             new TraitPatternMatch(
-                parser, "-'+*-,-.-:-A+C+N+[-_", STAR_NUM, WordTraitActionNumber.initInstance()
+                parser, "-'+*-,-.-:-A+C+N+[-_", STAR_NUM, ActionNumber.initInstance()
             ),
             new TraitPatternMatch(
-                parser, "-'+*-,-.+:-A+C+N+[-_", STAR_RANGE, WordTraitActionNumbers.initInstance(':')
+                parser, "-'+*-,-.+:-A+C+N+[-_", STAR_RANGE, ActionNumbers.initInstance(':')
             )
         );
         return rule;
@@ -249,11 +394,12 @@ class WordTraitUtilTest {
     @Test
     void givenText_extractContent(){
         WordTraitRule rule = initRule();
-        IWordTraitClient client = new TestClient();
+        TestClient client = new TestClient();
         String text, expected, actual;
         ERR_TYPE expectedErrType = ERR_TYPE.NONE;
         ERR_TYPE actualErrType;
 
+        client.resetTest();
         text = "23";
         actualErrType = rule.tryParse(client, text);
         expected = "strings=null|numbers=[23]|parTypeEnum=NUM_PAR";
@@ -261,6 +407,7 @@ class WordTraitUtilTest {
         Assertions.assertEquals(expectedErrType, actualErrType);
         Assertions.assertEquals(expected, actual);
 
+        client.resetTest();
         text = "2,3,4"; // num list
         actualErrType = rule.tryParse(client, text);
         expected = "strings=null|numbers=[2, 3, 4]|parTypeEnum=NUM_LIST";
@@ -268,6 +415,7 @@ class WordTraitUtilTest {
         Assertions.assertEquals(expectedErrType, actualErrType);
         Assertions.assertEquals(expected, actual);
 
+        client.resetTest();
         text = "'a'"; // string
         actualErrType = rule.tryParse(client, text);
         expected = "strings=[a]|numbers=null|parTypeEnum=STR_PAR";
@@ -275,6 +423,7 @@ class WordTraitUtilTest {
         Assertions.assertEquals(expectedErrType, actualErrType);
         Assertions.assertEquals(expected, actual);
 
+        client.resetTest();
         text = "'Larry','Moe','Curly'"; // string list
         actualErrType = rule.tryParse(client, text);
         expected = "strings=[Larry, Moe, Curly]|numbers=null|parTypeEnum=STR_LIST";
@@ -282,6 +431,7 @@ class WordTraitUtilTest {
         Assertions.assertEquals(expectedErrType, actualErrType);
         Assertions.assertEquals(expected, actual);
 
+        client.resetTest();
         text = "abc_1"; // identifier
         actualErrType = rule.tryParse(client, text);
         expected = "strings=[abc_1]|numbers=null|parTypeEnum=ID_PAR";
@@ -289,6 +439,7 @@ class WordTraitUtilTest {
         Assertions.assertEquals(expectedErrType, actualErrType);
         Assertions.assertEquals(expected, actual);
 
+        client.resetTest();
         text = "MyId"; // identifier
         actualErrType = rule.tryParse(client, text);
         expected = "strings=[MyId]|numbers=null|parTypeEnum=ID_PAR";
@@ -296,6 +447,7 @@ class WordTraitUtilTest {
         Assertions.assertEquals(expectedErrType, actualErrType);
         Assertions.assertEquals(expected, actual);
 
+        client.resetTest();
         text = "id1"; // identifier
         actualErrType = rule.tryParse(client, text);
         expected = "strings=[id1]|numbers=null|parTypeEnum=ID_PAR";
@@ -303,6 +455,7 @@ class WordTraitUtilTest {
         Assertions.assertEquals(expectedErrType, actualErrType);
         Assertions.assertEquals(expected, actual);
 
+        client.resetTest();
         text = "A,B_2,myVar"; // identifier list
         actualErrType = rule.tryParse(client, text);
         expected = "strings=[A, B_2, myVar]|numbers=null|parTypeEnum=ID_LIST";
@@ -310,6 +463,7 @@ class WordTraitUtilTest {
         Assertions.assertEquals(expectedErrType, actualErrType);
         Assertions.assertEquals(expected, actual);
 
+        client.resetTest();
         text = "A,B,myVar"; // identifier list
         actualErrType = rule.tryParse(client, text);
         expected = "strings=[A, B, myVar]|numbers=null|parTypeEnum=ID_LIST";
@@ -317,20 +471,15 @@ class WordTraitUtilTest {
         Assertions.assertEquals(expectedErrType, actualErrType);
         Assertions.assertEquals(expected, actual);
 
+        client.resetTest();
         text = "path1.path2.path_3";// identifier path
         actualErrType = rule.tryParse(client, text);
-        expected = "strings=[path1, path2, path_3]|numbers=null|parTypeEnum=ID_SEP";
+        expected = "strings=[path1, path2, path_3]|numbers=null|parTypeEnum=ID_PATH";
         actual = client.toString();
         Assertions.assertEquals(expectedErrType, actualErrType);
         Assertions.assertEquals(expected, actual);
 
-        text = "2:3"; // numeric range
-        actualErrType = rule.tryParse(client, text);
-        expected = "strings=null|numbers=[2, 3]|parTypeEnum=NUM_RANGE";
-        actual = client.toString();
-        Assertions.assertEquals(expectedErrType, actualErrType);
-        Assertions.assertEquals(expected, actual);
-
+        client.resetTest();
         text = "*abc_1"; // id access
         actualErrType = rule.tryParse(client, text);
         expected = "strings=[*abc_1]|numbers=null|parTypeEnum=STAR_ID";
@@ -339,9 +488,58 @@ class WordTraitUtilTest {
         Assertions.assertEquals(expected, actual);
 
         // bad test
+        client.resetTest();
         text = "'Larry','Mo'e','Curly'"; // string list
         actualErrType = rule.tryParse(client, text);
         Assertions.assertEquals(ERR_TYPE.UNKNOWN_PATTERN, actualErrType);
+    }
+
+    @Test
+    void givenRanges_extractContent(){
+        WordTraitRule rule = initRule();
+        TestClient client = new TestClient();
+        String text, expected, actual;
+        ERR_TYPE expectedErrType = ERR_TYPE.NONE;
+        ERR_TYPE actualErrType;
+
+        text = "2:3"; // numeric range
+        actualErrType = rule.tryParse(client, text);
+        expected = "strings=null|numbers=[2, 3]|parTypeEnum=NUM_RANGE";
+        actual = client.toString();
+        Assertions.assertEquals(expectedErrType, actualErrType);
+        Assertions.assertEquals(expected, actual);
+
+        client.resetTest();
+        text = ":3"; // numeric range
+        actualErrType = rule.tryParse(client, text);
+        expected = "strings=null|numbers=[0, 3]|parTypeEnum=NUM_RANGE";
+        actual = client.toString();
+        Assertions.assertEquals(expectedErrType, actualErrType);
+        Assertions.assertEquals(expected, actual);
+
+        client.resetTest();
+        text = "2:"; // numeric range
+        actualErrType = rule.tryParse(client, text);
+        expected = "strings=null|numbers=[2, 1024]|parTypeEnum=NUM_RANGE";
+        actual = client.toString();
+        Assertions.assertEquals(expectedErrType, actualErrType);
+        Assertions.assertEquals(expected, actual);
+    }
+
+    @Test
+    void givenEmptyParam_extractContent(){
+        WordTraitRule rule = initRule();
+        IWordTraitClient client = new TestClient();
+        String text, expected, actual;
+        ERR_TYPE expectedErrType = ERR_TYPE.NONE;
+        ERR_TYPE actualErrType;
+
+        text = "";
+        actualErrType = rule.tryParse(client, text);
+        expected = "strings=[]|numbers=null|parTypeEnum=EMPTY_PAR";
+        actual = client.toString();
+        Assertions.assertEquals(expectedErrType, actualErrType);
+        Assertions.assertEquals(expected, actual);
     }
 
     public static class TestClient implements IWordTraitClient {
@@ -349,27 +547,24 @@ class WordTraitUtilTest {
         private int[] numbers;
         private PAR_TYPE parTypeEnum;
 
+        public void resetTest(){
+            parTypeEnum = null;
+            strings = null;
+            numbers = null;
+        }
         @Override
         public void receiveContent(String... content) {
             strings = content;
-            numbers = null;
-            //System.out.println("receive content: string");
-            //System.out.println(Arrays.toString(content));
         }
 
         @Override
         public void receiveContent(int... content) {
             numbers = content;
-            strings = null;
-            //System.out.println("receive content: int");
-            //System.out.println(Arrays.toString(content));
         }
 
         @Override
         public void receiveContent(PAR_TYPE content) {
             parTypeEnum = content;
-            //System.out.println("receive content: enum");
-            //System.out.println(content);
         }
 
         @Override
@@ -380,4 +575,5 @@ class WordTraitUtilTest {
                     "|parTypeEnum=" + parTypeEnum;
         }
     }
+
 }

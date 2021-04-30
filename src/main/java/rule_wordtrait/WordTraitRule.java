@@ -6,11 +6,15 @@ import rule_wordtrait.iface.ITraitPatternMatch;
 
 
 public class WordTraitRule  {//implements IWordTraitRule
-    private ITraitPatternMatch[] rules;
+    private static WordTraitRule instance;
 
-    public WordTraitRule() {
-
+    public static WordTraitRule initInstance(){
+        return (instance == null)? (instance = new WordTraitRule()): instance;
     }
+
+    public WordTraitRule(){}
+
+    private ITraitPatternMatch[] rules;
 
     public void initWordTraitRule(ITraitPatternMatch... rules) {
         this.rules = rules;

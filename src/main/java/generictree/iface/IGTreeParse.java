@@ -3,13 +3,17 @@ package generictree.iface;
 import java.util.List;
 
 public interface IGTreeParse <T> {
-    IGTreeNode<T> findById(IGTreeNode<T> root, String identifier);
+    IGTreeNode<T> treeNodeFromId(IGTreeNode<T> root, String identifier);
 
     /*====PathTree algorithms=========================================================================================*/
 
-    IGTreeNode<T> findByPartialPath(int index, IGTreeNode<T> root, String... partialPath);
+    IGTreeNode<T> treeNodeFromPartialPath(int index, IGTreeNode<T> root, String... partialPath);
 
-    String[] getFullPath(IGTreeNode<T> root, String... partialPath);
+    String[] pathFromPartialPath(IGTreeNode<T> root, String... partialPath);
+
+    String[] pathFromTreeNode(IGTreeNode<T> root, IGTreeNode<T> treeNode);
+
+    boolean isPathToLeaf(IGTreeNode<T> root, String... partialPath);
 
     boolean putByPath(T payload, int level, IGTreeNode<T> root, String... path);
 

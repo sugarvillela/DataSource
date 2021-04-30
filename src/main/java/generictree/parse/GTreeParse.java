@@ -11,14 +11,14 @@ import java.util.Queue;
 
 public class GTreeParse<T> implements IGTreeParse<T> {
     @Override
-    public IGTreeNode<T> findById(IGTreeNode<T> root, String identifier) {
+    public IGTreeNode<T> treeNodeFromId(IGTreeNode<T> root, String identifier) {
         if(root.is(identifier)){
             return root;
         }
         else{
             IGTreeNode<T> foundNode;
             for(IGTreeNode<T> child : root.getChildren()){
-                if((foundNode = findById(child, identifier)) != null){
+                if((foundNode = treeNodeFromId(child, identifier)) != null){
                     return foundNode;
                 }
             }
@@ -27,7 +27,7 @@ public class GTreeParse<T> implements IGTreeParse<T> {
     }
 
     @Override
-    public IGTreeNode<T> findByPartialPath(int index, IGTreeNode<T> root, String... partialPath) {
+    public IGTreeNode<T> treeNodeFromPartialPath(int index, IGTreeNode<T> root, String... partialPath) {
         if(index < partialPath.length){
             if(root.is(partialPath[index])){
                 index++;
@@ -37,7 +37,7 @@ public class GTreeParse<T> implements IGTreeParse<T> {
             }
             IGTreeNode<T> foundNode;
             for(IGTreeNode<T> child : root.getChildren()){
-                if((foundNode = findByPartialPath(index, child, partialPath)) != null){
+                if((foundNode = treeNodeFromPartialPath(index, child, partialPath)) != null){
                     return foundNode;
                 }
             }
@@ -46,17 +46,34 @@ public class GTreeParse<T> implements IGTreeParse<T> {
     }
 
     @Override
-    public String[] getFullPath(IGTreeNode<T> root, String... partialPath) {
-        IGTreeNode<T> found = this.findByPartialPath(0, root, partialPath);
+    public String[] pathFromPartialPath(IGTreeNode<T> root, String... partialPath) {
+        IGTreeNode<T> found = this.treeNodeFromPartialPath(0, root, partialPath);
         if(found != null){
-            String[] fullPath = new String[found.level() + 1];
-            do{
-                fullPath[found.level()] = found.identifier();
-            }
-            while((found = found.parent()) != null);
-            return fullPath;
+            return this.pathFromTreeNode(root, found);
+//            String[] fullPath = new String[found.level() + 1];
+//            do{
+//                fullPath[found.level()] = found.identifier();
+//            }
+//            while((found = found.parent()) != null);
+//            return fullPath;
         }
         return null;
+    }
+
+    @Override
+    public String[] pathFromTreeNode(IGTreeNode<T> root, IGTreeNode<T> treeNode) {
+        String[] fullPath = new String[treeNode.level() + 1];
+        do{
+            fullPath[treeNode.level()] = treeNode.identifier();
+        }
+        while((treeNode = treeNode.parent()) != null);
+        return fullPath;
+    }
+
+    @Override
+    public boolean isPathToLeaf(IGTreeNode<T> root, String... partialPath) {
+        IGTreeNode<T> found = this.treeNodeFromPartialPath(0, root, partialPath);
+        return found != null && found.isLeaf();
     }
 
     @Override

@@ -21,13 +21,13 @@ public class ListTree implements IGTree<IReadNode> {
     }
 
     @Override
-    public boolean put(String path) {
-        return tree.put(path, Glob.RUN_STATE.getCurrNode());
+    public boolean put(String... path) {
+        return tree.put(Glob.RUN_STATE.getCurrNode(), path);
     }
 
     @Override
-    public boolean put(String path, IReadNode payload) {
-        return tree.put(path, payload);
+    public boolean put(IReadNode payload, String... path) {
+        return tree.put(payload, path);
     }
 
     @Override

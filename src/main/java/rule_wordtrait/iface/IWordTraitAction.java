@@ -1,5 +1,7 @@
 package rule_wordtrait.iface;
 
+import langdefsub.PAR_TYPE;
+
 public interface IWordTraitAction {
-    void doAction(IWordTraitClient client, String text);
+    boolean doAction(IWordTraitClient client, PAR_TYPE parType, String text);
 }

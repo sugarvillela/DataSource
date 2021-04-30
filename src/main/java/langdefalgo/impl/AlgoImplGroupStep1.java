@@ -3,18 +3,15 @@ package langdefalgo.impl;
 import attrib.types.RUNTIME_ATTRIB;
 import err.ERR_TYPE;
 import generictree.iface.IGTree;
-import langdef.CMD;
 import langdef.LangConstants;
 import langdef.STRUCT_LIST_TYPE;
 import langdefalgo.iface.IAlgoStrategy;
-import langdefalgo.iface.LANG_STRUCT;
 import readnode.iface.IReadNode;
 import readnode.impl.ReadNode;
 import runstate.Glob;
 import stackpayload.iface.IStackPayload;
 import stackpayload.impl.PayloadStateAccStr;
 import stackpayload.impl.StackPayload;
-import textevent.impl.TextEvent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -327,7 +324,7 @@ public class AlgoImplGroupStep1 {
             IReadNode currNode = Glob.RUN_STATE.getCurrNode();
             STRUCT_LIST_TYPE listType = (STRUCT_LIST_TYPE)parentEnum;
             String path = String.format(PATH_FORMAT, listType.toString(), currNode.text());
-            listType.getListTree().put(path, currNode);
+            listType.getListTree().put(currNode, path);
             return true;
         }
     }
@@ -374,7 +371,7 @@ public class AlgoImplGroupStep1 {
             if((identifier = currNode.textEvent().substring()) != null){// super.onPush() deletes the substring so get it now
                 this.findPath(identifier, stackTop);
                 //System.out.println("onPush: categoryPath: " + String.join(PATH_SEP, tempPath));
-                tempListType.getListTree().put(String.join(PATH_SEP, tempPath), currNode);
+                tempListType.getListTree().put(currNode, String.join(PATH_SEP, tempPath));
             }
             super.onPush(stackTop);
         }
@@ -385,7 +382,7 @@ public class AlgoImplGroupStep1 {
             this.findPath(stackTop);
             tempPath.add(currNode.text());
             //System.out.println("coreTask: categoryPath: " + String.join(PATH_SEP, tempPath));
-            tempListType.getListTree().put(String.join(PATH_SEP, tempPath), currNode);
+            tempListType.getListTree().put(currNode, String.join(PATH_SEP, tempPath));
             return true;
         }
     }

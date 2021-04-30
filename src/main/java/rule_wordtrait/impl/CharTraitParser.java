@@ -96,8 +96,11 @@ public class CharTraitParser implements ICharTraitParser {
     @Override
     public ICharTraitParser parse() {
         this.clear();
-
         int len = text.length();
+
+        if(len == 0){
+            return this;
+        }
         boolean escaped = false;
 
         for (int i = 0; i < len; i++) {
@@ -151,11 +154,8 @@ public class CharTraitParser implements ICharTraitParser {
     @Override
     public String getFoundTraits(){
         int count = 0, k = 0;
-        //System.out.println("getFoundTraits...");
         for(ICharTrait charTrait : traits){
-            //System.out.println(charTrait.watchedTrait());
             if(charTrait.foundTrait()){
-                //System.out.println("    found: " + charTrait.watchedTrait());
                 count++;
             }
         }

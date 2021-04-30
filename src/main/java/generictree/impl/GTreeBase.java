@@ -5,7 +5,6 @@ import generictree.iface.IGTreeNode;
 import generictree.iface.IGTreeParse;
 import generictree.iface.IGTreeTask;
 import generictree.parse.GTreeParse;
-import generictree.task.TaskDisp;
 import generictree.task.TaskToList;
 
 import java.util.ArrayList;
@@ -25,8 +24,8 @@ public abstract class GTreeBase <T> implements IGTree<T> {
     }
 
     @Override
-    public boolean put(String path) {
-        return this.put(path, null);
+    public boolean put(String... path) {
+        return this.put(null, path);
     }
 
     @Override
@@ -37,10 +36,10 @@ public abstract class GTreeBase <T> implements IGTree<T> {
             this.getParse().breadthFirst(this.getRoot(), task);
             for(int i = list.size() -1; i >= 0; i--){
                 IGTreeNode<T> currNode = list.get(i);
-                System.out.println(currNode.friendlyString());
+                //System.out.println(currNode.friendlyString());
                 if(!currNode.isLeaf()){
-                    System.out.println("clear");
-                     currNode.getChildren().clear();
+                    //System.out.println("clear");
+                    currNode.getChildren().clear();
                 }
             }
             root = null;
@@ -50,5 +49,13 @@ public abstract class GTreeBase <T> implements IGTree<T> {
     @Override
     public IGTreeParse<T> getParse() {
         return parseObject;
+    }
+
+    protected String[] tokenizePathOnSingle(char splitChar, String... path){
+        String[] tok;
+        if(path.length == 1 && (tok = path[0].split("[" + splitChar + "]")).length > 1){
+            return tok;
+        }
+        return path;
     }
 }

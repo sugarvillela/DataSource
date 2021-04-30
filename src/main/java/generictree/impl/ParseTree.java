@@ -33,10 +33,10 @@ public class ParseTree<T> extends GTreeBase <T> {
     }
 
     @Override
-    public boolean put(String path, T payload) {
+    public boolean put(T payload, String... path) {
         root = new ParseTreeNode<>();
         root.setLevel(0);
-        root.setIdentifier(path);
+        root.setIdentifier(path[0]);
         root.setPayload(payload);
         //System.out.println("root: " + root.csvString());
         boolean more;
