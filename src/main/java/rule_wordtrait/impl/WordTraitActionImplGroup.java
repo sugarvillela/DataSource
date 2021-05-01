@@ -25,6 +25,7 @@ public class WordTraitActionImplGroup {
         }
     }
 
+    // separate RX_PATTERN{1:2} to strings=RX_PATTERN, numbers=[1, 2]
     public static class ActionOnRxWordRangeYes extends ActionSplitSurrounded{
         private static ActionOnRxWordRangeYes instance;
 
@@ -162,6 +163,25 @@ public class WordTraitActionImplGroup {
         }
     }
 
+    // for access shorthand <>
+    public static class ActionOverrideTextRange implements IWordTraitAction {
+        public static ActionOverrideTextRange initInstance(int... replacementNumbers){
+            return new ActionOverrideTextRange(replacementNumbers);
+        }
+
+        private final int[] replacementNumbers;
+        private ActionOverrideTextRange(int... replacementNumbers){
+            this.replacementNumbers = replacementNumbers;
+        }
+
+        @Override
+        public boolean doAction(IWordTraitClient client, PAR_TYPE parType, String text) {
+            client.receiveContent(parType);
+            client.receiveContent(replacementNumbers);
+            return true;
+        }
+    }
+
     /*=====Singular extractors========================================================================================*/
 
     public static class ActionStringId implements IWordTraitAction {
@@ -203,7 +223,25 @@ public class WordTraitActionImplGroup {
         @Override
         public boolean doAction(IWordTraitClient client, PAR_TYPE parType, String text) {
             client.receiveContent(parType);
-            client.receiveContent(Integer.parseInt(text));
+            return NumUtil.initInstance().numberToClient(client, text);
+        }
+    }
+
+    // for access shorthand << or >>
+    public static class ActionOverrideTextNumber implements IWordTraitAction {
+        public static ActionOverrideTextNumber initInstance(int replacementNumber){
+            return new ActionOverrideTextNumber(replacementNumber);
+        }
+
+        private final int replacementNumber;
+        private ActionOverrideTextNumber(int replacementNumber){
+            this.replacementNumber = replacementNumber;
+        }
+
+        @Override
+        public boolean doAction(IWordTraitClient client, PAR_TYPE parType, String text) {
+            client.receiveContent(parType);
+            client.receiveContent(replacementNumber);
             return true;
         }
     }

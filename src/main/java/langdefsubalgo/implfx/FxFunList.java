@@ -19,4 +19,9 @@ public class FxFunList implements IFunList {
     public List<IFun> toList() {
         return null;
     }
+
+    @Override
+    public String toString() {
+        return "FxFunList{}";
+    }
 }

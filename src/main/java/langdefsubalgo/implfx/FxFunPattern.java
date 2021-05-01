@@ -16,7 +16,7 @@ import static langdef.LangConstants.ACCESS_MOD;
 
 public class FxFunPattern implements IFunPattern {
     private static final ITokenizer TOK_ON_BRACKET = Tokenizer.builder().delimiters('[', ']').
-            skipSymbols("'(").tokenizeDelimiter().keepSkipSymbol().keepEscapeSymbol().build();
+            skipSymbols("'(").keepSkipSymbol().keepEscapeSymbol().build();
     private IFunList access, right;
 
     public FxFunPattern(String text){
@@ -61,5 +61,13 @@ public class FxFunPattern implements IFunPattern {
     @Override
     public List<IFun> right() {
         return right.toList();
+    }
+
+    @Override
+    public String toString() {
+        return "FxFunPattern{" +
+                "\n    " + access +
+                "\n    " + right +
+                "\n}";
     }
 }

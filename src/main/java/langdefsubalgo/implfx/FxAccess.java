@@ -22,4 +22,11 @@ public class FxAccess implements IFunList {
     public List<IFun> toList() {
         return null;
     }
+
+    @Override
+    public String toString() {
+        return "FxAccess{" +
+                "accessMod=" + accessMod +
+                '}';
+    }
 }

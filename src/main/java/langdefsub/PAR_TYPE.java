@@ -3,7 +3,9 @@ package langdefsub;
 public enum PAR_TYPE {
     EMPTY_PAR,
     NUM_PAR,
+    NUM_PAR_NEG,
     NUM_LIST,
+    NUM_LIST_NEG,
     STR_PAR,
     STR_LIST,
     ID_PAR,
@@ -11,8 +13,6 @@ public enum PAR_TYPE {
     ID_PATH,
     STAR_ID,
     NUM_RANGE,
-    STAR_NUM,
-    STAR_RANGE,
 
     BOOL_PAR,
 

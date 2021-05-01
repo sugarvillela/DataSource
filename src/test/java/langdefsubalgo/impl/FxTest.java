@@ -1,6 +1,9 @@
 package langdefsubalgo.impl;
 
+import generictree.iface.IGTreeNode;
 import langdef.CMD;
+import langdefsubalgo.iface.IFunPattern;
+import langdefsubalgo.iface.ILogicTree;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -11,6 +14,7 @@ import textevent.impl.TextEvent;
 
 import java.util.List;
 
+import static langdef.STRUCT_KEYWORD.FX;
 import static langdef.STRUCT_KEYWORD.RX;
 import static langdef.STRUCT_LIST_TYPE.LIST_NUMBER;
 import static langdef.STRUCT_LIST_TYPE.LIST_STRING;
@@ -54,20 +58,29 @@ public class FxTest {
         System.out.println("====end display====");
     }
 
+    private void displayLeaves(ILogicTree logicTree){
+        for(IGTreeNode<IFunPattern> leaf : logicTree.getLeaves()){
+            System.out.println(leaf.getPayload());
+        }
+    }
+
     private IReadNode getMockFxPayload(String text){
         int row = count;
         count ++;
-        return ReadNode.builder().source("source").row(row).col(row).text(text).textEvent(new TextEvent(RX, CMD.PUSH)).build();
+        return ReadNode.builder().source("source").row(row).col(row).text(text).
+                containerText(text).textEvent(new TextEvent(FX, CMD.PUSH)).build();
     }
 
     @Test
     void test(){
         String text;
 
-        text = "TEXT.IN.LEN().RANGE(1:3)=TRUE";
+        text = "*[1:3]JOY.JOY(TEXT.IN)";
         IReadNode mockPayload = getMockFxPayload(text);
         Glob.RUN_STATE.initTest();
         Glob.RUN_STATE.setCurrNode(mockPayload);
         mockListType();
+        ILogicTree logicTree = new LogicTree(mockPayload);
+        displayLeaves(logicTree);
     }
 }

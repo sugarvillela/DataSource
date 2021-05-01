@@ -61,7 +61,8 @@ public class RxTest {
     private IReadNode getMockRxPayload(String text){
         int row = count;
         count ++;
-        return ReadNode.builder().source("source").row(row).col(row).text(text).textEvent(new TextEvent(RX, CMD.PUSH)).build();
+        return ReadNode.builder().source("source").row(row).col(row).text(text).
+                containerText(text).textEvent(new TextEvent(RX, CMD.PUSH)).build();
     }
 
     @Test
