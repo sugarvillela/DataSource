@@ -3,6 +3,8 @@ package langdefsubalgo.implrx;
 import err.ERR_TYPE;
 import langdefsub.PAR_TYPE;
 import langdefsub.WordTraitRuleByStep;
+import langdefsubalgo.factory.FactoryRx;
+import langdefsubalgo.impl.FunList;
 import langdefsubalgo.util.RangeUtil;
 import langdefsubalgo.validators.ValidFunList;
 import rule_wordtrait.WordTraitRule;
@@ -39,7 +41,7 @@ public class RxFunPattern implements IFunPattern, IWordTraitClient {
             this.receiveContent(1, 1);
         }
 
-        this.splitOnCompare();              // separate left and right
+        this.populate();              // separate left and right
         ValidFunList.initInstance().validCompare(listLeft, compare, listRight);
     }
     private boolean setRangeFromSymbol(String text){
@@ -50,7 +52,7 @@ public class RxFunPattern implements IFunPattern, IWordTraitClient {
         WordTraitRule wordTraitRule = WordTraitRuleByStep.initInstance().getStep_wordRange();
         Glob.ERR.check(wordTraitRule.tryParse(this, text));
     }
-    private void splitOnCompare(){
+    private void populate(){
         String text = strings[0];
         String textLeft, textRight;
         ArrayList<String> tok = TOK_ON_COMPARE.setText(text).parse().toList();
@@ -68,9 +70,9 @@ public class RxFunPattern implements IFunPattern, IWordTraitClient {
 //        System.out.println(compare);
 //        System.out.println(textRight);
 //        System.out.println("======");
-
-        listLeft = new RxFunList(textLeft);
-        listRight = new RxFunList(textRight);
+        FactoryRx factory = FactoryRx.initInstance();
+        listLeft = new FunList(textLeft, factory);
+        listRight = new FunList(textRight, factory);
     }
 
     @Override
@@ -105,6 +107,21 @@ public class RxFunPattern implements IFunPattern, IWordTraitClient {
 
     @Override
     public void receiveContent(PAR_TYPE content) {}
+
+    @Override
+    public String[] stringContent() {
+        return strings;
+    }
+
+    @Override
+    public int[] intContent() {
+        return numbers;
+    }
+
+    @Override
+    public PAR_TYPE parType() {
+        return parTypeEnum;
+    }
 
     @Override
     public String toString() {

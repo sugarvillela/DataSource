@@ -2,9 +2,11 @@ package langdefsubalgo.implfx;
 
 import err.ERR_TYPE;
 import langdefsub.COMPARE;
+import langdefsubalgo.factory.FactoryFx;
 import langdefsubalgo.iface.IFun;
 import langdefsubalgo.iface.IFunList;
 import langdefsubalgo.iface.IFunPattern;
+import langdefsubalgo.impl.FunList;
 import runstate.Glob;
 import tokenizer.iface.ITokenizer;
 import tokenizer.impl.Tokenizer;
@@ -17,18 +19,14 @@ import static langdef.LangConstants.ACCESS_MOD;
 public class FxFunPattern implements IFunPattern {
     private static final ITokenizer TOK_ON_BRACKET = Tokenizer.builder().delimiters('[', ']').
             skipSymbols("'(").keepSkipSymbol().keepEscapeSymbol().build();
-    private IFunList access, right;
+
+    private IFunList access, right, all;
 
     public FxFunPattern(String text){
-        if(text.charAt(0) == ACCESS_MOD){
-            this.splitOnBracket(text.substring(1), true);
-        }
-        else{
-            this.splitOnBracket(text, false);
-        }
+        all = new FunList(text, FactoryFx.initInstance());
     }
 
-    private void splitOnBracket(String text, boolean accessMod){
+    private void populate(String text, boolean accessMod){
         String textLeft, textRight;
         ArrayList<String> tok = TOK_ON_BRACKET.setText(text).parse().toList();
 
@@ -44,13 +42,15 @@ public class FxFunPattern implements IFunPattern {
         System.out.println(textRight);
         System.out.println("======");
 
-        access = new FxAccess(textLeft, accessMod);
-        right = new FxFunList(textRight);
+        access = new FxAccessListWrap(textLeft, accessMod);
+        right = new FunList(textRight, FactoryFx.initInstance());
     }
 
     @Override
     public List<IFun> left() {
-        return access.toList();
+        List<IFun> out = new ArrayList<>(1);
+        out.add(all.toList().get(0));
+        return out;
     }
 
     @Override
@@ -60,14 +60,14 @@ public class FxFunPattern implements IFunPattern {
 
     @Override
     public List<IFun> right() {
-        return right.toList();
+        List<IFun> list = all.toList();
+        return new ArrayList<>(list.subList(1, list.size()));
     }
 
     @Override
     public String toString() {
-        return "FxFunPattern{" +
-                "\n    " + access +
-                "\n    " + right +
+        return "FxFunPattern\n{\n" +
+                all.toString() +
                 "\n}";
     }
 }

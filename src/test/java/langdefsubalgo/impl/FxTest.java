@@ -73,14 +73,22 @@ public class FxTest {
 
     @Test
     void test(){
+        ILogicTree logicTree;
+        IReadNode mockPayload;
         String text;
-
-        text = "*[1:3]JOY.JOY(TEXT.IN)";
-        IReadNode mockPayload = getMockFxPayload(text);
         Glob.RUN_STATE.initTest();
-        Glob.RUN_STATE.setCurrNode(mockPayload);
         mockListType();
-        ILogicTree logicTree = new LogicTree(mockPayload);
+
+//        text = "[1,2]SWAP()";
+//        mockPayload = getMockFxPayload(text);
+//        Glob.RUN_STATE.setCurrNode(mockPayload);
+//        logicTree = new LogicTree(mockPayload);
+//        displayLeaves(logicTree);
+
+        text = "[2]TEXT.IN.SET()";
+        mockPayload = getMockFxPayload(text);
+        Glob.RUN_STATE.setCurrNode(mockPayload);
+        logicTree = new LogicTree(mockPayload);
         displayLeaves(logicTree);
     }
 }

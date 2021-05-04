@@ -1,5 +1,6 @@
 package langdef.util;
 
+import err.ERR_TYPE;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Assertions;
@@ -51,17 +52,17 @@ class ListTypeSearchTest {
         Assertions.assertEquals(expected, actual);
 
         // partial path
-        Assertions.assertTrue(Glob.LIST_TYPE_SEARCH.pathFromPartialPath("FIRST"));
+        Assertions.assertEquals(ERR_TYPE.NONE, Glob.LIST_TYPE_SEARCH.pathFromPartialPath("FIRST"));
         expected = "LIST_STRING|NAMES|FIRST";
         actual = String.join("|", Glob.LIST_TYPE_SEARCH.pathFound());
         Assertions.assertEquals(expected, actual);
 
-        Assertions.assertTrue(Glob.LIST_TYPE_SEARCH.pathFromPartialPath("17"));
+        Assertions.assertEquals(ERR_TYPE.NONE, Glob.LIST_TYPE_SEARCH.pathFromPartialPath("17"));
         expected = "LIST_NUMBER|VALUE|17";
         actual = String.join("|", Glob.LIST_TYPE_SEARCH.pathFound());
         Assertions.assertEquals(expected, actual);
 
-        Assertions.assertTrue(Glob.LIST_TYPE_SEARCH.pathFromPartialPath("VALUE"));
+        Assertions.assertEquals(ERR_TYPE.NONE, Glob.LIST_TYPE_SEARCH.pathFromPartialPath("VALUE"));
         expected = "LIST_NUMBER|VALUE";
         actual = String.join("|", Glob.LIST_TYPE_SEARCH.pathFound());
         Assertions.assertEquals(expected, actual);
@@ -71,11 +72,11 @@ class ListTypeSearchTest {
         Assertions.assertFalse(Glob.LIST_TYPE_SEARCH.isPathToLeaf("VALUE"));
 
         // node find
-        Assertions.assertTrue(Glob.LIST_TYPE_SEARCH.treeNodeFromPartialPath("FIRST"));
+        Assertions.assertEquals(ERR_TYPE.NONE, Glob.LIST_TYPE_SEARCH.treeNodeFromPartialPath("FIRST"));
 //        expected = "2,1,0,-,-,FIRST,readnode.impl.ReadNode@11c20519";//
 //        actual = Glob.LIST_TYPE_SEARCH.treeNodeFound().csvString();
 //        Assertions.assertEquals(expected, actual);
 
-        Assertions.assertFalse(Glob.LIST_TYPE_SEARCH.treeNodeFromPartialPath("binky"));
+        Assertions.assertEquals(ERR_TYPE.INVALID_PATH, Glob.LIST_TYPE_SEARCH.treeNodeFromPartialPath("binky"));
     }
 }

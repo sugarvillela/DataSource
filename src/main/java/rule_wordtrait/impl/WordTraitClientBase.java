@@ -11,17 +11,29 @@ public abstract class WordTraitClientBase implements IWordTraitClient {
     @Override
     public void receiveContent(String... content) {
         strings = content;
-        numbers = null;
     }
 
     @Override
     public void receiveContent(int... content) {
         numbers = content;
-        strings = null;
     }
 
     @Override
     public void receiveContent(PAR_TYPE content) {
         parTypeEnum = content;
+    }
+
+    @Override
+    public String[] stringContent() {
+        return strings;
+    }
+
+    @Override
+    public int[] intContent() {
+        return numbers;
+    }
+
+    public PAR_TYPE parType() {
+        return parTypeEnum;
     }
 }

@@ -1,8 +1,11 @@
 package langdefsubalgo.impl;
 
 import generictree.iface.IGTree;
+import generictree.iface.IGTreeParse;
+import generictree.task.TaskDisp;
 import langdef.CMD;
 import langdef.LangConstants;
+import langdefsubalgo.iface.IFunPattern;
 import langdefsubalgo.implrx.RxFunPattern;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Assertions;
@@ -89,19 +92,17 @@ public class RxTest {
         Glob.RUN_STATE.setCurrNode(mockPayload);
         mockListType();
 
-        //System.out.println(String.join("|", Glob.LIST_TYPE_SEARCH.getAllPaths()));
-        //System.out.println(Glob.LIST_TYPE_SEARCH.pathFromPartialPath("FIRST"));
         ILogicTree logicTree = new LogicTree(mockPayload);
 
-//        IGTreeParse<IRxFunPattern> parse = logicTree.getTree().getParse();
-//        logicTree.getTree().getParse().preOrder(logicTree.getTree().getRoot(), new TaskDisp<>());
+        IGTreeParse<IFunPattern> parse = logicTree.getTree().getParse();
+        logicTree.getTree().getParse().preOrder(logicTree.getTree().getRoot(), new TaskDisp<>());
     }
     @Test
     void rangeTest(){
         Glob.RUN_STATE.initTest();
         String text, actual, expected;
         IReadNode mockPayload;
-        RxFunPattern funPattern;
+        mockListType();
 
         text = "TEXT.IN.LEN().RANGE(1:3)=TRUE{1:2}";
         expected = "strings=[TEXT.IN.LEN().RANGE(1:3)=TRUE]|numbers=[1, 2]";
@@ -137,6 +138,7 @@ public class RxTest {
         Glob.RUN_STATE.setCurrNode(mockPayload);
         actual = new RxFunPattern(text).toString();
     }
+
     @Test
     void givenGoodCompareType_proceed(){
         String text = "TEXT.IN='foo'";
@@ -146,6 +148,7 @@ public class RxTest {
         mockListType();
         new LogicTree(mockPayload);
     }
+
     @Test
     void givenBadCompareType_quit(){
         String text = "TEXT.IN.LEN().RANGE(1:3)='foo'";
@@ -155,6 +158,7 @@ public class RxTest {
         mockListType();
         new LogicTree(mockPayload);
     }
+
     @Test
     void givenBadCompareLT_quit(){
         String text = "TEXT.IN.LEN().RANGE(1:3)<TRUE";

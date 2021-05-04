@@ -1,5 +1,6 @@
 package langdefsubalgo.factory;
 
+import langdefsubalgo.iface.IFunBuildUtil;
 import langdefsubalgo.iface.IPatternFactory;
 import langdefsubalgo.iface.IFunPattern;
 import langdefsubalgo.implrx.RxFunPattern;
@@ -18,4 +19,8 @@ public class FactoryRx implements IPatternFactory {
         return new RxFunPattern(text);
     }
 
+    @Override
+    public IFunBuildUtil getFunBuildUtil() {
+        return FunBuildUtilRx.initInstance();
+    }
 }

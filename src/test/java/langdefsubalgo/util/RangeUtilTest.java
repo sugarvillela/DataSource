@@ -48,6 +48,22 @@ class RangeUtilTest {
             parTypeEnum = content;
         }
 
+
+        @Override
+        public String[] stringContent() {
+            return strings;
+        }
+
+        @Override
+        public int[] intContent() {
+            return numbers;
+        }
+
+        @Override
+        public PAR_TYPE parType() {
+            return parTypeEnum;
+        }
+
         @Override
         public String toString() {
             return

@@ -1,5 +1,6 @@
 package langdef.util;
 
+import err.ERR_TYPE;
 import generictree.iface.IGTree;
 import generictree.iface.IGTreeNode;
 import langdef.LangConstants;
@@ -46,7 +47,7 @@ public class ListTypeSearch {
         return false;
     }
     
-    public boolean treeNodeFromPartialPath(String... partialPath) {
+    public ERR_TYPE treeNodeFromPartialPath(String... partialPath) {
         IGTree<IReadNode> currTree;
         IGTreeNode currNode;
         for(STRUCT_LIST_TYPE currType : STRUCT_LIST_TYPE.values()){
@@ -55,13 +56,13 @@ public class ListTypeSearch {
             if(root != null && (currNode = currTree.getParse().treeNodeFromPartialPath(0, root, partialPath)) != null){
                 treeNodeFound = currNode;
                 listTypeFound = currType;
-                return true;
+                return ERR_TYPE.NONE;
             }
         }
-        return false;
+        return ERR_TYPE.INVALID_PATH;
     }
 
-    public boolean pathFromPartialPath(String... partialPath) {
+    public ERR_TYPE pathFromPartialPath(String... partialPath) {
         IGTree<IReadNode> currTree;
         String[] currPath;
         for(STRUCT_LIST_TYPE currType : STRUCT_LIST_TYPE.values()){
@@ -70,12 +71,12 @@ public class ListTypeSearch {
             if(root != null && (currPath = currTree.getParse().pathFromPartialPath(root, partialPath)) != null){
                 pathFound = currPath;
                 listTypeFound = currType;
-                return true;
+                return ERR_TYPE.NONE;
             }
         }
-        return false;
+        return ERR_TYPE.INVALID_PATH;
     }
-    public boolean pathFromTreeNode(IGTreeNode<IReadNode> treeNode){
+    public ERR_TYPE pathFromTreeNode(IGTreeNode<IReadNode> treeNode){
         IGTree<IReadNode> currTree;
         String[] currPath;
         for(STRUCT_LIST_TYPE currType : STRUCT_LIST_TYPE.values()){
@@ -84,10 +85,10 @@ public class ListTypeSearch {
             if(root != null && (currPath = currTree.getParse().pathFromTreeNode(root, treeNode)) != null){
                 pathFound = currPath;
                 listTypeFound = currType;
-                return true;
+                return ERR_TYPE.NONE;
             }
         }
-        return false;
+        return ERR_TYPE.INVALID_PATH;
     }
     public boolean isPathToLeaf(String... partialPath){
         IGTree<IReadNode> currTree;

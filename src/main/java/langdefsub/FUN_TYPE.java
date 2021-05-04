@@ -3,10 +3,22 @@ package langdefsub;
 public enum FUN_TYPE {
     // back end, unless add feature
     LIT,
-    PATH,
-    // front end
+    GET_PATH,
+    GET_ACCESS,
+    // front end rx
     LEN,
-    RANGE
+    RANGE,
+    //IS_DUP,
+    // fx flags
+    VOTE,
+    SET,
+    DROP,
+    // fx structure
+    MOVE,
+    COPY,
+    CON,
+    //PUT,
+    SWAP
     ;
 
     public static FUN_TYPE fromString(String text){

@@ -9,6 +9,8 @@ public enum PRIM_TYPE {
     NULL        (COMPARE.EQUAL),
     STATE       (COMPARE.EQUAL),
     IMMUTABLE   (COMPARE.EQUAL),
+    PATH        (COMPARE.EQUAL), // a path to a list type
+    ACCESS      ()               // output from [1:2] fxAccess
     ;
 
     private final COMPARE[] allowedCompares;

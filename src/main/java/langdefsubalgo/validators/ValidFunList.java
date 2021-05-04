@@ -1,6 +1,7 @@
 package langdefsubalgo.validators;
 
 import langdefsub.COMPARE;
+import langdefsub.FUN_TYPE;
 import langdefsub.PAR_TYPE;
 import langdefsub.PRIM_TYPE;
 import langdefsubalgo.iface.IFun;
@@ -21,7 +22,7 @@ public class ValidFunList {
     private ValidFunList(){}
 
     public void validateParamType(IFun caller, PAR_TYPE actual){
-        for(PAR_TYPE parType : caller.paramTypes()){
+        for(PAR_TYPE parType : caller.allowedParamTypes()){
             if(parType == actual){
                 return;
             }
@@ -31,35 +32,105 @@ public class ValidFunList {
                 String.format("Proper usage: %s", caller.description())
         );
     }
-    public void validateRange(IFun caller, int[] numbers){
+
+    public void validateRangeLength(IFun caller, int[] numbers){
         if((numbers.length != 2)){
             Glob.ERR.kill(
                     String.format("Expected range in format RANGE(n:m) or RANGE(:m) or RANGE(n:), found %s", Arrays.toString(numbers)),
                     String.format("Proper usage: %s", caller.description())
             );
         }
-        if(numbers[0] > numbers[1]){
-            Glob.ERR.kill(
-                    String.format("Expected range in ascending order, found %d:%d", numbers[0], numbers[1]),
-                    String.format("Proper usage: %s", caller.description())
-            );
+    }
+    public void validateRange(IFun caller, int[] numbers){
+        int prev = -1024;
+        for(int i = 0; i < numbers.length; i++){
+            if(prev > numbers[i]){
+                Glob.ERR.kill(
+                        String.format("Expected parameters in ascending order, found %d:%d", numbers[0], numbers[1]),
+                        String.format("Proper usage: %s", caller.description())
+                );
+            }
+            prev = numbers[i];
         }
     }
 
-    public void validateOutInMatch(ArrayList<IFun> funList){
+    public void validatePrimTypeChain(ArrayList<IFun> funList){
         IFun prev = null;
         for(IFun curr : funList){
-            PRIM_TYPE outType = (prev == null)? PRIM_TYPE.NULL : prev.outType();
-            if(outType != curr.inType()){
+            PRIM_TYPE actual = (prev == null)? PRIM_TYPE.NULL : prev.primTypeAfter();
+            PRIM_TYPE expected = curr.primTypeBefore();
+            if(expected != null && actual != expected){
                 Glob.ERR.kill(
-                    String.format("Expected input type %s for sub-language function %s, found %s",
-                            curr.inType(), curr.funType(), outType
-                    ),
-                    String.format("Proper usage: %s", curr.description())
+                        String.format("Expected input type %s for sub-language function %s, found %s",
+                                expected, curr.funType(), actual
+                        ),
+                        String.format("Proper usage: %s", curr.description())
                 );
             }
             prev = curr;
         }
+    }
+
+    // types before and after: null means don't care; empty means disallow
+    public void validateFunTypeChain(ArrayList<IFun> funList){
+        IFun prev = null;
+        for(IFun curr : funList){
+            FUN_TYPE[] expectedList = curr.funTypesBefore();
+            if(expectedList != null && prev != null){
+                FUN_TYPE actual = prev.funType();
+                if(!inList(actual, expectedList)){
+                    String errMessage = (expectedList.length == 0)?
+                            String.format("Expected sub-language function %s first in list, found %s",
+                                    curr.funType(), prev.funType()
+                            )
+                            :
+                            String.format("Expected function type(s) %s to precede sub-language function %s, found %s",
+                                    Arrays.toString(expectedList), curr.funType(), actual
+                            );
+                    Glob.ERR.kill(errMessage, String.format("Proper usage: %s", curr.description()));
+                }
+            }
+            prev = curr;
+        }
+    }
+
+    // types before and after: null means don't care; empty means disallow
+    public void validateRangeBeforeInChain(ArrayList<IFun> funList){
+        IFun prev = null;
+        for(IFun curr : funList){
+            PAR_TYPE[] expectedList = curr.parTypesBefore();
+            if(expectedList != null && prev != null){
+                PAR_TYPE actual = prev.parType();
+                if(!inList(actual, expectedList)){
+                    String errMessage = (expectedList.length == 0)?
+                            String.format("Expected sub-language function %s first in list, found %s",
+                                    curr.funType(), prev.funType()
+                            )
+                            :
+                            String.format("Expected param type(s) %s to precede sub-language function %s, found %s",
+                                    Arrays.toString(expectedList), curr.funType(), actual
+                            );
+                    Glob.ERR.kill(errMessage, String.format("Proper usage: %s", curr.description()));
+                }
+            }
+            prev = curr;
+        }
+    }
+    private boolean inList(FUN_TYPE actual, FUN_TYPE[] expectedList){
+        for(FUN_TYPE expected : expectedList){
+            if(expected == actual){
+                return true;
+            }
+        }
+        return false;   // always false on empty list
+    }
+    private boolean inList(PAR_TYPE actual, PAR_TYPE[] expectedList){
+        for(PAR_TYPE expected : expectedList){
+            if(expected == actual){
+                return true;
+            }
+        }
+        return false;   // always false on empty list
     }
 
     public void validCompare(IFunList left, COMPARE compare, IFunList right){

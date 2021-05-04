@@ -165,10 +165,10 @@ public class WordTraitRuleByStep {
                 ),
                 new TraitPatternMatch(
                         parser, "+,---:-<->-A+C+N", NUM_LIST, WordTraitActionImplGroup.ActionNumbers.initInstance(',')
-                ),
-                new TraitPatternMatch(
-                        parser, "+,+--:-<->-A+C+N", NUM_LIST_NEG, WordTraitActionImplGroup.ActionNumbers.initInstance(',')
                 )
+//                new TraitPatternMatch(
+//                        parser, "+,+--:-<->-A+C+N", NUM_LIST_NEG, WordTraitActionImplGroup.ActionNumbers.initInstance(',')
+//                )
         );
         return step_accessType;
     }

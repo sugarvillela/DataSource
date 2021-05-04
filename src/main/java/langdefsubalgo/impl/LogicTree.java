@@ -34,9 +34,11 @@ public class LogicTree implements ILogicTree {
         List<IGTreeNode<IFunPattern>> leaves = this.getLeaves();
 
         IPatternFactory factory = (langStruct == RX)? FactoryRx.initInstance() : FactoryFx.initInstance();
+
         for(IGTreeNode<IFunPattern> leaf: leaves){
+            String leafText = leaf.identifier();
             leaf.setPayload(
-                    factory.newFunPattern(leaf.identifier())
+                    factory.newFunPattern(leafText)
             );
         }
     }

@@ -7,4 +7,8 @@ public interface IWordTraitClient {
     void receiveContent(String... content);
     void receiveContent(int... content);
     void receiveContent(PAR_TYPE content);
+
+    String[] stringContent();
+    int[] intContent();
+    PAR_TYPE parType();
 }
