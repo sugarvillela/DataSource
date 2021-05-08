@@ -5,7 +5,6 @@ import langdefsub.PRIM_TYPE;
 import langdefsubalgo.iface.IFun;
 import langdefsubalgo.iface.IFunList;
 import langdefsubalgo.iface.IPatternFactory;
-import runstate.Glob;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,9 +15,6 @@ public class FunList implements IFunList {
     public FunList(String text, IPatternFactory factory){
         //System.out.println("RxFunList: " + text);
         funList = factory.getFunBuildUtil().build(text);
-        Glob.VALID_FUN_LIST.validatePrimTypeChain(funList);
-        Glob.VALID_FUN_LIST.validateFunTypeChain(funList);
-        Glob.VALID_FUN_LIST.validateRangeBeforeInChain(funList);
         System.out.println("List");
         for(IFun fun : funList){
             System.out.println(fun.description());

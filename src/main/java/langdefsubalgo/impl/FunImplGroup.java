@@ -29,6 +29,10 @@ public abstract class FunImplGroup {
 
             this.content = content[0];
             System.out.println("LiteralObject constructor");
+
+            Glob.VALID_FUN_LIST.validatePrimTypeChain(prev, this);
+            Glob.VALID_FUN_LIST.validateFunTypeChain(prev, this);
+            Glob.VALID_FUN_LIST.validateRangeBeforeInChain(prev, this);
         }
     }
 
@@ -46,6 +50,10 @@ public abstract class FunImplGroup {
 
             this.content = content[0];
             System.out.println("LiteralNumber constructor");
+
+            Glob.VALID_FUN_LIST.validatePrimTypeChain(prev, this);
+            Glob.VALID_FUN_LIST.validateFunTypeChain(prev, this);
+            Glob.VALID_FUN_LIST.validateRangeBeforeInChain(prev, this);
         }
     }
 
@@ -63,6 +71,10 @@ public abstract class FunImplGroup {
 
             this.content = content[0];
             System.out.println("LiteralBool constructor");
+
+            Glob.VALID_FUN_LIST.validatePrimTypeChain(prev, this);
+            Glob.VALID_FUN_LIST.validateFunTypeChain(prev, this);
+            Glob.VALID_FUN_LIST.validateRangeBeforeInChain(prev, this);
         }
     }
 
@@ -83,6 +95,10 @@ public abstract class FunImplGroup {
             this.path = path;
             //this.treeNode = treeNode;
             System.out.println("FunGetPath constructor");
+
+            Glob.VALID_FUN_LIST.validatePrimTypeChain(prev, this);
+            Glob.VALID_FUN_LIST.validateFunTypeChain(prev, this);
+            Glob.VALID_FUN_LIST.validateRangeBeforeInChain(prev, this);
         }
 
         @Override
@@ -100,8 +116,12 @@ public abstract class FunImplGroup {
             this.setPrimTypeAfter(NUMBER);
             this.setParamTypes(EMPTY_PAR);
 
-            Glob.VALID_FUN_LIST.validateParamType(this, parType);
             System.out.println("FunLen constructor");
+
+            Glob.VALID_FUN_LIST.validateParamType(this, parType);
+            Glob.VALID_FUN_LIST.validatePrimTypeChain(prev, this);
+            Glob.VALID_FUN_LIST.validateFunTypeChain(prev, this);
+            Glob.VALID_FUN_LIST.validateRangeBeforeInChain(prev, this);
         }
     }
 
@@ -114,12 +134,17 @@ public abstract class FunImplGroup {
             this.setPrimTypeBefore(NUMBER);
             this.setPrimTypeAfter(BOOLEAN);
             this.setParamTypes(NUM_RANGE);
+            this.content = content;
 
             System.out.println("FunRange constructor: parType = " + parType);
+
             Glob.VALID_FUN_LIST.validateParamType(this, parType);
             Glob.VALID_FUN_LIST.validateRangeLength(this, content);
             Glob.VALID_FUN_LIST.validateRange(this, content);
-            this.content = content;
+
+            Glob.VALID_FUN_LIST.validatePrimTypeChain(prev, this);
+            Glob.VALID_FUN_LIST.validateFunTypeChain(prev, this);
+            Glob.VALID_FUN_LIST.validateRangeBeforeInChain(prev, this);
         }
         @Override
         public String description() {
@@ -139,9 +164,13 @@ public abstract class FunImplGroup {
             this.setFunTypesBefore(GET_PATH);
 
             this.parTypeEnum = parType;
-            Glob.VALID_FUN_LIST.validateParamType(this, parType);
-
             System.out.println("FunVote constructor");
+
+            Glob.VALID_FUN_LIST.validateParamType(this, parType);
+            Glob.VALID_FUN_LIST.validatePrimTypeChain(prev, this);
+            Glob.VALID_FUN_LIST.validateFunTypeChain(prev, this);
+            Glob.VALID_FUN_LIST.validateRangeBeforeInChain(prev, this);
+
         }
     }
 
@@ -155,9 +184,13 @@ public abstract class FunImplGroup {
             this.setFunTypesBefore(GET_PATH);
 
             this.parTypeEnum = parType;
-            Glob.VALID_FUN_LIST.validateParamType(this, parType);
-
             System.out.println("FunSet constructor");
+
+            Glob.VALID_FUN_LIST.validateParamType(this, parType);
+            Glob.VALID_FUN_LIST.validatePrimTypeChain(prev, this);
+            Glob.VALID_FUN_LIST.validateFunTypeChain(prev, this);
+            Glob.VALID_FUN_LIST.validateRangeBeforeInChain(prev, this);
+
         }
     }
 
@@ -172,9 +205,12 @@ public abstract class FunImplGroup {
             this.setFunTypesBefore(GET_PATH);
 
             this.parTypeEnum = parType;
-            Glob.VALID_FUN_LIST.validateParamType(this, parType);
-
             System.out.println("FunDrop constructor");
+
+            Glob.VALID_FUN_LIST.validateParamType(this, parType);
+            Glob.VALID_FUN_LIST.validatePrimTypeChain(prev, this);
+            Glob.VALID_FUN_LIST.validateFunTypeChain(prev, this);
+            Glob.VALID_FUN_LIST.validateRangeBeforeInChain(prev, this);
         }
     }
 
@@ -191,9 +227,12 @@ public abstract class FunImplGroup {
             this.setParTypesBefore(NUM_LIST);
 
             this.parTypeEnum = parType;
-            Glob.VALID_FUN_LIST.validateParamType(this, parType);
-
             System.out.println("FunSwap constructor");
+
+            Glob.VALID_FUN_LIST.validateParamType(this, parType);
+            Glob.VALID_FUN_LIST.validatePrimTypeChain(prev, this);
+            Glob.VALID_FUN_LIST.validateFunTypeChain(prev, this);
+            Glob.VALID_FUN_LIST.validateRangeBeforeInChain(prev, this);
         }
     }
 
@@ -210,9 +249,12 @@ public abstract class FunImplGroup {
             this.setParTypesBefore(NUM_PAR, NUM_LIST);
 
             this.parTypeEnum = parType;
-            Glob.VALID_FUN_LIST.validateParamType(this, parType);
-
             System.out.println("FunCon constructor");
+
+            Glob.VALID_FUN_LIST.validateParamType(this, parType);
+            Glob.VALID_FUN_LIST.validatePrimTypeChain(prev, this);
+            Glob.VALID_FUN_LIST.validateFunTypeChain(prev, this);
+            Glob.VALID_FUN_LIST.validateRangeBeforeInChain(prev, this);
         }
     }
                 /*
